@@ -97,7 +97,7 @@ public class AdministratorsController {
         }
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<?> getAllAdmins(BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;

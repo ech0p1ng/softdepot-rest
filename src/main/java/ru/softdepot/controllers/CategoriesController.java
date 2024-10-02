@@ -15,7 +15,7 @@ import java.util.List;
 public class CategoriesController {
     private final CategoryDAO categoryDAO;
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<?> newProgram(BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
