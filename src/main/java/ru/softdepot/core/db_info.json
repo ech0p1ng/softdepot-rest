@@ -1,0 +1,15 @@
+{
+	"administrator_name":"administrator_role",
+	"administrator_password":"9QrlLHkwMJah3hNoMRlW",
+	
+	"developer_password":"32BItzvBNem4vEaXxjBb",
+	"developer_name":"developer_role",
+	
+	"customer_password":"at7DcsAixTk4Eqs7zdp3",
+	"customer_name":"customer_role",
+	
+	"unregistered_user_name":"unregistered_role",
+	"unregistered_user_password":"WqQMglB97jPxKw7TCiFc",
+	
+	"url":"jdbc:postgresql://localhost:5432/softdepot"
+}
