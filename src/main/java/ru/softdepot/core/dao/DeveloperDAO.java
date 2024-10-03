@@ -55,8 +55,7 @@ public class DeveloperDAO implements DAO<Developer> {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             String msg = String.format("Developer with [email=%s] or [name=%s] already exists.",
                     developer.getEmail(), developer.getName());
             throw new Exception(msg);
@@ -119,7 +118,7 @@ public class DeveloperDAO implements DAO<Developer> {
             e.printStackTrace();
         }
         if (developer == null) {
-            String msg  = String.format("Developer with [id=%d] does not exist.", id);
+            String msg = String.format("Developer with [id=%d] does not exist.", id);
             throw new Exception(msg);
         }
         return developer;
@@ -149,7 +148,7 @@ public class DeveloperDAO implements DAO<Developer> {
             e.printStackTrace();
         }
         if (developer == null) {
-            String msg  = String.format("Developer with [email=%s] does not exist.", email);
+            String msg = String.format("Developer with [email=%s] does not exist.", email);
             throw new Exception(msg);
         }
         return developer;
@@ -179,10 +178,9 @@ public class DeveloperDAO implements DAO<Developer> {
 
     public Program getProgram(Developer developer, int programId) throws Exception {
         Program program = programDAO.getById(programId);
-        if (hasProgram(developer, program)){
+        if (hasProgram(developer, program)) {
             return program;
-        }
-        else {
+        } else {
             String msg = String.format("Developer [id=%d] does not have program [id=%d]",
                     developer.getId(), programId);
             throw new Exception(msg);
@@ -220,7 +218,7 @@ public class DeveloperDAO implements DAO<Developer> {
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "SELECT * FROM daily_stats " +
-                    "WHERE program_id=? AND stats_date>=? AND stats_date<=?"
+                            "WHERE program_id=? AND stats_date>=? AND stats_date<=?"
             );
 
             Timestamp sqlDateStart = Timestamp.from(start.toInstant());
@@ -261,6 +259,25 @@ public class DeveloperDAO implements DAO<Developer> {
         }
 
         return exists;
+    }
+
+    public boolean exists(int id) {
+        Developer developer = null;
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM developer WHERE id=?"
+            );
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return true;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public boolean hasProgram(Developer developer, Program program) {

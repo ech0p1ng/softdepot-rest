@@ -38,20 +38,12 @@ public class ProductsController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProgram(@PathVariable("id") int id,
-                                           BindingResult bindingResult) throws BindException {
-        if (bindingResult.hasErrors()) {
-            if (bindingResult instanceof BindException exception) {
-                throw exception;
-            } else {
-                throw new BindException(bindingResult);
-            }
-        } else {
-            this.programDAO.delete(id);
-            return ResponseEntity.ok().build();
-        }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteProgram(@PathVariable("id") int id) {
+        this.programDAO.delete(id);
+        return ResponseEntity.ok().build();
     }
+
 
     @PostMapping("/new")
     public ResponseEntity<?> addNewProgram(@RequestBody Program program,
@@ -79,7 +71,7 @@ public class ProductsController {
     }
 
     @GetMapping("/all")
-    public List<Program> getPrograms(){
+    public List<Program> getPrograms() {
         return this.programDAO.getAll();
     }
 }

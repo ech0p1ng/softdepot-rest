@@ -8,6 +8,8 @@ import ru.softdepot.core.models.Program;
 
 import java.sql.*;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Repository
@@ -105,6 +107,36 @@ public class DailyStatsDAO implements DAO<DailyStats> {
             e.printStackTrace();
         }
         return dailyStats;
+    }
+
+    public List<DailyStats> getByProgramId(int programId) {
+        List<DailyStats> stats = new ArrayList<>();
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM daily_stats WHERE program_id=?"
+            );
+            statement.setInt(1, programId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                OffsetDateTime dateTime = DataBase.convertToDateTime(
+                        resultSet.getTimestamp("stats_date"));
+
+                stats.add(new DailyStats(
+                        resultSet.getInt("id"),
+                        dateTime,
+                        resultSet.getInt("program_id"),
+                        resultSet.getFloat("avg_estimation"),
+                        resultSet.getBigDecimal("earnings"),
+                        resultSet.getInt("purchases_amount"),
+                        resultSet.getInt("reviews_amount")
+                ));
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return stats;
     }
 
     public boolean exists(int statsId) {

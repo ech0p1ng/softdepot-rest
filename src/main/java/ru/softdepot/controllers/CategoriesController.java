@@ -10,23 +10,19 @@ import ru.softdepot.core.models.Category;
 
 import java.util.List;
 
-@RestController("softdepot-api/categories")
+@RestController
+@RequestMapping("softdepot-api/categories")
 @AllArgsConstructor
 public class CategoriesController {
     private final CategoryDAO categoryDAO;
 
     @GetMapping
-    public ResponseEntity<?> newProgram(BindingResult bindingResult) throws BindException {
-        if (bindingResult.hasErrors()) {
-            if (bindingResult instanceof BindException exception) throw exception;
-            else throw new BindException(bindingResult);
-        } else {
-            List<Category> categories = categoryDAO.getAll();
-            return ResponseEntity.ok().body(categories);
-        }
+    public ResponseEntity<?> getAllCategories() {
+        List<Category> categories = categoryDAO.getAll();
+        return ResponseEntity.ok().body(categories);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/new")
     public ResponseEntity<?> addCategory(@RequestBody Category category,
                                          BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
@@ -37,8 +33,7 @@ public class CategoriesController {
                 if (!categoryDAO.exists(category.getName())) {
                     categoryDAO.add(category);
                     return ResponseEntity.ok().build();
-                }
-                else {
+                } else {
                     return ResponseEntity.notFound().build();
                 }
             } catch (Exception e) {
@@ -59,52 +54,32 @@ public class CategoriesController {
             if (!categoryDAO.exists(category.getName())) {
                 categoryDAO.update(category);
                 return ResponseEntity.ok().build();
-            }
-            else {
+            } else {
                 return ResponseEntity.notFound().build();
             }
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable("id") int id,
-                                            BindingResult bindingResult) throws BindException {
-        if (bindingResult.hasErrors()) {
-            if (bindingResult instanceof BindException exception) throw exception;
-            else throw new BindException(bindingResult);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteCategory(@PathVariable("id") int id) {
+        if (categoryDAO.exists(id)) {
+            categoryDAO.delete(id);
+            return ResponseEntity.ok().build();
         } else {
-            if (categoryDAO.exists(id)) {
-                categoryDAO.delete(id);
-                return ResponseEntity.ok().build();
-            }
-            else {
-                return ResponseEntity.notFound().build();
-            }
+            return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCategory(@PathVariable("id") int id,
-                                         BindingResult bindingResult) throws BindException {
-        if (bindingResult.hasErrors()) {
-            if (bindingResult instanceof BindException exception) throw exception;
-            else throw new BindException(bindingResult);
-        } else {
-            var category = categoryDAO.getById(id);
-            return ResponseEntity.ok().body(category);
-        }
+    public ResponseEntity<?> getCategory(@PathVariable("id") int id) {
+        var category = categoryDAO.getById(id);
+        return ResponseEntity.ok().body(category);
     }
 
-    @GetMapping("/{name}")
-    public ResponseEntity<?> getCategory(@PathVariable("name") String name,
-                                         BindingResult bindingResult) throws BindException {
-        if (bindingResult.hasErrors()) {
-            if (bindingResult instanceof BindException exception) throw exception;
-            else throw new BindException(bindingResult);
-        } else {
-            var category = categoryDAO.getByName(name);
-            return ResponseEntity.ok().body(category);
-        }
-    }
+//    @GetMapping("/{name}")
+//    public ResponseEntity<?> getCategory(@PathVariable("name") String name) throws BindException {
+//        var category = categoryDAO.getByName(name);
+//        return ResponseEntity.ok().body(category);
+//    }
 
 }

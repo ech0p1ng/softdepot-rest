@@ -6,35 +6,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
-import ru.softdepot.core.dao.AdministratorDAO;
-import ru.softdepot.core.models.Administrator;
-import ru.softdepot.core.models.Program;
-
-import java.util.Map;
+import ru.softdepot.core.dao.CustomerDAO;
+import ru.softdepot.core.models.Customer;
 
 @RestController
-@RequestMapping("softdepot-api/administrators")
+@RequestMapping("softdepot-api/customers")
 @AllArgsConstructor
-public class AdministratorsController {
-    private final AdministratorDAO administratorDAO;
-    private final String adminNotFoundByEmail = "Администратор с таким email не найден";
-    private final String adminNotFoundById = "Администратор с таким id не найден";
+public class CustomersController {
+
+    private final CustomerDAO customerDAO;
+    private final String customerNotFoundByEmail = "Пользователь с таким email не найден";
+    private final String customerNotFoundById = "Пользователь с таким id не найден";
 
     @PostMapping("/new")
-    public ResponseEntity<?> addNewAdmin(@RequestBody Administrator administrator,
-                                         BindingResult bindingResult) throws BindException {
+    public ResponseEntity<?> addNewCustomer(@RequestBody Customer customer,
+                                            BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (administratorDAO.exists(administrator.getEmail())) {
+            if (customerDAO.exists(customer.getEmail())) {
                 return ResponseEntity
                         .badRequest()
                         .body("Администратор с таким email уже существует");
             } else {
                 try {
-                    administratorDAO.add(administrator);
+                    customerDAO.add(customer);
                 } catch (Exception e) {
                     return ResponseEntity
                             .badRequest()
@@ -45,51 +42,52 @@ public class AdministratorsController {
         }
     }
 
-    @PatchMapping("/edit/{id}")
-    public ResponseEntity<?> editAdmin(@RequestBody Administrator administrator,
-                                       @PathVariable("id") int id,
-                                       BindingResult bindingResult) throws BindException {
+    @PatchMapping("/edit")
+    public ResponseEntity<?> editCustomer(@RequestBody Customer customer,
+                                          BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (administratorDAO.exists(id)) {
-                administratorDAO.update(administrator);
+            if (customerDAO.exists(customer.getEmail())) {
+                customerDAO.update(customer);
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
-                        .body(adminNotFoundByEmail);
+                        .body(customerNotFoundByEmail);
             }
         }
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteAdmin(@PathVariable int id) {
-        if (administratorDAO.exists(id)) {
-            administratorDAO.delete(id);
+    public ResponseEntity<?> deleteCustomer(@PathVariable int id) {
+        if (customerDAO.exists(id)) {
+            customerDAO.delete(id);
             return ResponseEntity.ok().build();
         }
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(adminNotFoundById);
+                .body(customerNotFoundById);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAdmin(@PathVariable int id) {
+    public ResponseEntity<?> getCustomer(@PathVariable int id) {
         try {
-            Administrator admin = administratorDAO.getById(id);
+            Customer admin = customerDAO.getById(id);
             return ResponseEntity.ok().body(admin);
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(adminNotFoundById);
+                    .body(customerNotFoundById);
         }
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllAdmins() {
-        var admins = administratorDAO.getAll();
+    public ResponseEntity<?> getAllCustomers() {
+        var admins = customerDAO.getAll();
         return ResponseEntity.ok().body(admins);
     }
+
+
 }

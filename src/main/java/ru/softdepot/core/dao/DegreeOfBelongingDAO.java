@@ -78,13 +78,41 @@ public class DegreeOfBelongingDAO implements DAO<DegreeOfBelonging> {
         }
     }
 
-    public boolean exists(int programId, int tagId) {
+    public void delete(int programId, int tagId) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                "SELECT * FROM degree_of_belonging WHERE program_id=? AND tag_id=?"
+                    "DELETE FROM degree_of_belonging WHERE program_id=? AND tag_id=?"
             );
             preparedStatement.setInt(1, programId);
             preparedStatement.setInt(2, tagId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean exists(int programId, int tagId) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT * FROM degree_of_belonging WHERE program_id=? AND tag_id=?"
+            );
+            preparedStatement.setInt(1, programId);
+            preparedStatement.setInt(2, tagId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean exists(int id) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT * FROM degree_of_belonging WHERE id=?"
+            );
+            preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return true;

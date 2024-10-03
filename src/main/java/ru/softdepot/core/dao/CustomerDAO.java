@@ -147,6 +147,29 @@ public class CustomerDAO implements DAO<Customer> {
         return exists;
     }
 
+    public List<Customer> getAll() {
+        List<Customer> result = new ArrayList<>();
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM customer"
+            );
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                result.add(new Customer(
+                        resultSet.getInt("id"),
+                        resultSet.getString("customer_name"),
+                        resultSet.getString("email"),
+                        resultSet.getString("password"),
+                        resultSet.getString("profile_img_url"),
+                        resultSet.getBigDecimal("balance")
+                ));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
     public boolean exists(int id) {
         boolean exists = false;
 
