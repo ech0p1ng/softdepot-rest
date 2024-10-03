@@ -37,12 +37,12 @@ public class DegreeOfBelongingControllers {
                         .status(HttpStatus.NOT_FOUND)
                         .body(categoryNotFound(degreeOfBelonging.getTagId()));
 
-            if (!degreeOfBelongingDAO.exists(
+            if (degreeOfBelongingDAO.exists(
                     degreeOfBelonging.getProgramId(),
                     degreeOfBelonging.getTagId()))
                 return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(degreeOfBelongingNotFound(
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(degreeOfBelongingAlredyExists(
                                 degreeOfBelonging.getProgramId(),
                                 degreeOfBelonging.getTagId()));
 
@@ -68,6 +68,15 @@ public class DegreeOfBelongingControllers {
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
                         .body(categoryNotFound(degreeOfBelonging.getTagId()));
+
+            if (!degreeOfBelongingDAO.exists(
+                    degreeOfBelonging.getProgramId(),
+                    degreeOfBelonging.getTagId()))
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(degreeOfBelongingNotFound(
+                                degreeOfBelonging.getProgramId(),
+                                degreeOfBelonging.getTagId()));
 
             degreeOfBelongingDAO.update(degreeOfBelonging);
             return ResponseEntity.ok().build();
@@ -160,6 +169,13 @@ public class DegreeOfBelongingControllers {
     private static String degreeOfBelongingNotFound(int programId, int tagId) {
         return String.format(
                 "Степень принадлежности программы с id = %s к категории с id = %s не найдена",
+                programId, tagId
+        );
+    }
+
+    private static String degreeOfBelongingAlredyExists(int programId, int tagId) {
+        return String.format(
+                "Степень принадлежности программы с id = %s к категории с id = %s уже существует",
                 programId, tagId
         );
     }

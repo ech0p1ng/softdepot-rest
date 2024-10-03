@@ -36,7 +36,7 @@ public class DeveloperDAO implements DAO<Developer> {
 
     @Override
     public int add(Developer developer) throws Exception {
-        if (!exists(developer.getEmail(), developer.getName())) {
+        if (!exists(developer.getEmail())) {
             try {
                 PreparedStatement statment = connection.prepareStatement(
                         "INSERT INTO developer (developer_name, email, password, profile_img_url) " +
@@ -241,15 +241,14 @@ public class DeveloperDAO implements DAO<Developer> {
         return stats;
     }
 
-    public boolean exists(String email, String developerName) {
+    public boolean exists(String email) {
         boolean exists = false;
 
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "SELECT * FROM developer WHERE email=? OR developer_name=?"
+                    "SELECT * FROM developer WHERE email=?"
             );
             statement.setString(1, email);
-            statement.setString(2, developerName);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 exists = true;
