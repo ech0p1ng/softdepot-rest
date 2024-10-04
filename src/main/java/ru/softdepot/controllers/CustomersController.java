@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.CustomerDAO;
 import ru.softdepot.core.models.Customer;
 
@@ -15,8 +16,6 @@ import ru.softdepot.core.models.Customer;
 public class CustomersController {
 
     private final CustomerDAO customerDAO;
-    private final String customerNotFoundByEmail = "Пользователь с таким email не найден";
-    private final String customerNotFoundById = "Пользователь с таким id не найден";
 
     @PostMapping("/new")
     public ResponseEntity<?> addNewCustomer(@RequestBody Customer customer,
@@ -27,8 +26,13 @@ public class CustomersController {
         } else {
             if (customerDAO.exists(customer.getEmail())) {
                 return ResponseEntity
-                        .badRequest()
-                        .body("Администратор с таким email уже существует");
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(Message.build(
+                                Message.Entity.customer,
+                                Message.Identifier.email,
+                                customer.getEmail(),
+                                Message.Status.alreadyExists
+                        ));
             } else {
                 try {
                     customerDAO.add(customer);
@@ -49,13 +53,18 @@ public class CustomersController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (customerDAO.exists(customer.getEmail())) {
+            if (customerDAO.exists(customer.getId())) {
                 customerDAO.update(customer);
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
-                        .body(customerNotFoundByEmail);
+                        .body(Message.build(
+                                Message.Entity.customer,
+                                Message.Identifier.id,
+                                customer.getId(),
+                                Message.Status.notFound
+                        ));
             }
         }
     }
@@ -68,7 +77,12 @@ public class CustomersController {
         }
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(customerNotFoundById);
+                .body(Message.build(
+                        Message.Entity.customer,
+                        Message.Identifier.id,
+                        id,
+                        Message.Status.notFound
+                ));
     }
 
     @GetMapping("/{id}")
@@ -79,7 +93,12 @@ public class CustomersController {
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(customerNotFoundById);
+                    .body(Message.build(
+                            Message.Entity.customer,
+                            Message.Identifier.id,
+                            id,
+                            Message.Status.notFound
+                    ));
         }
     }
 

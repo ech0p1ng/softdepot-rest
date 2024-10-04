@@ -6,20 +6,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
+import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.AdministratorDAO;
 import ru.softdepot.core.models.Administrator;
-import ru.softdepot.core.models.Program;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("softdepot-api/administrators")
 @AllArgsConstructor
 public class AdministratorsController {
     private final AdministratorDAO administratorDAO;
-    private final String adminNotFoundByEmail = "Администратор с таким email не найден";
-    private final String adminNotFoundById = "Администратор с таким id не найден";
+
 
     @PostMapping("/new")
     public ResponseEntity<?> addNewAdmin(@RequestBody Administrator administrator,
@@ -31,7 +27,12 @@ public class AdministratorsController {
             if (administratorDAO.exists(administrator.getEmail())) {
                 return ResponseEntity
                         .badRequest()
-                        .body("Администратор с таким email уже существует");
+                        .body(Message.build(
+                                Message.Entity.admin,
+                                Message.Identifier.email,
+                                administrator.getEmail(),
+                                Message.Status.notFound
+                        ));
             } else {
                 try {
                     administratorDAO.add(administrator);
@@ -59,7 +60,12 @@ public class AdministratorsController {
             } else {
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
-                        .body(adminNotFoundByEmail);
+                        .body(Message.build(
+                                Message.Entity.admin,
+                                Message.Identifier.id,
+                                id,
+                                Message.Status.notFound
+                        ));
             }
         }
     }
@@ -72,7 +78,11 @@ public class AdministratorsController {
         }
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(adminNotFoundById);
+                .body(Message.build(
+                        Message.Entity.admin,
+                        Message.Identifier.id,
+                        id,
+                        Message.Status.notFound));
     }
 
     @GetMapping("/{id}")
@@ -83,7 +93,12 @@ public class AdministratorsController {
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(adminNotFoundById);
+                    .body(Message.build(
+                            Message.Entity.admin,
+                            Message.Identifier.id,
+                            id,
+                            Message.Status.notFound
+                    ));
         }
     }
 

@@ -1,11 +1,14 @@
 package ru.softdepot.controllers;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.ProgramDAO;
 import ru.softdepot.core.models.Program;
 
@@ -53,6 +56,31 @@ public class ProductsController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
+
+            if (programDAO.exists(program.getId()))
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(Message.build(
+                                Message.Entity.product,
+                                Message.Identifier.id,
+                                program.getId(),
+                                Message.Status.alreadyExists
+                        ));
+            if (programDAO.exists(program.getName(), program.getDeveloperId()))
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(Message.build(
+                                Message.Entity.product,
+                                Message.Identifier.id,
+                                String.format(
+                                        "%s от разработчика с id %s",
+                                        program.getId(),
+                                        program.getDeveloperId()),
+                                Message.Status.alreadyExists
+                        ));
+
+
+
             int id = this.programDAO.add(program);
             Program programResult;
             try {
@@ -70,8 +98,8 @@ public class ProductsController {
         }
     }
 
-    @GetMapping("/all")
-    public List<Program> getPrograms() {
-        return this.programDAO.getAll();
+    @GetMapping
+    public ResponseEntity<?> getPrograms() {
+        return ResponseEntity.ok().body(this.programDAO.getAll());
     }
 }

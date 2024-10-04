@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.DeveloperDAO;
 import ru.softdepot.core.models.Developer;
 
@@ -15,24 +16,17 @@ import ru.softdepot.core.models.Developer;
 public class DevelopersController {
     private final DeveloperDAO developerDAO;
 
-    private static String developerNotFound(int id) {
-        return String.format("Разработчик с id = %s не найден", id);
-    }
-
-    private static String developerNotFound(String email) {
-        return String.format("Разработчик с email = %s не найден", email);
-    }
-
-    private static String developerAlreadyExists(String email) {
-        return String.format("Разработчик с email = %s уже существует", email);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<?> getDeveloperById(@PathVariable("id") int id) {
         if (!developerDAO.exists(id)) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(developerNotFound(id));
+                    .body(Message.build(
+                            Message.Entity.developer,
+                            Message.Identifier.id,
+                            id,
+                            Message.Status.notFound
+                    ));
         }
 
         try {
@@ -56,7 +50,12 @@ public class DevelopersController {
             if (developerDAO.exists(developer.getEmail())) {
                 return ResponseEntity
                         .badRequest()
-                        .body(developerAlreadyExists(developer.getEmail()));
+                        .body(Message.build(
+                                Message.Entity.developer,
+                                Message.Identifier.email,
+                                developer.getEmail(),
+                                Message.Status.alreadyExists
+                        ));
             }
         }
 
@@ -80,7 +79,12 @@ public class DevelopersController {
             if (!developerDAO.exists(developer.getId())) {
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
-                        .body(developerNotFound(developer.getId()));
+                        .body(Message.build(
+                                Message.Entity.developer,
+                                Message.Identifier.id,
+                                developer.getId(),
+                                Message.Status.notFound
+                        ));
             }
 
             developerDAO.update(developer);
@@ -93,7 +97,12 @@ public class DevelopersController {
         if (!developerDAO.exists(id)) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(developerNotFound(id));
+                    .body(Message.build(
+                            Message.Entity.developer,
+                            Message.Identifier.id,
+                            id,
+                            Message.Status.notFound
+                    ));
         }
 
         developerDAO.delete(id);

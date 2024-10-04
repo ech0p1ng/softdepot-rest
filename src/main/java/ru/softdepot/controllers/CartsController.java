@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.CartDAO;
 import ru.softdepot.core.dao.CustomerDAO;
 import ru.softdepot.core.dao.ProgramDAO;
@@ -20,18 +21,6 @@ public class CartsController {
     private final CustomerDAO customerDAO;
     private final ProgramDAO programDAO;
 
-    private static String customerNotFound(int id) {
-        return String.format("Пользователь с id = %d не найден", id);
-    }
-
-    private static String programNotFound(int id) {
-        return String.format("Программа с id = %d не найдена", id);
-    }
-
-    private static String cartNotFound(int id) {
-        return String.format("Корзина с id = %d не найдена", id);
-    }
-
     @GetMapping("/{userId}")
     public ResponseEntity<?> getPrograms(@PathVariable("userId") int id) {
         if (customerDAO.exists(id)) {
@@ -40,27 +29,20 @@ public class CartsController {
         } else {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(customerNotFound(id));
+                    .body(Message.build(
+                            Message.Entity.customer,
+                            Message.Identifier.id,
+                            id,
+                            Message.Status.notFound
+                    ));
         }
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteProgram(@RequestParam("userId") int id,
                                            @RequestParam("programId") int programId) {
-        if (!customerDAO.exists(id))
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(customerNotFound(id));
-
-        if (!programDAO.exists(programId))
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(programNotFound(id));
-
-        if (!cartDAO.containsProgram(id, programId))
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(cartNotFound(id));
+        var errorMessage = check(id, programId);
+        if (errorMessage != null) return errorMessage;
 
         cartDAO.deleteProgram(id, programId);
         return ResponseEntity.ok().build();
@@ -69,22 +51,45 @@ public class CartsController {
     @PostMapping("/add")
     public ResponseEntity<?> addProgram(@RequestParam("userId") int id,
                                         @RequestParam("programId") int programId) {
+
+        var errorMessage = check(id, programId);
+        if (errorMessage != null) return errorMessage;
+
+        cartDAO.addProgram(id, programId);
+        return ResponseEntity.ok().build();
+    }
+
+    private ResponseEntity<?> check(int id, int programId) {
         if (!customerDAO.exists(id))
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(customerNotFound(id));
+                    .body(Message.build(
+                            Message.Entity.customer,
+                            Message.Identifier.id,
+                            id,
+                            Message.Status.notFound
+                    ));
 
         if (!programDAO.exists(programId))
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(programNotFound(id));
+                    .body(Message.build(
+                            Message.Entity.product,
+                            Message.Identifier.id,
+                            programId,
+                            Message.Status.notFound
+                    ));
 
         if (!cartDAO.containsProgram(id, programId))
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(cartNotFound(id));
+                    .body(Message.build(
+                            Message.Entity.cart,
+                            Message.Identifier.id,
+                            programId,
+                            Message.Status.notFound
+                    ));
 
-        cartDAO.addProgram(id, programId);
-        return ResponseEntity.ok().build();
+        return null;
     }
 }

@@ -1,10 +1,12 @@
 package ru.softdepot.controllers;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.CategoryDAO;
 import ru.softdepot.core.models.Category;
 
@@ -34,7 +36,14 @@ public class CategoriesController {
                     categoryDAO.add(category);
                     return ResponseEntity.ok().build();
                 } else {
-                    return ResponseEntity.notFound().build();
+                    return ResponseEntity
+                            .status(HttpStatus.BAD_REQUEST)
+                            .body(Message.build(
+                                    Message.Entity.category,
+                                    Message.Identifier.name,
+                                    category.getName(),
+                                    Message.Status.alreadyExists
+                            ));
                 }
             } catch (Exception e) {
                 return ResponseEntity
@@ -55,7 +64,14 @@ public class CategoriesController {
                 categoryDAO.update(category);
                 return ResponseEntity.ok().build();
             } else {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(Message.build(
+                                Message.Entity.category,
+                                Message.Identifier.name,
+                                category.getName(),
+                                Message.Status.alreadyExists
+                        ));
             }
         }
     }
@@ -66,14 +82,32 @@ public class CategoriesController {
             categoryDAO.delete(id);
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Message.build(
+                            Message.Entity.category,
+                            Message.Identifier.id,
+                            id,
+                            Message.Status.notFound
+                    ));
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCategory(@PathVariable("id") int id) {
-        var category = categoryDAO.getById(id);
-        return ResponseEntity.ok().body(category);
+        if (categoryDAO.exists(id)) {
+            var category = categoryDAO.getById(id);
+            return ResponseEntity.ok().body(category);
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Message.build(
+                            Message.Entity.category,
+                            Message.Identifier.id,
+                            id,
+                            Message.Status.notFound
+                    ));
+        }
     }
 
 //    @GetMapping("/{name}")

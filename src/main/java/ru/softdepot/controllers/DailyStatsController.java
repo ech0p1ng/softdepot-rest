@@ -6,13 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.DailyStatsDAO;
 import ru.softdepot.core.dao.ProgramDAO;
 import ru.softdepot.core.models.DailyStats;
 import ru.softdepot.core.models.Program;
 
 @RestController
-@RequestMapping("/softdepot-api/dailystats")
+@RequestMapping("/softdepot-api/daily-stats")
 @AllArgsConstructor
 public class DailyStatsController {
     private final DailyStatsDAO dailyStatsDAO;
@@ -28,7 +29,12 @@ public class DailyStatsController {
             if (!programDAO.exists(dailyStats.getProgramId()))
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
-                        .body(programNotFound(dailyStats.getProgramId()));
+                        .body(Message.build(
+                                Message.Entity.product,
+                                Message.Identifier.id,
+                                dailyStats.getProgramId(),
+                                Message.Status.notFound
+                        ));
             dailyStatsDAO.add(dailyStats);
             return ResponseEntity.ok().build();
         }
@@ -41,80 +47,108 @@ public class DailyStatsController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (!dailyStatsDAO.exists(dailyStats.getId()))
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(dailyStatsNotFound(dailyStats.getId()));
-
-            if (!programDAO.exists(dailyStats.getProgramId()))
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(programNotFound(dailyStats.getProgramId()));
+            var errorMessage = check(dailyStats.getId(), dailyStats.getProgramId());
+            if (errorMessage != null) return errorMessage;
 
             dailyStatsDAO.update(dailyStats);
             return ResponseEntity.ok().build();
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteDailyStats(@PathVariable("id") int id) {
         if (!dailyStatsDAO.exists(id)) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(dailyStatsNotFound(id));
+                    .body(Message.build(
+                            Message.Entity.dailyStats,
+                            Message.Identifier.id,
+                            id,
+                            Message.Status.notFound
+                    ));
         }
 
-        DailyStats dailyStats = dailyStatsDAO.getById(id);
+        var dailyStats = dailyStatsDAO.getById(id);
 
         if (!programDAO.exists(dailyStats.getProgramId()))
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(programNotFound(id));
+                    .body(Message.build(
+                            Message.Entity.product,
+                            Message.Identifier.id,
+                            dailyStats.getProgramId(),
+                            Message.Status.notFound
+                    ));
 
         dailyStatsDAO.delete(id);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
-    public ResponseEntity<?> getDailyStats(@RequestParam("id") int id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getDailyStats(@PathVariable("id") int id) {
         if (!dailyStatsDAO.exists(id)) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(dailyStatsNotFound(id));
+                    .body(Message.build(
+                            Message.Entity.dailyStats,
+                            Message.Identifier.id,
+                            id,
+                            Message.Status.notFound
+                    ));
         }
 
-        DailyStats dailyStats = dailyStatsDAO.getById(id);
+        var dailyStats = dailyStatsDAO.getById(id);
 
         if (!programDAO.exists(dailyStats.getProgramId()))
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(programNotFound(id));
+                    .body(Message.build(
+                            Message.Entity.product,
+                            Message.Identifier.id,
+                            dailyStats.getProgramId(),
+                            Message.Status.notFound
+                    ));
 
         return ResponseEntity.ok().body(dailyStats);
     }
 
-    @GetMapping
+    @GetMapping("/list")
     public ResponseEntity<?> getDailyStatsList(@RequestParam("programId") int programId) {
         if (!programDAO.exists(programId))
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(programNotFound(programId));
+                    .body(Message.build(
+                            Message.Entity.product,
+                            Message.Identifier.id,
+                            programId,
+                            Message.Status.notFound
+                    ));
 
         var stats = dailyStatsDAO.getByProgramId(programId);
         return ResponseEntity.ok().body(stats);
     }
 
-    private static String dailyStatsNotFound(int id) {
-        return String.format(
-                "Ежедневная статистика с id = %s не найдена",
-                id
-        );
-    }
+    private ResponseEntity<?> check(int dailyStatsId, int programId) {
+        if (!dailyStatsDAO.exists(dailyStatsId)) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Message.build(
+                            Message.Entity.dailyStats,
+                            Message.Identifier.id,
+                            dailyStatsId,
+                            Message.Status.notFound
+                    ));
+        }
 
-    private static String programNotFound(int id) {
-        return String.format(
-                "Программа с id = %s не найдена",
-                id
-        );
+        if (!programDAO.exists(programId))
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Message.build(
+                            Message.Entity.product,
+                            Message.Identifier.id,
+                            programId,
+                            Message.Status.notFound
+                    ));
+        return null;
     }
 }
