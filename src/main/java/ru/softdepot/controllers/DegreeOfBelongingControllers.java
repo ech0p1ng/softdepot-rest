@@ -51,7 +51,7 @@ public class DegreeOfBelongingControllers {
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping(value = "/delete", params = {"programId", "categoryId"})
     public ResponseEntity<?> deleteDegreeOfBelonging(@RequestParam("programId") int programId,
                                                      @RequestParam("categoryId") int categoryId) {
         var errorMessage = check(programId, categoryId);
@@ -81,7 +81,7 @@ public class DegreeOfBelongingControllers {
         return ResponseEntity.ok().body(degreeOfBelonging);
     }
 
-    @GetMapping
+    @GetMapping(params = {"programId", "categoryId"})
     public ResponseEntity<?> getDegreeOfBelonging(@RequestParam("programId") int programId,
                                                   @RequestParam("categoryId") int categoryId) {
         var errorMessage = check(programId, categoryId);

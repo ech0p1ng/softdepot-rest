@@ -38,7 +38,7 @@ public class CartsController {
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping(value = "/delete", params = {"userId", "programId"})
     public ResponseEntity<?> deleteProgram(@RequestParam("userId") int id,
                                            @RequestParam("programId") int programId) {
         var errorMessage = check(id, programId);
@@ -48,7 +48,7 @@ public class CartsController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/add")
+    @PostMapping(value = "/add", params = {"userId", "programId"})
     public ResponseEntity<?> addProgram(@RequestParam("userId") int id,
                                         @RequestParam("programId") int programId) {
 

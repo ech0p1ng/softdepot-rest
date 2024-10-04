@@ -11,6 +11,7 @@ import ru.softdepot.core.dao.CustomerDAO;
 import ru.softdepot.core.dao.ProgramDAO;
 import ru.softdepot.core.dao.PurchaseDAO;
 import ru.softdepot.core.models.Customer;
+import ru.softdepot.core.models.Program;
 import ru.softdepot.core.models.Purchase;
 
 @RestController
@@ -26,7 +27,7 @@ public class PurchasesController {
         return ResponseEntity.ok().body(purchaseDAO.getAll());
     }
 
-    @GetMapping
+    @GetMapping(params = {"customerId"})
     public ResponseEntity<?> getPurchasesByCustomer(@RequestParam("customerId") int customerId) {
         if (!customerDAO.exists(customerId))
             return ResponseEntity
@@ -48,6 +49,78 @@ public class PurchasesController {
 
         var purchases = purchaseDAO.getPurchasesOfCustomer(customer);
         return ResponseEntity.ok().body(purchases);
+    }
+
+    @GetMapping(params = {"programId"})
+    public ResponseEntity<?> getPurchasesOfProgram(@RequestParam("programId") int programId) {
+        if (!programDAO.exists(programId))
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Message.build(
+                            Message.Entity.product,
+                            Message.Identifier.id,
+                            programId,
+                            Message.Status.notFound
+                    ));
+
+        Program program = null;
+
+        try {
+            program = programDAO.getById(programId);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage() + "\n\n" + e.getStackTrace());
+        }
+
+        var purchases = purchaseDAO.getPurchasesOfProgram(program);
+        return ResponseEntity.ok().body(purchases);
+    }
+
+    @GetMapping(params={"programId","customerId"})
+    public ResponseEntity<?> getPurchaseOfCustomer(@RequestParam("programId") int programId,
+                                                   @RequestParam("customerId") int customerId) {
+        if (!programDAO.exists(programId))
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Message.build(
+                            Message.Entity.product,
+                            Message.Identifier.id,
+                            programId,
+                            Message.Status.notFound
+                    ));
+
+        if (!customerDAO.exists(customerId))
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Message.build(
+                            Message.Entity.customer,
+                            Message.Identifier.id,
+                            customerId,
+                            Message.Status.notFound
+                    ));
+
+        Customer customer = null;
+        Program program = null;
+
+        try {
+            customer = customerDAO.getById(customerId);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage() + "\n\n" + e.getStackTrace());
+        }
+
+        try {
+            program = programDAO.getById(programId);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage() + "\n\n" + e.getStackTrace());
+        }
+
+        var purchase = purchaseDAO.getByCustomerAndProgram(customer, program);
+        return ResponseEntity.ok().body(purchase);
     }
 
     @PostMapping("/new")

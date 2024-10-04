@@ -112,7 +112,7 @@ public class DailyStatsController {
         return ResponseEntity.ok().body(dailyStats);
     }
 
-    @GetMapping("/list")
+    @GetMapping(value = "/list", params = {"programId"})
     public ResponseEntity<?> getDailyStatsList(@RequestParam("programId") int programId) {
         if (!programDAO.exists(programId))
             return ResponseEntity
