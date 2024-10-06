@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.ProgramDAO;
@@ -22,17 +23,17 @@ public class ProductsController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findProgram(@PathVariable("id") int id) throws Exception {
         if (!programDAO.exists(id))
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(Message.build(
-                            Message.Entity.product,
-                            Message.Identifier.id,
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.PRODUCT,
+                            Message.Identifier.ID,
                             id,
-                            Message.Status.notFound
-                    ));
+                            Message.Status.NOT_FOUND
+                    )
+            );
 
-        var program = this.programDAO.getById(id);
-        return ResponseEntity.ok().body(program);
+        return ResponseEntity.ok().body(programDAO.getById(id));
     }
 
     @PatchMapping("/edit")
@@ -42,7 +43,7 @@ public class ProductsController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            this.programDAO.update(program);
+            programDAO.update(program);
             return ResponseEntity.ok().build();
         }
     }
@@ -50,16 +51,17 @@ public class ProductsController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteProgram(@PathVariable("id") int id) {
         if (!programDAO.exists(id))
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(Message.build(
-                            Message.Entity.product,
-                            Message.Identifier.id,
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.PRODUCT,
+                            Message.Identifier.ID,
                             id,
-                            Message.Status.notFound
-                    ));
+                            Message.Status.NOT_FOUND
+                    )
+            );
 
-        this.programDAO.delete(id);
+        programDAO.delete(id);
         return ResponseEntity.ok().build();
     }
 
@@ -74,40 +76,44 @@ public class ProductsController {
         } else {
 
             if (programDAO.exists(program.getId()))
-                return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
-                        .body(Message.build(
-                                Message.Entity.product,
-                                Message.Identifier.id,
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        Message.build(
+                                Message.Entity.PRODUCT,
+                                Message.Identifier.ID,
                                 program.getId(),
-                                Message.Status.alreadyExists
-                        ));
+                                Message.Status.ALREADY_EXISTS
+                        )
+                );
             if (programDAO.exists(program.getName(), program.getDeveloperId()))
-                return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
-                        .body(Message.build(
-                                Message.Entity.product,
-                                Message.Identifier.id,
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        Message.build(
+                                Message.Entity.PRODUCT,
+                                Message.Identifier.ID,
                                 String.format(
                                         "%s от разработчика с id %s",
                                         program.getId(),
                                         program.getDeveloperId()),
-                                Message.Status.alreadyExists
-                        ));
+                                Message.Status.ALREADY_EXISTS
+                        )
+                );
 
 
-            int id = this.programDAO.add(program);
-            Program programResult = this.programDAO.getById(id);
-            return ResponseEntity
-                    .created(uriComponentsBuilder
-                            .replacePath("/softdepot-api/products/{id}")
-                            .build(Map.of("id", id)))
-                    .body(programResult);
+//            int id = this.programDAO.add(program);
+//            Program programResult = this.programDAO.getById(id);
+//            return ResponseEntity
+//                    .created(uriComponentsBuilder
+//                            .replacePath("/softdepot-api/products/{id}")
+//                            .build(Map.of("id", id)))
+//                    .body(programResult);
+            programDAO.add(program);
+            return ResponseEntity.ok().build();
         }
     }
 
     @GetMapping
     public ResponseEntity<?> getPrograms() {
-        return ResponseEntity.ok().body(this.programDAO.getAll());
+        return ResponseEntity.ok().body(programDAO.getAll());
     }
 }

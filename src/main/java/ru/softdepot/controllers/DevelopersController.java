@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.DeveloperDAO;
 import ru.softdepot.core.models.Developer;
@@ -19,14 +20,15 @@ public class DevelopersController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getDeveloperById(@PathVariable("id") int id) throws Exception {
         if (!developerDAO.exists(id)) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(Message.build(
-                            Message.Entity.developer,
-                            Message.Identifier.id,
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.DEVELOPER,
+                            Message.Identifier.ID,
                             id,
-                            Message.Status.notFound
-                    ));
+                            Message.Status.NOT_FOUND
+                    )
+            );
         }
 
         var developer = developerDAO.getById(id);
@@ -42,14 +44,15 @@ public class DevelopersController {
             else throw new BindException(bindingResult);
         } else {
             if (developerDAO.exists(developer.getEmail())) {
-                return ResponseEntity
-                        .badRequest()
-                        .body(Message.build(
-                                Message.Entity.developer,
-                                Message.Identifier.email,
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        Message.build(
+                                Message.Entity.DEVELOPER,
+                                Message.Identifier.EMAIL,
                                 developer.getEmail(),
-                                Message.Status.alreadyExists
-                        ));
+                                Message.Status.ALREADY_EXISTS
+                        )
+                );
             }
         }
 
@@ -65,14 +68,15 @@ public class DevelopersController {
             else throw new BindException(bindingResult);
         } else {
             if (!developerDAO.exists(developer.getId())) {
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(Message.build(
-                                Message.Entity.developer,
-                                Message.Identifier.id,
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        Message.build(
+                                Message.Entity.DEVELOPER,
+                                Message.Identifier.ID,
                                 developer.getId(),
-                                Message.Status.notFound
-                        ));
+                                Message.Status.NOT_FOUND
+                        )
+                );
             }
 
             developerDAO.update(developer);
@@ -83,14 +87,15 @@ public class DevelopersController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteDeveloper(@PathVariable("id") int id) {
         if (!developerDAO.exists(id)) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(Message.build(
-                            Message.Entity.developer,
-                            Message.Identifier.id,
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.DEVELOPER,
+                            Message.Identifier.ID,
                             id,
-                            Message.Status.notFound
-                    ));
+                            Message.Status.NOT_FOUND
+                    )
+            );
         }
 
         developerDAO.delete(id);

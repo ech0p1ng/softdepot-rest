@@ -6,12 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.AdministratorDAO;
 import ru.softdepot.core.models.Administrator;
 
 @RestController
-@RequestMapping("softdepot-api/administrators")
+@RequestMapping("softdepot-api/admins")
 @AllArgsConstructor
 public class AdministratorsController {
     private final AdministratorDAO administratorDAO;
@@ -25,14 +26,15 @@ public class AdministratorsController {
             else throw new BindException(bindingResult);
         } else {
             if (administratorDAO.exists(administrator.getEmail())) {
-                return ResponseEntity
-                        .badRequest()
-                        .body(Message.build(
-                                Message.Entity.admin,
-                                Message.Identifier.email,
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        Message.build(
+                                Message.Entity.ADMIN,
+                                Message.Identifier.EMAIL,
                                 administrator.getEmail(),
-                                Message.Status.notFound
-                        ));
+                                Message.Status.NOT_FOUND
+                        )
+                );
             } else {
                 administratorDAO.add(administrator);
                 return ResponseEntity.ok().build();
@@ -40,7 +42,7 @@ public class AdministratorsController {
         }
     }
 
-    @PatchMapping("/edit/{id}")
+    @PatchMapping("/edit")
     public ResponseEntity<?> editAdmin(@RequestBody Administrator administrator,
                                        @PathVariable("id") int id,
                                        BindingResult bindingResult) throws BindException {
@@ -48,15 +50,16 @@ public class AdministratorsController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (administratorDAO.exists(id))
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(Message.build(
-                                Message.Entity.admin,
-                                Message.Identifier.id,
+            if (!administratorDAO.exists(id))
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        Message.build(
+                                Message.Entity.ADMIN,
+                                Message.Identifier.ID,
                                 id,
-                                Message.Status.notFound
-                        ));
+                                Message.Status.NOT_FOUND
+                        )
+                );
 
             administratorDAO.update(administrator);
             return ResponseEntity.ok().build();
@@ -69,26 +72,29 @@ public class AdministratorsController {
             administratorDAO.delete(id);
             return ResponseEntity.ok().build();
         }
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Message.build(
-                        Message.Entity.admin,
-                        Message.Identifier.id,
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                Message.build(
+                        Message.Entity.ADMIN,
+                        Message.Identifier.ID,
                         id,
-                        Message.Status.notFound));
+                        Message.Status.NOT_FOUND
+                )
+        );
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getAdmin(@PathVariable int id) throws Exception {
         if (!administratorDAO.exists(id))
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(Message.build(
-                            Message.Entity.admin,
-                            Message.Identifier.id,
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.ADMIN,
+                            Message.Identifier.ID,
                             id,
-                            Message.Status.notFound
-                    ));
+                            Message.Status.NOT_FOUND
+                    )
+            );
         Administrator admin = administratorDAO.getById(id);
         return ResponseEntity.ok().body(admin);
     }

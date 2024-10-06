@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.CategoryDAO;
 import ru.softdepot.core.dao.DegreeOfBelongingDAO;
@@ -28,24 +29,26 @@ public class DegreeOfBelongingControllers {
             else throw new BindException(bindingResult);
         } else {
             if (!programDAO.exists(degreeOfBelonging.getProgramId()))
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(Message.build(
-                                Message.Entity.product,
-                                Message.Identifier.id,
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        Message.build(
+                                Message.Entity.PRODUCT,
+                                Message.Identifier.ID,
                                 degreeOfBelonging.getProgramId(),
-                                Message.Status.notFound
-                        ));
+                                Message.Status.NOT_FOUND
+                        )
+                );
 
             if (!categoryDAO.exists(degreeOfBelonging.getTagId()))
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(Message.build(
-                                Message.Entity.category,
-                                Message.Identifier.id,
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        Message.build(
+                                Message.Entity.CATEGORY,
+                                Message.Identifier.ID,
                                 degreeOfBelonging.getTagId(),
-                                Message.Status.notFound
-                        ));
+                                Message.Status.NOT_FOUND
+                        )
+                );
 
             degreeOfBelongingDAO.add(degreeOfBelonging);
             return ResponseEntity.ok().build();
@@ -59,9 +62,8 @@ public class DegreeOfBelongingControllers {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-
             var errorMessage = check(degreeOfBelonging.getProgramId(), degreeOfBelonging.getTagId());
-            if (errorMessage != null) return errorMessage;
+            if (errorMessage != null) throw errorMessage;
 
             degreeOfBelongingDAO.update(degreeOfBelonging);
             return ResponseEntity.ok().build();
@@ -72,7 +74,7 @@ public class DegreeOfBelongingControllers {
     public ResponseEntity<?> deleteDegreeOfBelonging(@RequestParam("programId") int programId,
                                                      @RequestParam("categoryId") int categoryId) {
         var errorMessage = check(programId, categoryId);
-        if (errorMessage != null) return errorMessage;
+        if (errorMessage != null) throw errorMessage;
 
         degreeOfBelongingDAO.delete(programId, categoryId);
         return ResponseEntity.ok().build();
@@ -84,16 +86,16 @@ public class DegreeOfBelongingControllers {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(Message.build(
-                            Message.Entity.degreeOfBelonging,
-                            Message.Identifier.id,
+                            Message.Entity.DEGREE_OF_BELONGING,
+                            Message.Identifier.ID,
                             id,
-                            Message.Status.notFound
+                            Message.Status.NOT_FOUND
                     ));
         }
         var degreeOfBelonging = degreeOfBelongingDAO.getById(id);
 
         var errorMessage = check(degreeOfBelonging.getProgramId(), degreeOfBelonging.getTagId());
-        if (errorMessage != null) return errorMessage;
+        if (errorMessage != null) throw errorMessage;
 
         return ResponseEntity.ok().body(degreeOfBelonging);
     }
@@ -102,42 +104,45 @@ public class DegreeOfBelongingControllers {
     public ResponseEntity<?> getDegreeOfBelonging(@RequestParam("programId") int programId,
                                                   @RequestParam("categoryId") int categoryId) {
         var errorMessage = check(programId, categoryId);
-        if (errorMessage != null) return errorMessage;
+        if (errorMessage != null) throw errorMessage;
 
         var degreeOfBelonging = degreeOfBelongingDAO.getByTagAndProgram(categoryId, programId);
         return ResponseEntity.ok().body(degreeOfBelonging);
     }
 
-    private ResponseEntity<?> check(int programId, int categoryId) {
+    private ResponseStatusException check(int programId, int categoryId) {
         if (!programDAO.exists(programId))
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(Message.build(
-                            Message.Entity.product,
-                            Message.Identifier.id,
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.PRODUCT,
+                            Message.Identifier.ID,
                             programId,
-                            Message.Status.notFound
-                    ));
+                            Message.Status.NOT_FOUND
+                    )
+            );
 
         if (!categoryDAO.exists(categoryId))
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(Message.build(
-                            Message.Entity.category,
-                            Message.Identifier.id,
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.CATEGORY,
+                            Message.Identifier.ID,
                             categoryId,
-                            Message.Status.notFound
-                    ));
+                            Message.Status.NOT_FOUND
+                    )
+            );
 
         if (!degreeOfBelongingDAO.exists(programId, categoryId))
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(Message.build(
-                            Message.Entity.degreeOfBelonging,
-                            Message.Identifier.id,
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.DEGREE_OF_BELONGING,
+                            Message.Identifier.ID,
                             String.format("%s программы к категории с id = %s", programId, categoryId),
-                            Message.Status.notFound
-                    ));
+                            Message.Status.NOT_FOUND
+                    )
+            );
         return null;
     }
 }

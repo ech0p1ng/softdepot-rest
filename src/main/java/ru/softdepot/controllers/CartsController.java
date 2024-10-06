@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.CartDAO;
 import ru.softdepot.core.dao.CustomerDAO;
@@ -23,14 +24,15 @@ public class CartsController {
             var programs = cartDAO.getPrograms(id);
             return ResponseEntity.ok().body(programs);
         } else {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(Message.build(
-                            Message.Entity.customer,
-                            Message.Identifier.id,
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.CUSTOMER,
+                            Message.Identifier.ID,
                             id,
-                            Message.Status.notFound
-                    ));
+                            Message.Status.NOT_FOUND
+                    )
+            );
         }
     }
 
@@ -38,7 +40,7 @@ public class CartsController {
     public ResponseEntity<?> deleteProgram(@RequestParam("userId") int id,
                                            @RequestParam("programId") int programId) {
         var errorMessage = check(id, programId);
-        if (errorMessage != null) return errorMessage;
+        if (errorMessage != null) throw errorMessage;
 
         cartDAO.deleteProgram(id, programId);
         return ResponseEntity.ok().build();
@@ -49,42 +51,45 @@ public class CartsController {
                                         @RequestParam("programId") int programId) {
 
         var errorMessage = check(id, programId);
-        if (errorMessage != null) return errorMessage;
+        if (errorMessage != null) throw errorMessage;
 
         cartDAO.addProgram(id, programId);
         return ResponseEntity.ok().build();
     }
 
-    private ResponseEntity<?> check(int id, int programId) {
+    private ResponseStatusException check(int id, int programId) {
         if (!customerDAO.exists(id))
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(Message.build(
-                            Message.Entity.customer,
-                            Message.Identifier.id,
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.CUSTOMER,
+                            Message.Identifier.ID,
                             id,
-                            Message.Status.notFound
-                    ));
+                            Message.Status.NOT_FOUND
+                    )
+            );
 
         if (!programDAO.exists(programId))
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(Message.build(
-                            Message.Entity.product,
-                            Message.Identifier.id,
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.PRODUCT,
+                            Message.Identifier.ID,
                             programId,
-                            Message.Status.notFound
-                    ));
+                            Message.Status.NOT_FOUND
+                    )
+            );
 
         if (!cartDAO.containsProgram(id, programId))
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(Message.build(
-                            Message.Entity.cart,
-                            Message.Identifier.id,
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.CART,
+                            Message.Identifier.ID,
                             programId,
-                            Message.Status.notFound
-                    ));
+                            Message.Status.NOT_FOUND
+                    )
+            );
 
         return null;
     }

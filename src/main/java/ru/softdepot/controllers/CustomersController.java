@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.CustomerDAO;
 import ru.softdepot.core.models.Customer;
@@ -25,14 +26,15 @@ public class CustomersController {
             else throw new BindException(bindingResult);
         } else {
             if (customerDAO.exists(customer.getEmail())) {
-                return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
-                        .body(Message.build(
-                                Message.Entity.customer,
-                                Message.Identifier.email,
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        Message.build(
+                                Message.Entity.CUSTOMER,
+                                Message.Identifier.EMAIL,
                                 customer.getEmail(),
-                                Message.Status.alreadyExists
-                        ));
+                                Message.Status.ALREADY_EXISTS
+                        )
+                );
             } else {
                 customerDAO.add(customer);
                 return ResponseEntity.ok().build();
@@ -51,14 +53,15 @@ public class CustomersController {
                 customerDAO.update(customer);
                 return ResponseEntity.ok().build();
             } else {
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(Message.build(
-                                Message.Entity.customer,
-                                Message.Identifier.id,
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        Message.build(
+                                Message.Entity.CUSTOMER,
+                                Message.Identifier.ID,
                                 customer.getId(),
-                                Message.Status.notFound
-                        ));
+                                Message.Status.NOT_FOUND
+                        )
+                );
             }
         }
     }
@@ -69,38 +72,24 @@ public class CustomersController {
             customerDAO.delete(id);
             return ResponseEntity.ok().build();
         }
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Message.build(
-                        Message.Entity.customer,
-                        Message.Identifier.id,
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                Message.build(
+                        Message.Entity.CUSTOMER,
+                        Message.Identifier.ID,
                         id,
-                        Message.Status.notFound
-                ));
+                        Message.Status.NOT_FOUND
+                )
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCustomer(@PathVariable int id) {
-        try {
-            Customer admin = customerDAO.getById(id);
-            return ResponseEntity.ok().body(admin);
-        } catch (Exception e) {
-            return ResponseEntity
-                    .internalServerError()
-                    .body(Message.build(
-                            Message.Entity.customer,
-                            Message.Identifier.id,
-                            id,
-                            Message.Status.notFound
-                    ));
-        }
+    public ResponseEntity<?> getCustomer(@PathVariable int id) throws Exception {
+        return ResponseEntity.ok().body(customerDAO.getById(id));
     }
 
     @GetMapping
     public ResponseEntity<?> getAllCustomers() {
-        var customers = customerDAO.getAll();
-        return ResponseEntity.ok().body(customers);
+        return ResponseEntity.ok().body(customerDAO.getAll());
     }
-
-
 }

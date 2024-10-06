@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.UserDAO;
 import ru.softdepot.core.models.User;
@@ -24,14 +25,15 @@ public class UsersController {
             else throw new BindException(bindingResult);
         } else {
             if (userDAO.exists(user.getEmail()))
-                return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
-                        .body(Message.build(
-                                Message.Entity.user,
-                                Message.Identifier.email,
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        Message.build(
+                                Message.Entity.USER,
+                                Message.Identifier.EMAIL,
                                 user.getEmail(),
-                                Message.Status.alreadyExists
-                        ));
+                                Message.Status.ALREADY_EXISTS
+                        )
+                );
 
             userDAO.add(user);
             return ResponseEntity.ok().build();
