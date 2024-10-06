@@ -60,14 +60,15 @@ public class DevelopersController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/edit")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> editDeveloper(@RequestBody Developer developer,
+                                           @PathVariable("id") int id,
                                            BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (!developerDAO.exists(developer.getId())) {
+            if (!developerDAO.exists(id)) {
                 throw new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         Message.build(
@@ -84,7 +85,7 @@ public class DevelopersController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDeveloper(@PathVariable("id") int id) {
         if (!developerDAO.exists(id)) {
             throw new ResponseStatusException(

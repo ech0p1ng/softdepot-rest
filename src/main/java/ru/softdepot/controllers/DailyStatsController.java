@@ -41,14 +41,15 @@ public class DailyStatsController {
         }
     }
 
-    @PatchMapping("/edit")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> updateDailyStats(@RequestBody DailyStats dailyStats,
+                                              @PathVariable("id") int id,
                                               BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (!dailyStatsDAO.exists(dailyStats.getId()))
+            if (!dailyStatsDAO.exists(id))
                 throw new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         Message.build(
@@ -75,7 +76,7 @@ public class DailyStatsController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDailyStats(@PathVariable("id") int id) {
         if (!dailyStatsDAO.exists(id))
             throw new ResponseStatusException(

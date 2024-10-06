@@ -42,14 +42,15 @@ public class CustomersController {
         }
     }
 
-    @PatchMapping("/edit")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> editCustomer(@RequestBody Customer customer,
+                                          @PathVariable("id") int id,
                                           BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (customerDAO.exists(customer.getId())) {
+            if (customerDAO.exists(id)) {
                 customerDAO.update(customer);
                 return ResponseEntity.ok().build();
             } else {
@@ -66,8 +67,8 @@ public class CustomersController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteCustomer(@PathVariable int id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCustomer(@PathVariable("id") int id) {
         if (customerDAO.exists(id)) {
             customerDAO.delete(id);
             return ResponseEntity.ok().build();
@@ -84,7 +85,7 @@ public class CustomersController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCustomer(@PathVariable int id) throws Exception {
+    public ResponseEntity<?> getCustomer(@PathVariable("id") int id) throws Exception {
         return ResponseEntity.ok().body(customerDAO.getById(id));
     }
 

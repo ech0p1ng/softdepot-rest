@@ -106,13 +106,46 @@ public class PurchasesController {
         }
     }
 
-    @PatchMapping("/edit")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPurchaseById(@PathVariable("id") int id) {
+        if (!purchaseDAO.exists(id))
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.PURCHASE,
+                            Message.Identifier.ID,
+                            id,
+                            Message.Status.NOT_FOUND
+                    )
+            );
+
+        var purchase = purchaseDAO.getById(id);
+
+        var errorMessage = check(purchase.getCustomerId(), purchase.getProgramId());
+        if (errorMessage != null) throw errorMessage;
+
+        return ResponseEntity.ok().body(purchase);
+    }
+
+    @PatchMapping("/{id}")
     public ResponseEntity<?> editPurchase(@RequestBody Purchase purchase,
+                                          @PathVariable("id") int id,
                                           BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
+            if (!purchaseDAO.exists(id))
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        Message.build(
+                                Message.Entity.PURCHASE,
+                                Message.Identifier.ID,
+                                id,
+                                Message.Status.NOT_FOUND
+                        )
+                );
+
             var errorMessage = check(purchase.getCustomerId(), purchase.getProgramId());
             if (errorMessage != null) throw errorMessage;
 
@@ -121,7 +154,7 @@ public class PurchasesController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePurchase(@PathVariable("id") int id) {
         if (!purchaseDAO.exists(id))
             throw new ResponseStatusException(

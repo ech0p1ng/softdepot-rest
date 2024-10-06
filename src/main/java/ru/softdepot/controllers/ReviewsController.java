@@ -50,13 +50,25 @@ public class ReviewsController {
         }
     }
 
-    @PatchMapping("/edit")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> editReview(@RequestBody Review review,
+                                        @PathVariable("id") int id,
                                         BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
+            if (!reviewDAO.exists(id))
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        Message.build(
+                                Message.Entity.REVIEW,
+                                Message.Identifier.ID,
+                                id,
+                                Message.Status.NOT_FOUND
+                        )
+                );
+
             var errorMessage = check(review.getCustomerId(), review.getProgramId());
             if (errorMessage != null) throw errorMessage;
 
@@ -122,7 +134,7 @@ public class ReviewsController {
         return ResponseEntity.ok().body(reviewDAO.getById(id));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteReview(@PathVariable("id") int id) {
         if (!reviewDAO.exists(id))
             throw new ResponseStatusException(

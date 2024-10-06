@@ -42,7 +42,7 @@ public class AdministratorsController {
         }
     }
 
-    @PatchMapping("/edit")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> editAdmin(@RequestBody Administrator administrator,
                                        @PathVariable("id") int id,
                                        BindingResult bindingResult) throws BindException {
@@ -66,8 +66,8 @@ public class AdministratorsController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteAdmin(@PathVariable int id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteAdmin(@PathVariable("id") int id) {
         if (administratorDAO.exists(id)) {
             administratorDAO.delete(id);
             return ResponseEntity.ok().build();
@@ -84,7 +84,7 @@ public class AdministratorsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAdmin(@PathVariable int id) throws Exception {
+    public ResponseEntity<?> getAdmin(@PathVariable("id") int id) throws Exception {
         if (!administratorDAO.exists(id))
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,

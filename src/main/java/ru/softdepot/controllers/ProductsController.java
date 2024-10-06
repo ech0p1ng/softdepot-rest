@@ -9,16 +9,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.softdepot.Messages.Message;
+import ru.softdepot.core.dao.CategoryDAO;
+import ru.softdepot.core.dao.DeveloperDAO;
 import ru.softdepot.core.dao.ProgramDAO;
 import ru.softdepot.core.models.Program;
-
-import java.util.Map;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("softdepot-api/products")
 public class ProductsController {
     private final ProgramDAO programDAO;
+    private final DeveloperDAO developerDAO;
+    private final CategoryDAO categoryDAO;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findProgram(@PathVariable("id") int id) throws Exception {
@@ -36,19 +38,58 @@ public class ProductsController {
         return ResponseEntity.ok().body(programDAO.getById(id));
     }
 
-    @PatchMapping("/edit")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> updateProgram(@RequestBody Program program,
+                                           @PathVariable("id") int id,
                                            BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
+            if (!programDAO.exists(id))
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        Message.build(
+                                Message.Entity.PRODUCT,
+                                Message.Identifier.ID,
+                                id,
+                                Message.Status.NOT_FOUND
+                        )
+                );
+
+            if (!developerDAO.exists(program.getDeveloperId()))
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        Message.build(
+                                Message.Entity.DEVELOPER,
+                                Message.Identifier.ID,
+                                program.getDeveloperId(),
+                                Message.Status.NOT_FOUND
+                        )
+                );
+
+            var categories = program.getTags();
+
+            for (var category : categories) {
+                if (!categoryDAO.exists(category.getId()))
+                    throw new ResponseStatusException(
+                            HttpStatus.NOT_FOUND,
+                            Message.build(
+                                    Message.Entity.CATEGORY,
+                                    Message.Identifier.ID,
+                                    category.getId(),
+                                    Message.Status.NOT_FOUND
+                            )
+                    );
+
+            }
+
             programDAO.update(program);
             return ResponseEntity.ok().build();
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProgram(@PathVariable("id") int id) {
         if (!programDAO.exists(id))
             throw new ResponseStatusException(
@@ -75,16 +116,43 @@ public class ProductsController {
             else throw new BindException(bindingResult);
         } else {
 
-            if (programDAO.exists(program.getId()))
+            if (!programDAO.exists(program.getId()))
                 throw new ResponseStatusException(
-                        HttpStatus.CONFLICT,
+                        HttpStatus.NOT_FOUND,
                         Message.build(
                                 Message.Entity.PRODUCT,
                                 Message.Identifier.ID,
                                 program.getId(),
-                                Message.Status.ALREADY_EXISTS
+                                Message.Status.NOT_FOUND
                         )
                 );
+
+            if (!developerDAO.exists(program.getDeveloperId()))
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        Message.build(
+                                Message.Entity.DEVELOPER,
+                                Message.Identifier.ID,
+                                program.getDeveloperId(),
+                                Message.Status.NOT_FOUND
+                        )
+                );
+
+            var categories = program.getTags();
+
+            for (var category : categories) {
+                if (!categoryDAO.exists(category.getId()))
+                    throw new ResponseStatusException(
+                            HttpStatus.NOT_FOUND,
+                            Message.build(
+                                    Message.Entity.CATEGORY,
+                                    Message.Identifier.ID,
+                                    category.getId(),
+                                    Message.Status.NOT_FOUND
+                            )
+                    );
+            }
+
             if (programDAO.exists(program.getName(), program.getDeveloperId()))
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT,

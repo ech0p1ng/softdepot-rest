@@ -46,14 +46,15 @@ public class CategoriesController {
         }
     }
 
-    @PatchMapping("/edit")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> editCategory(@RequestBody Category category,
+                                          @PathVariable("id") int id,
                                           BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (categoryDAO.exists(category.getId())) {
+            if (categoryDAO.exists(id)) {
                 categoryDAO.update(category);
                 return ResponseEntity.ok().build();
             } else {
@@ -70,7 +71,7 @@ public class CategoriesController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable("id") int id) {
         if (categoryDAO.exists(id)) {
             categoryDAO.delete(id);
