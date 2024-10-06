@@ -26,12 +26,11 @@ public class CategoriesController {
 
     @PostMapping("/new")
     public ResponseEntity<?> addCategory(@RequestBody Category category,
-                                         BindingResult bindingResult) throws BindException {
+                                         BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            try {
                 if (!categoryDAO.exists(category.getName())) {
                     categoryDAO.add(category);
                     return ResponseEntity.ok().build();
@@ -45,11 +44,6 @@ public class CategoriesController {
                                     Message.Status.alreadyExists
                             ));
                 }
-            } catch (Exception e) {
-                return ResponseEntity
-                        .badRequest()
-                        .body(e.getMessage() + "\n\n" + e.getStackTrace());
-            }
         }
     }
 
@@ -60,7 +54,7 @@ public class CategoriesController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (!categoryDAO.exists(category.getName())) {
+            if (categoryDAO.exists(category.getName())) {
                 categoryDAO.update(category);
                 return ResponseEntity.ok().build();
             } else {

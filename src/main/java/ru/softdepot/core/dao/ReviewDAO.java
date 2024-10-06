@@ -32,7 +32,7 @@ public class ReviewDAO implements DAO<Review> {
 
     @Override
     public int add(Review review) throws Exception {
-        if (!exists(review.getCustomerId())) {
+        if (!exists(review.getCustomerId(), review.getProgramId())) {
             try {
                 PreparedStatement statement = connection.prepareStatement(
                         "INSERT INTO review (customer_id, program_id, estimation, review_text, date_time) " +
@@ -121,21 +121,21 @@ public class ReviewDAO implements DAO<Review> {
         return review;
     }
 
-    public Review get(Customer customer, Program program) throws Exception {
+    public Review get(int customerId, int programId) throws Exception {
         Review review = null;
 
         try {
             PreparedStatement statement = connection.prepareStatement(
                 "SELECT * FROM review WHERE customer_id=? AND program_id=?"
             );
-            statement.setInt(1, customer.getId());
-            statement.setInt(2, program.getId());
+            statement.setInt(1, customerId);
+            statement.setInt(2, programId);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 review = new Review(
                     resultSet.getInt("id"),
-                        customer.getId(),
-                        program.getId(),
+                        customerId,
+                        programId,
                         resultSet.getInt("estimation"),
                         resultSet.getString("review_text"),
                         DataBase.convertToDateTime(resultSet.getTimestamp("date_time"))
@@ -147,21 +147,22 @@ public class ReviewDAO implements DAO<Review> {
 
         if (review == null) {
             String msg  = String.format("Сustomer [id=%d] review about the program [id=%d] does not exist.",
-                    customer.getId(), program.getId());
+                    customerId, programId);
             throw new Exception(msg);
         }
 
         return review;
     }
 
-    public boolean exists(int cutomerId) {
+    public boolean exists(int cutomerId, int programId) {
         boolean exists = false;
 
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "SELECT * FROM review WHERE customer_id=?"
+                    "SELECT * FROM review WHERE customer_id=? AND program_id=?"
             );
             statement.setInt(1, cutomerId);
+            statement.setInt(2, programId);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 exists = true;
@@ -173,13 +174,32 @@ public class ReviewDAO implements DAO<Review> {
         return exists;
     }
 
-    public List<Review> getAllByCustomer(Customer customer) {
+    public boolean exists(int id) {
+        boolean exists = false;
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM review WHERE id=?"
+            );
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                exists = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return exists;
+    }
+
+    public List<Review> getAllByCustomer(int customerId) {
         List<Review> reviews = new ArrayList<>();
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "SELECT * FROM review WHERE customer_id=?"
             );
-            statement.setInt(1, customer.getId());
+            statement.setInt(1, customerId);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Review review = getById(resultSet.getInt("id"));
@@ -191,13 +211,13 @@ public class ReviewDAO implements DAO<Review> {
         return reviews;
     }
 
-    public List<Review> getAllAboutProgram(Program program) {
+    public List<Review> getAllAboutProgram(int programId) {
         List<Review> reviews = new ArrayList<Review>();
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "SELECT * FROM review WHERE program_id=?"
             );
-            statement.setInt(1, program.getId());
+            statement.setInt(1, programId);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 reviews.add(getById(resultSet.getInt("id")));

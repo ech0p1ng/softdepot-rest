@@ -375,11 +375,11 @@ public class CustomerDAO implements DAO<Customer> {
     }
 
     public Review getReview(Customer customer, Program program) throws Exception {
-        return reviewDAO.get(customer, program);
+        return reviewDAO.get(customer.getId(), program.getId());
     }
 
     public List<Review> getAllReviewsByCustomer(Customer customer) {
-        return reviewDAO.getAllByCustomer(customer);
+        return reviewDAO.getAllByCustomer(customer.getId());
     }
 
 

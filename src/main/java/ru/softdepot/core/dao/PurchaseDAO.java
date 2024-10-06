@@ -209,6 +209,23 @@ public class PurchaseDAO implements DAO<Purchase> {
         return exists;
     }
 
+    public boolean exists(int id) {
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM purchase WHERE id=?"
+            );
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public List<Purchase> getAll() {
         List<Purchase> purchases = new ArrayList<>();
         try {

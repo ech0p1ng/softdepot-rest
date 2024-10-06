@@ -409,7 +409,7 @@ public class ProgramDAO implements DAO<Program> {
     }
 
     public List<Review> getAllReviews(Program program) {
-        return reviewDAO.getAllAboutProgram(program);
+        return reviewDAO.getAllAboutProgram(program.getId());
     }
 
     public float getAverageEstimation(Program program) {

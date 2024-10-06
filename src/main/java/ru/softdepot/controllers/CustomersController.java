@@ -19,7 +19,7 @@ public class CustomersController {
 
     @PostMapping("/new")
     public ResponseEntity<?> addNewCustomer(@RequestBody Customer customer,
-                                            BindingResult bindingResult) throws BindException {
+                                            BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
@@ -34,13 +34,7 @@ public class CustomersController {
                                 Message.Status.alreadyExists
                         ));
             } else {
-                try {
-                    customerDAO.add(customer);
-                } catch (Exception e) {
-                    return ResponseEntity
-                            .badRequest()
-                            .body(e.getMessage() + "\n\n" + e.getStackTrace());
-                }
+                customerDAO.add(customer);
                 return ResponseEntity.ok().build();
             }
         }
@@ -92,7 +86,7 @@ public class CustomersController {
             return ResponseEntity.ok().body(admin);
         } catch (Exception e) {
             return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+                    .internalServerError()
                     .body(Message.build(
                             Message.Entity.customer,
                             Message.Identifier.id,
@@ -104,8 +98,8 @@ public class CustomersController {
 
     @GetMapping
     public ResponseEntity<?> getAllCustomers() {
-        var admins = customerDAO.getAll();
-        return ResponseEntity.ok().body(admins);
+        var customers = customerDAO.getAll();
+        return ResponseEntity.ok().body(customers);
     }
 
 

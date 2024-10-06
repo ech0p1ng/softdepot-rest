@@ -19,7 +19,7 @@ public class AdministratorsController {
 
     @PostMapping("/new")
     public ResponseEntity<?> addNewAdmin(@RequestBody Administrator administrator,
-                                         BindingResult bindingResult) throws BindException {
+                                         BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
@@ -34,13 +34,7 @@ public class AdministratorsController {
                                 Message.Status.notFound
                         ));
             } else {
-                try {
-                    administratorDAO.add(administrator);
-                } catch (Exception e) {
-                    return ResponseEntity
-                            .badRequest()
-                            .body(e.getMessage() + "\n\n" + e.getStackTrace());
-                }
+                administratorDAO.add(administrator);
                 return ResponseEntity.ok().build();
             }
         }
@@ -54,10 +48,7 @@ public class AdministratorsController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (administratorDAO.exists(id)) {
-                administratorDAO.update(administrator);
-                return ResponseEntity.ok().build();
-            } else {
+            if (administratorDAO.exists(id))
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
                         .body(Message.build(
@@ -66,7 +57,9 @@ public class AdministratorsController {
                                 id,
                                 Message.Status.notFound
                         ));
-            }
+
+            administratorDAO.update(administrator);
+            return ResponseEntity.ok().build();
         }
     }
 
@@ -86,11 +79,8 @@ public class AdministratorsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAdmin(@PathVariable int id) {
-        try {
-            Administrator admin = administratorDAO.getById(id);
-            return ResponseEntity.ok().body(admin);
-        } catch (Exception e) {
+    public ResponseEntity<?> getAdmin(@PathVariable int id) throws Exception {
+        if (!administratorDAO.exists(id))
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(Message.build(
@@ -99,7 +89,8 @@ public class AdministratorsController {
                             id,
                             Message.Status.notFound
                     ));
-        }
+        Administrator admin = administratorDAO.getById(id);
+        return ResponseEntity.ok().body(admin);
     }
 
     @GetMapping

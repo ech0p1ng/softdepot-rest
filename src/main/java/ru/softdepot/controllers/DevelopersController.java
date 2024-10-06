@@ -17,7 +17,7 @@ public class DevelopersController {
     private final DeveloperDAO developerDAO;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getDeveloperById(@PathVariable("id") int id) {
+    public ResponseEntity<?> getDeveloperById(@PathVariable("id") int id) throws Exception {
         if (!developerDAO.exists(id)) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -29,20 +29,14 @@ public class DevelopersController {
                     ));
         }
 
-        try {
-            var developer = developerDAO.getById(id);
-            return ResponseEntity.ok().body(developer);
-        } catch (Exception e) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(e.getMessage() + "\n\n" + e.getStackTrace());
-        }
+        var developer = developerDAO.getById(id);
+        return ResponseEntity.ok().body(developer);
     }
 
 
     @PostMapping("/new")
     public ResponseEntity<?> addDeveloper(@RequestBody Developer developer,
-                                          BindingResult bindingResult) throws BindException {
+                                          BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
@@ -59,13 +53,7 @@ public class DevelopersController {
             }
         }
 
-        try {
-            developerDAO.add(developer);
-        } catch (Exception e) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(e.getMessage() + "\n\n" + e.getStackTrace());
-        }
+        developerDAO.add(developer);
         return ResponseEntity.ok().build();
     }
 

@@ -2,16 +2,12 @@ package ru.softdepot.controllers;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.softdepot.Messages.Message;
 import ru.softdepot.core.dao.CartDAO;
 import ru.softdepot.core.dao.CustomerDAO;
 import ru.softdepot.core.dao.ProgramDAO;
-import ru.softdepot.core.models.Program;
 
 @RestController
 @RequestMapping("softdepot-api/carts")

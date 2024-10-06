@@ -27,8 +27,25 @@ public class DegreeOfBelongingControllers {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            var errorMessage = check(degreeOfBelonging.getProgramId(), degreeOfBelonging.getTagId());
-            if (errorMessage != null) return errorMessage;
+            if (!programDAO.exists(degreeOfBelonging.getProgramId()))
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(Message.build(
+                                Message.Entity.product,
+                                Message.Identifier.id,
+                                degreeOfBelonging.getProgramId(),
+                                Message.Status.notFound
+                        ));
+
+            if (!categoryDAO.exists(degreeOfBelonging.getTagId()))
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(Message.build(
+                                Message.Entity.category,
+                                Message.Identifier.id,
+                                degreeOfBelonging.getTagId(),
+                                Message.Status.notFound
+                        ));
 
             degreeOfBelongingDAO.add(degreeOfBelonging);
             return ResponseEntity.ok().build();
