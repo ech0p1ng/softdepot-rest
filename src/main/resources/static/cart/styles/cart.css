@@ -1,0 +1,129 @@
+#cart-bg {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    position: fixed;
+    left: 0;
+    top: 0;
+    visibility: hidden;
+    z-index: 99999;
+}
+
+#cart-opened {
+    display: block;
+    position: relative;
+    width: 50%;
+    height: 80%;
+    background-color: var(--border-color);
+    border-radius: 10px;
+}
+
+.exit-button {
+    height: 40px;
+    width: 40px;
+}
+
+#cart-header {
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#cart-title {
+    font-size: 20px;
+}
+
+#cart-total-title {
+    font-size: 20px;
+    display: flex;
+    justify-content: space-between;
+    height: 60px;
+    margin: 0 10px 0 10px;
+    align-items: center;
+}
+
+#cart-games-list {
+    /* background-color: red; */
+    height: calc(80%);
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow: auto;
+    border-radius: 10px;
+    -ms-overflow-style: none; /* IE и Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+#cart-games-list::-webkit-scrollbar {
+    display: none;
+}
+
+.cart-game-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    height: 80px;
+    width: 100%;
+    background-color: var(--bg-opacity);
+    border-radius: 10px;
+    transition: background-color 0.3s ease-in-out;
+    margin-top: 10px;
+}
+
+.cart-game-row:nth-child(1) {
+    margin-top: 0;
+}
+
+.cart-game-row:hover {
+    background-color: var(--bg-no-opacity);
+    cursor: pointer;
+}
+
+.cart-game-remove {
+    height: 40px;
+    width: 40px;
+    background-color: darkred;
+    margin: 10px;
+}
+
+.cart-game-remove:hover {
+    background-color: red;
+}
+
+.cart-game-price {
+    display: flex;
+    flex-direction: row;
+    border-radius: 10px;
+    background-color: var(--border-color);
+    height: 60px;
+    align-items: center;
+    margin-right: 10px;
+    width: 150px;
+    justify-content: space-between;
+}
+
+.preview {
+    border-radius: 10px 0 0 10px;
+    height: 100%;
+}
+
+.cart-game-price-title {
+    margin-left: 10px;
+    flex: 1;
+    text-align: center;
+}
+
+.cart-game-description {
+    /* width: 100%; */
+    padding: 10px;
+    flex: 1;
+    text-decoration: none;
+    color: var(--text-color);
+}

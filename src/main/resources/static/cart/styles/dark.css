@@ -1,0 +1,30 @@
+body {
+    --bg-body: rgb(16, 16, 16);
+    --bg-color: rgb(64, 64, 64);
+    --bg-opacity: rgba(64, 64, 64, 0.4);
+    --bg-main-opacity: rgba(64, 64, 64, 0);
+    --bg-no-opacity: rgb(64, 64, 64);
+    --border-color: rgb(32, 32, 32);
+    --text-color: white;
+    --text-bright-color: white;
+}
+
+.shopping-basket {
+    background-image: url("/styles/svg/shopping-basket-white.svg");
+}
+
+.profile {
+    background-image: url("/styles/svg/profile-white.svg");
+}
+
+.logo {
+    background-image: url("/styles/svg/train-white.svg");
+}
+
+.loupe {
+    background-image: url("/styles/svg/search-white.svg");
+}
+
+.change-theme {
+    background-image: url("/styles/svg/moon.svg");
+}

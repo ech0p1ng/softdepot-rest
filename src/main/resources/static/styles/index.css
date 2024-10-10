@@ -1,0 +1,94 @@
+.game-row {
+    height: 80px;
+    width: 100%;
+    background-color: var(--bg-opacity);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.game-row {
+    margin-bottom: 10px;
+}
+
+.game-row:hover {
+    cursor: pointer;
+    background-color: var(--bg-no-opacity);
+}
+
+.game-row .preview {
+    min-width: 170px;
+    object-fit: cover;
+    border-radius: 10px 0 0 10px;
+}
+
+.game-row .description {
+    padding: 10px;
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.game-row .tags {
+    font-size: 11px;
+    opacity: 0.6;
+    font-weight: bold;
+}
+
+.price-and-buy {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 10px 10px 10px;
+    border-radius: 0 10px 10px 0;
+    border-left: 1px solid var(--bg-opacity);
+    min-width: 130px;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.game-row:hover .price-and-buy {
+    border-left: 1px solid var(--border-color);
+}
+
+.score {
+    min-width: 140px;
+    height: 100%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    font-size: 40px;
+    position: relative;
+}
+
+.add-to-cart {
+    background-color: darkgreen;
+    border: none;
+    color: var(--text-bright-color);
+    border-radius: 10px;
+    transition: background-color 0.3s ease-in-out;
+    font-size: 14px;
+}
+
+.add-to-cart:hover {
+    cursor: pointer;
+    background-color: green;
+}
+
+.remove-from-cart {
+    background-color: darkred;
+    border: none;
+    color: var(--text-bright-color);
+    border-radius: 10px;
+    transition: background-color 0.3s ease-in-out;
+    font-size: 14px;
+}
+
+.remove-from-cart:hover {
+    cursor: pointer;
+    background-color: red;
+}
