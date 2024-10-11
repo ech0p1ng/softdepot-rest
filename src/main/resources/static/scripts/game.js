@@ -5,8 +5,8 @@ class Game {
         this.url = url;
         this.price = price;
         this.tags = tags;
-        // this.score = score;
-        this.score = Number(((score / 100) * 5).toFixed(1));
+        this.score = score.toFixed(1);
+        // this.score = Number(((score / 100) * 5).toFixed(1));
         this.game_row = null;
         this.description = description;
         this.big_description = big_description;

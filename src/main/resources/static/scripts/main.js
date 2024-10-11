@@ -25,10 +25,14 @@ window.onload = () => {
 
     $.ajax({
         method: "GET",
-        url: "localhost:8080/softdepot-api/products",
-        contentType: "application/json;charset=UTF-8",
-        success: function () {
-            console.log("success");
+        url: "http://127.0.0.1:8080/softdepot-api/products",
+        // contentType: "application/json;charset=UTF-8",
+        dataType: "json",
+        success: function (data) {
+            data.forEach((element) => {
+                let game = new Game(element.name, element.logoUrl, element.id, element.price, "", element.averageEstimation, element.shortDescription, element.fullDescription);
+                games_list_elem.append(game.getGameRowPreview());
+            });
         },
     });
 

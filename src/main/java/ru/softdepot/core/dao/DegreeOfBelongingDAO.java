@@ -194,4 +194,28 @@ public class DegreeOfBelongingDAO implements DAO<DegreeOfBelonging> {
 
         return degreeOfBelongingList;
     }
+
+    public List<DegreeOfBelonging> getAll() {
+        List<DegreeOfBelonging> degreeOfBelongingList = new ArrayList<>();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT * FROM degree_of_belonging"
+            );
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                DegreeOfBelonging degreeOfBelonging = new DegreeOfBelonging(
+                        resultSet.getInt("id"),
+                        resultSet.getInt("program_id"),
+                        resultSet.getInt("tag_id"),
+                        resultSet.getInt("degree_value")
+                );
+                degreeOfBelongingList.add(degreeOfBelonging);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return degreeOfBelongingList;
+    }
 }

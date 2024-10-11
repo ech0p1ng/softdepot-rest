@@ -14,7 +14,7 @@ import ru.softdepot.core.dao.ProgramDAO;
 import ru.softdepot.core.models.DegreeOfBelonging;
 
 @RestController
-@RequestMapping("softdepot-api/degree-of-belonging")
+@RequestMapping("softdepot-api/degrees-of-belonging")
 @AllArgsConstructor
 public class DegreeOfBelongingControllers {
     private final DegreeOfBelongingDAO degreeOfBelongingDAO;
@@ -81,6 +81,13 @@ public class DegreeOfBelongingControllers {
         return ResponseEntity.ok().body(
                 degreeOfBelongingDAO.getByTagAndProgram(categoryId, programId)
         );
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllDegreesOfBelonging() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(degreeOfBelongingDAO.getAll());
     }
 
     private ResponseStatusException check(int id) {
