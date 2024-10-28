@@ -1,0 +1,153 @@
+h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-style: normal;
+}
+
+body {
+    scrollbar-color: var(--foreground-color) var(--bg-opacity);
+}
+
+body::-webkit-scrollbar {
+    background: var(--foreground-color); /* ширина всей полосы прокрутки */
+}
+
+body::-webkit-scrollbar-track {
+    background: var(--bg-main-opacity); /* цвет зоны отслеживания */
+}
+
+.game-highlights {
+    display: flex;
+    flex-direction: row;
+    height: 500px;
+    background-color: var(--bg-opacity);
+    /* border-radius: 10px; */
+    border-radius: 10px 10px 0 0;
+}
+
+.videos-and-screenshots {
+    display: flex;
+    justify-content: center;
+}
+
+.header {
+    width: 100%;
+    border-radius: 0 10px 0 0;
+}
+
+.header-and-short-description {
+    width: 30%;
+    max-width: 400px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+#short-description {
+    height: 100%;
+    margin-top: 10px;
+}
+
+.videos-and-screenshots {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+}
+
+.screenshots-tape {
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+    padding-left: 1px;
+    padding-right: 1px;
+}
+
+.screenshot-on-tape {
+    margin: 2px 1px 2px 1px;
+
+}
+
+.screenshot-on-tape:hover {
+    cursor: pointer;
+}
+
+.screenshots-viewer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80%;
+    max-height: 80%;
+    padding: 10px;
+    background-color: var(--bg-opacity);
+    border-radius: 10px 0 0 0;
+}
+
+#current-screenshot {
+    overflow: hidden;
+    height: 100%;
+}
+
+.screenshot-on-tape:hover #current-screenshot {
+    opacity: 0;
+}
+
+#get-product-block {
+    background-color: var(--bg-opacity);
+    margin-top: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 0 0 10px 10px;
+}
+
+#price-and-buy {
+    background-color: var(--bg-body);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.add-to-cart {
+    border: none;
+    color: var(--text-bright-color);
+    background-color: darkgreen;
+    border-radius: 10px;
+    padding: 10px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.add-to-cart:hover {
+    background-color: green;
+    cursor: pointer;
+}
+
+#big-description {
+    /* border-radius: 10px; */
+    padding: 10px;
+    margin-top: 10px;
+    background-color: var(--bg-opacity);
+    border-radius: 10px;
+}
+
+#price {
+    margin-right: 5px;
+}
+
+.game-name-big {
+    margin-top: 0px;
+}
+
+.remove-from-cart {
+    background-color: darkred;
+    border: none;
+    padding: 10px;
+    color: var(--text-bright-color);
+    border-radius: 10px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.remove-from-cart:hover {
+    cursor: pointer;
+    background-color: red;
+}

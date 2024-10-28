@@ -10,33 +10,33 @@ body {
 }
 
 .shopping-basket {
-    background-image: url("/styles/svg/shopping-basket-white.svg");
+    background-image: url("svg/shopping-basket-white.svg");
 }
 
 .profile {
-    background-image: url("/styles/svg/profile-white.svg");
+    background-image: url("svg/profile-white.svg");
 }
 
 .logo {
-    background-image: url("/styles/svg/train-white.svg");
+    background-image: url("svg/train-white.svg");
 }
 
 .loupe {
-    background-image: url("/styles/svg/search-white.svg");
+    background-image: url("svg/search-white.svg");
 }
 
 .change-theme {
-    background-image: url("/styles/svg/moon.svg");
+    background-image: url("svg/moon.svg");
 }
 
 .close-button {
-    background-image: url("/styles/svg/cross-white.svg");
+    background-image: url("svg/cross-white.svg");
     background-size: 30px 30px;
     background-repeat: no-repeat;
     background-position: center;
 }
 .close-button-bright {
-    background-image: url("/styles/svg/cross-white.svg");
+    background-image: url("svg/cross-white.svg");
     background-size: 30px 30px;
     background-repeat: no-repeat;
     background-position: center;
