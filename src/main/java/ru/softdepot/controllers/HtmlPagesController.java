@@ -12,7 +12,7 @@ public class HtmlPagesController {
         return "mainpage/index.html";
     }
 
-    @GetMapping("/{programId}")
+    @GetMapping("/programs/{programId}")
     public String programPage(@PathVariable String programId, Model model) {
         return "program/index.html";
     }
