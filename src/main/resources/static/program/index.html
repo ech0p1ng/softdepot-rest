@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="program/styles/index.css" />
         <link rel="stylesheet" href="cart/styles/cart.css" />
         <link id="color-scheme" rel="stylesheet" href="styles/dark.css" />
-        <title th:text="${'Soft Depot - ' + program.getName()}">Soft Depot - GAME_NAME</title>
+        <title id="page-title">Soft Depot - GAME_NAME</title>
     </head>
     <body>
         <header>
@@ -19,7 +19,7 @@
 
             <div class="header-buttons">
                 <!-- Кнопка "Домой" -->
-                <a id="main-button" class="button" th:href="@{/}">
+                <a class="button main-button" href="/">
                     <div class="logo"></div>
                     <span class="store-name" title="Главная страница">SOFT DEPOT</span>
                 </a>
@@ -48,19 +48,19 @@
             </div>
         </header>
         <main>
-            <h1 class="game-name-big game-name" th:text="${program.getName()}">GAME_NAME</h1>
+            <h1 class="game-name-big game-name">GAME_NAME</h1>
             <div class="game-highlights">
                 <div class="videos-and-screenshots">
                     <div class="screenshots-viewer">
-                        <img id="current-screenshot" th:src="${program.getScreenshotsUrl().get(0)}" />
+                        <img id="current-screenshot" src="" />
                     </div>
                     <div class="screenshots-tape">
-                        <img class="screenshot-on-tape" th:each="screenshot : ${program.getScreenshotsUrl()}" th:src="${screenshot}" onclick="change_current_screenshot.apply(this)" />
+                        <img class="screenshot-on-tape" src="" onclick="change_current_screenshot.apply(this)" />
                     </div>
                 </div>
 
                 <div class="header-and-short-description">
-                    <img class="header" th:src="${program.getHeaderUrl()}" />
+                    <img class="header" />
                     <div id="short-description" th:text="${program.getShortDescription()}">GAME_SHORT_DESCRIPTION</div>
                     <div class="score-block">
                         <span>Пользователи оценивают </span>
@@ -122,7 +122,8 @@
         <script src="scripts/theme.js"></script>
         <script src="scripts/game.js"></script>
         <!-- <script src="/scripts/main.js"></script> -->
-        <script src="/default/scripts/game-highlights.js"></script>
-        <script src="/default/cart/scripts/cart.js"></script>
+        <!-- <script src="scripts/game-highlights.js"></script> -->
+        <script src="cart/scripts/cart.js"></script>
+        <script src="program/scripts/loadcontent.js"></script>
     </body>
 </html>

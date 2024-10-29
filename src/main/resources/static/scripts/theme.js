@@ -1,5 +1,5 @@
-let darkthemecss = "/static/styles/dark.css";
-let lightthemecss = "/static/styles/light.css";
+let darkthemecss = "/styles/dark.css";
+let lightthemecss = "/styles/light.css";
 
 function change_theme() {
     var next_theme = localStorage.getItem("color-scheme");

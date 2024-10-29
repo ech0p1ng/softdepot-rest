@@ -39,7 +39,7 @@ public class Program {
         this.developerId = developerId;
         this.shortDescription = shortDescription;
         this.categories = categories;
-        this.filesPath = "/program/content" + id;
+        this.filesPath = "program/content" + id;
         setName(name);
     }
 
@@ -50,7 +50,7 @@ public class Program {
         this.developerId = developerId;
         this.shortDescription = shortDescription;
         this.categories = categories;
-        this.filesPath = "/program/content" + id;
+        this.filesPath = "program/content" + id;
         setName(name);
     }
 
@@ -60,7 +60,7 @@ public class Program {
         this.fullDescription = description;
         this.developerId = developerId;
         this.shortDescription = shortDescription;
-        this.filesPath = "/program/content" + id;
+        this.filesPath = "program/content" + id;
         setName(name);
     }
 
@@ -213,16 +213,16 @@ public class Program {
 
     public List<String> getScreenshotsUrl() {
         return new ArrayList<String>(Arrays.asList(
-                String.format("/program/content%d/screenshots/sh01.jpg", getId()),
-                String.format("/program/content%d/screenshots/sh02.jpg", getId()),
-                String.format("/program/content%d/screenshots/sh03.jpg", getId()),
-                String.format("/program/content%d/screenshots/sh04.jpg", getId()),
-                String.format("/program/content%d/screenshots/sh05.jpg", getId()),
-                String.format("/program/content%d/screenshots/sh06.jpg", getId()),
-                String.format("/program/content%d/screenshots/sh07.jpg", getId()),
-                String.format("/program/content%d/screenshots/sh08.jpg", getId()),
-                String.format("/program/content%d/screenshots/sh09.jpg", getId()),
-                String.format("/program/content%d/screenshots/sh10.jpg", getId())
+                String.format("program/content%d/screenshots/sh01.jpg", getId()),
+                String.format("program/content%d/screenshots/sh02.jpg", getId()),
+                String.format("program/content%d/screenshots/sh03.jpg", getId()),
+                String.format("program/content%d/screenshots/sh04.jpg", getId()),
+                String.format("program/content%d/screenshots/sh05.jpg", getId()),
+                String.format("program/content%d/screenshots/sh06.jpg", getId()),
+                String.format("program/content%d/screenshots/sh07.jpg", getId()),
+                String.format("program/content%d/screenshots/sh08.jpg", getId()),
+                String.format("program/content%d/screenshots/sh09.jpg", getId()),
+                String.format("program/content%d/screenshots/sh10.jpg", getId())
         ));
     }
 
