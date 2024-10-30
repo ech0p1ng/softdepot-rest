@@ -9,16 +9,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class HtmlPagesController {
     @GetMapping
     public String mainPage() {
-        return "mainpage/index.html";
+        return "/mainpage/index.html";
+//        return "redirect:https://google.com";
     }
 
     @GetMapping("/programs/{programId}")
-    public String programPage(@PathVariable String programId, Model model) {
-        return "program/index.html";
+    public String programPage(@PathVariable("programId") String programId,
+                              Model model) {
+        return "/program/index.html";
     }
-
-//    @GetMapping("/new")
-//    public String newPage() {
-//
-//    }
 }

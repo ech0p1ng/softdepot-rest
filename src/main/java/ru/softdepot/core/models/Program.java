@@ -213,16 +213,16 @@ public class Program {
 
     public List<String> getScreenshotsUrl() {
         return new ArrayList<String>(Arrays.asList(
-                String.format("program/content%d/screenshots/sh01.jpg", getId()),
-                String.format("program/content%d/screenshots/sh02.jpg", getId()),
-                String.format("program/content%d/screenshots/sh03.jpg", getId()),
-                String.format("program/content%d/screenshots/sh04.jpg", getId()),
-                String.format("program/content%d/screenshots/sh05.jpg", getId()),
-                String.format("program/content%d/screenshots/sh06.jpg", getId()),
-                String.format("program/content%d/screenshots/sh07.jpg", getId()),
-                String.format("program/content%d/screenshots/sh08.jpg", getId()),
-                String.format("program/content%d/screenshots/sh09.jpg", getId()),
-                String.format("program/content%d/screenshots/sh10.jpg", getId())
+                String.format("/program/content/%d/screenshots/sh01.jpg", getId()),
+                String.format("/program/content/%d/screenshots/sh02.jpg", getId()),
+                String.format("/program/content/%d/screenshots/sh03.jpg", getId()),
+                String.format("/program/content/%d/screenshots/sh04.jpg", getId()),
+                String.format("/program/content/%d/screenshots/sh05.jpg", getId()),
+                String.format("/program/content/%d/screenshots/sh06.jpg", getId()),
+                String.format("/program/content/%d/screenshots/sh07.jpg", getId()),
+                String.format("/program/content/%d/screenshots/sh08.jpg", getId()),
+                String.format("/program/content/%d/screenshots/sh09.jpg", getId()),
+                String.format("/program/content/%d/screenshots/sh10.jpg", getId())
         ));
     }
 
@@ -274,12 +274,12 @@ public class Program {
         this.logo = logo;
     }
 
-    public void setHeaderUrl(String headerUrl) {
-        this.headerUrl = headerUrl;
+    public void setHeaderUrl() {
+        this.headerUrl = "/program/content/" + getId() + "/header.jpg";
     }
 
     public String getHeaderUrl() {
-        return headerUrl;
+        return "/program/content/" + getId() + "/header.jpg";
     }
 
     public boolean isInCart() {

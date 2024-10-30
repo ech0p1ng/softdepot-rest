@@ -91,13 +91,13 @@ class Game {
         let game_row = $(
             '<div class="game-row" style="z-index: 1">' +
             '    <img class="preview" src="' + this.headerUrl + '" />' +
-            '	<a href="undefined" target="_blank" class="description">' +
+            '	<a href="/programs/' + this.id + '" target="_blank" class="description">' +
             '		<div>' +
             '			<span class="name">' + this.name + '</span>' +
             '			<br />' +
             '			<span class="tags">' + this.tagsAsString + '</span>' +
             '		</div>' +
-            '        <span class="score" title="Оценка пользователей" style="color: '+this.getScoreColor(this.averageEstimation)+'">' + this.averageEstimation + '</span>' +
+            '        <span class="score" title="Оценка пользователей" style="color: ' + this.getScoreColor(this.averageEstimation) + '">' + this.averageEstimation + '</span>' +
             '	</a>' +
             '    <div class="price-and-buy">' +
             '        <span class="price">' +
@@ -150,6 +150,22 @@ class Game {
         $("#page-title").html("Soft Depot - " + this.name);
         $(".header").attr("src", this.headerUrl);
         $("#short-description").html(this.shortDescription);
+        $(".game-name").html(this.name);
+        $("#score").html(this.averageEstimation);
+        $("#score").attr("style", "color: " + this.getScoreColor(this.averageEstimation));
+        $("#description-text").html(this.fullDescription);
+        $("#price").html(this.priceAsString);
+        $(".add-to-cart").attr("program-id", this.id);
+
+        let first = true;
+        this.screenshotsUrl.forEach((img) => {
+            let screenshot = $('<img className="screenshot-on-tape" src="' + img + '" onClick="change_current_screenshot.apply(this)"/>');
+            if (first) {
+                $(".screenshots-viewer").append('<img id="current-screenshot" src="'+img+'" />');
+                first = false;
+            }
+            $(".screenshots-tape").append(screenshot);
+        });
 
     }
 }

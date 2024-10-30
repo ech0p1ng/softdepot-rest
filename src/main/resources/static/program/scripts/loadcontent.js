@@ -14,3 +14,7 @@ $(document).ready(function () {
         },
     });
 });
+
+function change_current_screenshot() {
+    $("#current-screenshot").attr("src", this.src);
+}

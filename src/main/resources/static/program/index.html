@@ -3,10 +3,10 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="styles/base.css" />
-        <link rel="stylesheet" href="program/styles/index.css" />
-        <link rel="stylesheet" href="cart/styles/cart.css" />
-        <link id="color-scheme" rel="stylesheet" href="styles/dark.css" />
+        <link rel="stylesheet" href="/styles/base.css" />
+        <link rel="stylesheet" href="/program/styles/index.css" />
+        <link rel="stylesheet" href="/cart/styles/cart.css" />
+        <link id="color-scheme" rel="stylesheet" href="/styles/dark.css" />
         <title id="page-title">Soft Depot - GAME_NAME</title>
     </head>
     <body>
@@ -52,21 +52,21 @@
             <div class="game-highlights">
                 <div class="videos-and-screenshots">
                     <div class="screenshots-viewer">
-                        <img id="current-screenshot" src="" />
+<!--                        <img id="current-screenshot" src="" />-->
                     </div>
                     <div class="screenshots-tape">
-                        <img class="screenshot-on-tape" src="" onclick="change_current_screenshot.apply(this)" />
+<!--                        <img class="screenshot-on-tape" src="" onclick="change_current_screenshot.apply(this)" />-->
                     </div>
                 </div>
 
                 <div class="header-and-short-description">
                     <img class="header" />
-                    <div id="short-description" th:text="${program.getShortDescription()}">GAME_SHORT_DESCRIPTION</div>
+                    <div id="short-description">GAME_SHORT_DESCRIPTION</div>
                     <div class="score-block">
                         <span>Пользователи оценивают </span>
-                        <span class="game-name" th:text="${program.getName()}">GAME_NAME</span>
+                        <span class="game-name">GAME_NAME</span>
                         <span> на </span>
-                        <span id="score" th:text="${program.getAverageEstimation()}">GAME_ESTIMATION</span>
+                        <span id="score">GAME_ESTIMATION</span>
                         <span> баллов из 5.</span>
                     </div>
                 </div>
@@ -74,18 +74,18 @@
             <div id="get-product-block">
                 <span id="buy-invite">
                     Приобрести
-                    <span class="game-name" th:text="${program.getName()}">GAME_NAME</span>
+                    <span class="game-name">GAME_NAME</span>
                 </span>
                 <div id="price-and-buy">
-                    <span id="price" th:text="${program.getPriceAsString()}"></span>
-                    <button class="add-to-cart" style="z-index: 2" th:attr="program-id=${program.getId()}" onclick="add_to_cart_from_list(event)">
+                    <span id="price" ></span>
+                    <button class="add-to-cart" style="z-index: 2" onclick="add_to_cart_from_list(event)">
                         <span>Добавить в корзину</span>
                     </button>
                 </div>
             </div>
             <h1 id="description-header">Об игре</h1>
             <div id="big-description">
-                <span id="description-text" th:text="${program.getFullDescription()}">GAME_DESCRIPTION</span>
+                <span id="description-text">GAME_DESCRIPTION</span>
             </div>
 
             <!-- Корзина -->
@@ -118,12 +118,12 @@
         <!--            <span>Курсовая работа студента группы 21ПИнж(б)РПиС Петрова Алексея<br />2024 г.</span>-->
         <!--        </footer>-->
 
-        <script src="scripts/jquery-3.7.1.min.js"></script>
-        <script src="scripts/theme.js"></script>
-        <script src="scripts/game.js"></script>
+        <script src="/scripts/jquery-3.7.1.min.js"></script>
+        <script src="/scripts/theme.js"></script>
+        <script src="/scripts/game.js"></script>
         <!-- <script src="/scripts/main.js"></script> -->
         <!-- <script src="scripts/game-highlights.js"></script> -->
-        <script src="cart/scripts/cart.js"></script>
-        <script src="program/scripts/loadcontent.js"></script>
+        <script src="/cart/scripts/cart.js"></script>
+        <script src="/program/scripts/loadcontent.js"></script>
     </body>
 </html>
