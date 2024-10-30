@@ -90,7 +90,8 @@ class Game {
     getGameRowPreview() {
         let game_row = $(
             '<div class="game-row" style="z-index: 1">' +
-            '    <img class="preview" src="' + this.headerUrl + '" />' +
+            '  <a href="/programs/' + this.id + '" class="preview" target="_blank" class="description">' +
+            '    <img class="preview" src="' + this.headerUrl + '" /></a>' +
             '	<a href="/programs/' + this.id + '" target="_blank" class="description">' +
             '		<div>' +
             '			<span class="name">' + this.name + '</span>' +
