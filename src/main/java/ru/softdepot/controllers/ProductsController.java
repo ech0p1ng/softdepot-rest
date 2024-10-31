@@ -8,7 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
-import ru.softdepot.Messages.Message;
+import ru.softdepot.messages.Message;
 import ru.softdepot.core.dao.CategoryDAO;
 import ru.softdepot.core.dao.DeveloperDAO;
 import ru.softdepot.core.dao.ProgramDAO;
@@ -35,7 +35,9 @@ public class ProductsController {
                     )
             );
 
-        return ResponseEntity.ok().body(programDAO.getById(id));
+        var program = programDAO.getById(id);
+        System.out.println(program.getFilesPath());
+        return ResponseEntity.ok().body(program);
     }
 
     @PatchMapping("/{id}")

@@ -7,7 +7,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import ru.softdepot.Messages.Message;
+import ru.softdepot.messages.Message;
 import ru.softdepot.core.dao.DailyStatsDAO;
 import ru.softdepot.core.dao.ProgramDAO;
 import ru.softdepot.core.models.DailyStats;

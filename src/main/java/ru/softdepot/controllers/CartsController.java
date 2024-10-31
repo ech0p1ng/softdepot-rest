@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import ru.softdepot.Messages.Message;
+import ru.softdepot.messages.Message;
 import ru.softdepot.core.dao.CartDAO;
 import ru.softdepot.core.dao.CustomerDAO;
 import ru.softdepot.core.dao.ProgramDAO;

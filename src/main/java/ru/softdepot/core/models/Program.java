@@ -1,13 +1,19 @@
 package ru.softdepot.core.models;
 
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import ru.softdepot.config.AppConfig;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Component
 public class Program {
     private int id;
     private String name;
@@ -28,8 +34,16 @@ public class Program {
     private MultipartFile headerImg;
     private List<MultipartFile> screenshots;
     private MultipartFile logo;
-
     private String headerUrl;
+
+//    private AppConfig appConfig;
+//
+//    @Autowired
+//    public Program(AppConfig appConfig) {
+//        this.appConfig = appConfig;
+//    }
+
+
 
     public Program(int id, String name, BigDecimal price, String fullDescription,
                    int developerId, String shortDescription, List<Category> categories) {
@@ -39,7 +53,7 @@ public class Program {
         this.developerId = developerId;
         this.shortDescription = shortDescription;
         this.categories = categories;
-        this.filesPath = "program/content" + id;
+        setFilesPath(id);
         setName(name);
     }
 
@@ -50,7 +64,7 @@ public class Program {
         this.developerId = developerId;
         this.shortDescription = shortDescription;
         this.categories = categories;
-        this.filesPath = "program/content" + id;
+        setFilesPath(id);
         setName(name);
     }
 
@@ -60,7 +74,7 @@ public class Program {
         this.fullDescription = description;
         this.developerId = developerId;
         this.shortDescription = shortDescription;
-        this.filesPath = "program/content" + id;
+        setFilesPath(id);
         setName(name);
     }
 
@@ -84,6 +98,11 @@ public class Program {
         setMacosInstaller(macosInstaller);
         setHeaderImg(headerImg);
         setScreenshots(screenshots);
+    }
+
+
+    public void setFilesPath(int id) {
+        this.filesPath = "program/content/" + id;
     }
 
     public int getId() {
@@ -175,11 +194,11 @@ public class Program {
 
 
     public String getLogoUrl() {
-        return filesPath + "/logo.png";
+        return getFilesPath() + "/logo.png";
     }
 
     public String getInstallerWindowsUrl() {
-        String path = filesPath + "/installers/win";
+        String path = getFilesPath() + "/installers/win";
 
         File dir = new File(path);
         if (dir.isDirectory()) {
@@ -190,7 +209,7 @@ public class Program {
     }
 
     public String getInstallerLinuxUrl() {
-        String path = filesPath + "/installers/linux";
+        String path = getFilesPath() + "/installers/linux";
 
         File dir = new File(path);
         if (dir.isDirectory()) {
@@ -201,7 +220,7 @@ public class Program {
     }
 
     public String getInstallerMacosUrl() {
-        String path = filesPath + "/installers/macos";
+        String path = getFilesPath() + "/installers/macos";
 
         File dir = new File(path);
         if (dir.isDirectory()) {
@@ -209,6 +228,13 @@ public class Program {
             return files[0].getAbsolutePath();
         }
         return null;
+    }
+
+    public String getFilesPath() {
+//        System.out.println(this.filesPath);
+//        System.out.println(appConfig.getFileUploadPath());
+//        return Paths.get(appConfig.getFileUploadPath(), this.filesPath).toString();
+        return this.filesPath;
     }
 
     public List<String> getScreenshotsUrl() {
@@ -279,7 +305,7 @@ public class Program {
     }
 
     public String getHeaderUrl() {
-        return "/program/content/" + getId() + "/header.jpg";
+        return headerUrl;
     }
 
     public boolean isInCart() {

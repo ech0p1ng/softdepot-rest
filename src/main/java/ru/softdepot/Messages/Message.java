@@ -1,4 +1,4 @@
-package ru.softdepot.Messages;
+package ru.softdepot.messages;
 
 public class Message {
     public static <T> String build(Entity entity, Identifier identifier, T value, Status status) {
