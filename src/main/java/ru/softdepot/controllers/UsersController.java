@@ -24,18 +24,22 @@ public class UsersController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (userDAO.exists(user.getEmail()))
-                throw new ResponseStatusException(
-                        HttpStatus.CONFLICT,
-                        Message.build(
-                                Message.Entity.USER,
-                                Message.Identifier.EMAIL,
-                                user.getEmail(),
-                                Message.Status.ALREADY_EXISTS
-                        )
-                );
-
-            userDAO.add(user);
+            System.out.printf(user.getName());
+            System.out.printf(user.getEmail());
+            System.out.printf(user.getPassword());
+            System.out.println(user.getUserType());
+//            if (userDAO.exists(user.getEmail()))
+//                throw new ResponseStatusException(
+//                        HttpStatus.CONFLICT,
+//                        Message.build(
+//                                Message.Entity.USER,
+//                                Message.Identifier.EMAIL,
+//                                user.getEmail(),
+//                                Message.Status.ALREADY_EXISTS
+//                        )
+//                );
+//
+//            userDAO.add(user);
             return ResponseEntity.ok().build();
         }
     }

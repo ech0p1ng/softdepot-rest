@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+
+        <link rel="stylesheet" href="/default/styles/base.css" />
+        <link rel="stylesheet" href="/user/admin/styles/index.css" />
+        <link id="color-scheme" rel="stylesheet" href="/default/styles/dark.css" />
+        <title>Soft Depot - Администратор</title>
+    </head>
+    <body>
+        <header>
+            <div class="header-buttons">
+                <!-- Кнопка "Домой" -->
+                <a id="main-button" class="button" th:href="@{/}">
+                    <div class="logo"></div>
+                    <span class="store-name" title="Главная страница">SOFT DEPOT</span>
+                </a>
+
+                <div class="right-buttons-panel">
+                    <!-- Тема -->
+                    <button class="change-theme button" title="Сменить тему" onclick="change_theme()"></button>
+
+                    <!-- Выход -->
+                    <a class="profile-exit-button button" title="Выход" th:href="@{/log-out}"></a>
+                </div>
+            </div>
+        </header>
+        <main>
+            <li class="buttons-side-panel">
+                <ul>
+                    <a class="button" th:href="@{/administrator/id{id}(id=${admin.getId()})}">Главная</a>
+                </ul>
+                <ul>
+                    <a class="button" th:href="@{/administrator/id{id}/categories(id=${admin.getId()})}">Категории</a>
+                </ul>
+                <ul>
+                    <a class="button" th:href="@{/administrator/id{id}/programs(id=${admin.getId()})}">Товары</a>
+                </ul>
+                <ul>
+                    <a class="button" th:href="@{/administrator/id{id}/purchases(id=${admin.getId()})}">Заказы</a>
+                </ul>
+                <!--                <ul>-->
+                <!--                    <a class="button" th:href="@{/administrator/id{id}/customers(id=${admin.getId()})}">Покупатели</a>-->
+                <!--                </ul>-->
+                <!--                <ul>-->
+                <!--                    <a class="button" th:href="@{/administrator/id{id}/developers(id=${admin.getId()})}">Разработчики</a>-->
+                <!--                </ul>-->
+                <!--                <ul>-->
+                <!--                    <a class="button" th:href="@{/administrator/id{id}/admins(id=${admin.getId()})}">Администраторы</a>-->
+                <!--                </ul>-->
+            </li>
+            <div class="main-panel">
+                <div class="header">
+                    <span class="header-text">Товары</span>
+                </div>
+                <div class="content">
+                    <div class="button add-category-button" onclick="add_program_from_admin()">Добавить программу</div>
+                    <div id="admin-games-list"></div>
+                </div>
+
+                <!--                форма редактирования/добавления программы-->
+                <div class="add-program-form-bg">
+                    <div class="add-program-form">
+                        <div class="form-header">
+                            <span>Игра</span>
+                            <div class="close-button button" onclick="close_form()"></div>
+                        </div>
+                        <div class="forms">                        
+                            <form method="post" id="add_game_info_form">
+                                <p>
+                                    <input class="program-name" type="text" placeholder="Название программы" minlength="3" />
+                                </p>
+                                <p>
+                                    <textarea class="short-description" placeholder="Краткое описание" maxlength="400"></textarea>
+                                </p>
+                                <p>
+                                    <textarea class="full-description" placeholder="Полное описание" maxlength="15000"></textarea>
+                                </p>
+                                <p>
+                                    <input class="price" id="price" type="number" min="0" placeholder="Стоимость" />
+                                    <label>руб.</label>
+                                </p>
+                                <p id="categories-selector">
+                                    <template id="categories-container">
+                                        <option value="1">Первый</option>
+                                        <option value="2">Второй</option>
+                                        <option value="3">Третий</option>
+                                    </template>
+                                    <select class="program-tag" selector-id="1"></select>
+                                    <div class="button add-tag">Добавить категорию</div>
+                                </p>
+                            </form>
+                            <form method="post" id="add_game_files_form" enctype="multipart/form-data">
+                                <p>
+                                    <label for="logo-img-upload">Логотип</label>
+                                    <input class="upload" type="file" id="logo-img-upload" accept="image/png" />
+                                </p>
+                                <p>
+                                    <label for="header-img-upload">Заголовочное изображение</label>
+                                    <input class="upload" type="file" id="header-img-upload" accept="image/jpeg" />
+                                </p>
+                                <p>
+                                    <label for="screenshots-upload">Скриншоты</label>
+                                    <input class="upload" type="file" id="screenshots-upload" multiple />
+                                </p>
+                            </form>
+                            <button class="button submit" onclick="add_game(event)">Добавить</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+    <script src="/default/scripts/jquery-3.7.1.min.js"></script>
+    <script src="/default/scripts/main.js"></script>
+    <script src="/default/scripts/theme.js"></script>
+    <script src="/user/admin/scripts/programs.js"></script>
+</html>

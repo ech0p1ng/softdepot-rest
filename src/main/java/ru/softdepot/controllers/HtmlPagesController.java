@@ -18,4 +18,9 @@ public class HtmlPagesController {
                               Model model) {
         return "/program/index.html";
     }
+
+    @GetMapping("/registration")
+    public String registrationPage() {
+        return "/user/registration/index.html";
+    }
 }

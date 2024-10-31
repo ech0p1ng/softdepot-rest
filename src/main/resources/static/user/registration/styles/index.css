@@ -1,0 +1,108 @@
+form {
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background-color: var(--bg-opacity);
+    width: 400px;
+    padding: 10px;
+}
+
+form a, form span {
+    padding: 0;
+    margin-top: 10px;
+    background-color: var(--search-bg-color);
+    font: var(--font-default);
+    color: var(--text-color);
+    font-size: 11px;
+}
+
+.form-header {
+    font-size: 16pt;
+}
+
+form a {
+    text-underline-color: 1px var(--text-color);;
+}
+
+#submit {
+    width: 100%;
+    padding: 0 10px 0 10px;
+    align-content: center;
+}
+
+form input {
+    height: 30px;
+    padding: 0;
+    background-color: var(--bg-body);
+    font: var(--font-default);
+    color: var(--text-color);
+    border: none;
+    border-radius: 10px;
+    margin-top: 10px;
+    width: 100%;
+    padding: 0 10px 0 10px;
+}
+
+form input:focus {
+    background-color: var(--bg-color);
+}
+
+form .button {
+    height: 30px;
+    border-radius: 10px;
+    color: var(--text-color);
+}
+
+.input-field {
+    width: calc(100% - 20px);
+}
+
+.radio-buttons-block {
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--bg-no-opacity);
+    width: 100%;
+}
+
+.radio-buttons-block-item {
+    height: 30px;
+    width: 50%;
+}
+
+.radio-buttons-block-item input[type=radio] {
+    display: none;
+}
+
+.radio-buttons-block label {
+    display: flex;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease-in-out;
+    /*background-color: var(--bg-body);*/
+}
+
+/* Checked */
+.radio-buttons-block input[type=radio]:checked + label {
+    background-color: var(--bg-opacity);
+}
+
+/* Hover */
+.radio-buttons-block label:hover {
+    background-color: var(--bg-no-opacity);
+}
+
+/* Disabled */
+.radio-buttons-block input[type=radio]:disabled + label {
+    background: var(--bg-body);
+}

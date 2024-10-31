@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Soft Depot - Добавление программы</title>
+</head>
+<body>
+    <form method="post"
+          th:object="${program}"
+          th:action="@{/program/new/check}"
+    >
+        <label for="programName">Название программы</label>
+        <input type="text" name="programName" id="programName"
+               th:field="*{name}"
+        >
+        <br/>
+
+        <!--                  th:field="*{program.shortDescription}">-->
+        <label for="shortDescription">Краткое описание</label>
+        <textarea name="shortDescription" id="shortDescription" th:field="*{shortDescription}"></textarea>
+        <br/>
+
+        <!--                  th:field="*{program.fullDescription}">-->
+        <label for="fullDescription">Полное описание</label>
+        <textarea name="fullDescription" id="fullDescription" th:field="*{fullDescription}">
+        </textarea>
+        <br/>
+
+        <!--               th:field="*{program.price}">-->
+        <label for="price">Стоимость</label>
+        <input type="number" name="price" id="price" min="0" th:field="*{price}">
+        <br/>
+
+<!--        <label for="logo">Лого</label>-->
+<!--        <input type="file" name="logo" id="logo" accept="image/jpeg"-->
+<!--               th:field="*{}">-->
+<!--        <br/>-->
+<!---->
+<!--        <label for="programHeaderImg">Заголовочное изображение</label>-->
+<!--        <input type="file" name="programHeaderImg" id="programHeaderImg" accept="image/jpeg">-->
+<!--               th:field="*{programMedia.programHeaderImg}">-->
+<!--        <br/>-->
+<!---->
+<!--        <label for="screenshots">Скриншоты</label>-->
+<!--        <input type="file" name="screenshots" id="screenshots" accept="image/jpeg" multiple>-->
+<!--               th:field="*{programMedia.screenshots}">-->
+<!--        <br/>-->
+<!---->
+<!--        <label for="winInstaller">Установщик Windows</label>-->
+<!--        <input type="file" name="winInstaller" id="winInstaller">-->
+<!--               th:field="*{programMedia.winInstaller}">-->
+<!--        <br/>-->
+<!---->
+<!--        <label for="linuxInstaller">Установщик Linux</label>-->
+<!--        <input type="file" name="linuxInstaller" id="linuxInstaller">-->
+<!--               th:field="*{programMedia.linuxInstaller}">-->
+<!--        <br/>-->
+<!---->
+<!--        <label for="macosInstaller">Установщик MacOS</label>-->
+<!--        <input type="file" name="macosInstaller" id="macosInstaller">-->
+<!--               th:field="*{programMedia.macosInstaller}">-->
+<!--        <br/>-->
+<!---->
+<!--        <span>Ключевые слова</span>-->
+<!--        <ul>-->
+<!--            <li th:each="tag : ${allTags}">-->
+<!--                <label>-->
+<!--                    <span th:text="${tag.getName()}">TAG_NAME</span>-->
+<!--                    <input type="range" min="0" max="10" step="1"-->
+<!--                           th:value="${tag.degreeOfBelonging}"-->
+<!--                           title="Чем правее ползунок, тем больше программа подходит этой категории"-->
+<!--                    >-->
+<!--                </label>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!---->
+        <input type="submit" value="Добавить игру" title="Добавить игру">
+    </form>
+</body>
+</html>

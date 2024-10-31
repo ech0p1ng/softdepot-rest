@@ -1,0 +1,58 @@
+form {
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background-color: var(--bg-opacity);
+    width: 400px;
+    padding: 10px;
+}
+
+form a, form span {
+    padding: 0;
+    margin-top: 10px;
+    background-color: var(--search-bg-color);
+    font: var(--font-default);
+    color: var(--text-color);
+    font-size: 11px;
+}
+
+.form-header {
+    font-size: 16pt;
+}
+
+form a {
+    text-underline-color: 1px var(--text-color);;
+}
+
+
+form input {
+    height: 30px;
+    padding: 0;
+    background-color: var(--bg-body);
+    font: var(--font-default);
+    color: var(--text-color);
+    border: none;
+    border-radius: 10px;
+    margin-top: 10px;
+    width: 100%;
+    padding: 0 10px 0 10px;
+}
+
+form input:focus {
+    background-color: var(--bg-color);
+}
+
+form .button {
+    height: 30px;
+    border-radius: 10px;
+    color: var(--text-color);
+    margin-top: 10px;
+}
+
+.input-field {
+    width: calc(100% - 20px);
+}
