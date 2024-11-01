@@ -10,17 +10,20 @@ public class HtmlPagesController {
     @GetMapping
     public String mainPage() {
         return "/mainpage/index.html";
-//        return "redirect:https://google.com";
     }
 
     @GetMapping("/programs/{programId}")
-    public String programPage(@PathVariable("programId") String programId,
-                              Model model) {
+    public String programPage(@PathVariable("programId") String programId) {
         return "/program/index.html";
     }
 
     @GetMapping("/registration")
     public String registrationPage() {
         return "/user/registration/index.html";
+    }
+
+    @GetMapping("/porno")
+    public String pornoPage() {
+        return "redirect:https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUXbmV2ZXIgZ29ubmEgZ2l2ZSB5b3UgdXA%3D";
     }
 }
