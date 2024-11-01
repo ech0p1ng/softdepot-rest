@@ -45,8 +45,11 @@ public class UserDAO implements DAO<User> {
             case Administrator: {
                 return administratorDAO.add(new Administrator(user));
             }
+            default: {
+                throw new Exception("Неверная роль пользователя");
+            }
         }
-        return -1;
+//        return -1;
     }
 
     @Override
@@ -100,7 +103,7 @@ public class UserDAO implements DAO<User> {
         return null;
     }
 
-    public boolean exists(String email) {
+    public boolean existsByEmail(String email) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT email FROM customer WHERE email=? " +
@@ -112,6 +115,28 @@ public class UserDAO implements DAO<User> {
             preparedStatement.setString(1, email);
             preparedStatement.setString(2, email);
             preparedStatement.setString(3, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean existsByName(String name) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT email FROM customer WHERE customer_name=? " +
+                            "UNION " +
+                            "SELECT email FROM developer WHERE developer_name=? " +
+                            "UNION " +
+                            "SELECT email FROM administrator WHERE administrator_name=?"
+            );
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, name);
+            preparedStatement.setString(3, name);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return true;

@@ -1,4 +1,4 @@
-function submitForm() {
+function registration() {
     let data = {
         name: $("#username").val(),
         email: $("#email").val(),
@@ -12,11 +12,46 @@ function submitForm() {
         contentType: 'application/json',
         data: JSON.stringify(data),
         success: function (response) {
-            alert(response);
+            alert("Успех\n\n" + response);
         },
-        error: function (error) {
-            alert(error);
+        error: function (xhr, status, error) {
+            // let errorResponse = new ErrorResponse(error);
+            // alert("Ошибка\n\n" + error.toString());
+            // console.error(JSON.parse(error));
+            if (xhr.responseJSON) {
+                $(".error-messages").html('');
+                var errorResponse = xhr.responseJSON;
+
+                //Ошибки валидации
+                if (errorResponse.errors) {
+                    let messages = [];
+                    errorResponse.errors.forEach((error) => {
+                        // printErrorMessage(error.defaultMessage);
+                        messages.push(error.defaultMessage);
+                    });
+                    messages.sort();
+                    messages.forEach((message) => {
+                        printErrorMessage(message);
+                    });
+                }
+                //другие ошибки сервера
+                else
+                    printErrorMessage(errorResponse.message);
+
+
+            } else {
+                console.error('Ошибка:', error);
+            }
         }
+    });
+
+}
+
+function printErrorMessage(message) {
+    console.error(message);
+    var arr = message.split("\n");
+    arr.forEach((msg) => {
+        $(".error-messages").append('<span style="color: red" class="error-message">' + msg + '</span> <br/>');
     });
 
 }

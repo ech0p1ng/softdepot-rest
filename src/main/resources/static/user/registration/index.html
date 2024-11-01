@@ -59,9 +59,9 @@
     </div>
 </header>
 <main>
-    <form>
-        <span class="form-header">Регистрация</span>
-<!--        <span style="color: red" class="error-message" th:each="message : ${messages}" th:text="${message}"></span>-->
+    <div class="form">
+        <span id="form-header">Регистрация</span>
+        <div class="error-messages"></div>
         <input class="input-field" type="text" id="username" name="username" placeholder="Имя пользователя">
         <br/>
         <input class="input-field" type="email" id="email" name="email" placeholder="E-mail">
@@ -70,16 +70,18 @@
         <br/>
         <div class="radio-buttons-block">
             <div class="radio-buttons-block-item">
-                <input type="radio" name="userType" value="customer" id="customer" checked>
+                <input type="radio" name="userType" value="Customer" id="customer" checked>
                 <label for="customer">Покупатель</label>
             </div>
             <div class="radio-buttons-block-item">
-                <input type="radio" name="userType" value="developer" id="developer">
+                <input type="radio" name="userType" value="Developer" id="developer">
                 <label for="developer">Разработчик</label>
             </div>
         </div>
-        <input class="button" id="submit" title="Зарегистрироваться" value="Зарегистрироваться" onclick="submitForm()">
-    </form>
+        <button class="button" id="submit" title="Зарегистрироваться" value="Зарегистрироваться"
+                onclick="registration()">Зарегистрироваться
+        </button>
+    </div>
 </main>
 <!--<footer>-->
 <!--    <span>Курсовая работа студента группы 21ПИнж(б)РПиС Петрова Алексея<br />2024 г.</span>-->

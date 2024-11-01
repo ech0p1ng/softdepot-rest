@@ -1,13 +1,25 @@
 package ru.softdepot.core.models;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Length;
+
+
 public class User {
     public enum Type {Customer, Developer, Administrator}
     private int id;
 
+    @Email
+    @NotBlank(message = "Введите email")
     private String email;
 
+    @NotBlank(message = "Введите имя")
+    @Length(min = 5, max = 30, message = "Имя должно быть длиной от 5 до 30 символов")
     private String name;
 
+    @NotBlank(message = "Введите пароль")
+    @Length(min = 8, max = 30, message = "Пароль должен быть длиной от 8 до 30 символов")
     private String password;
 
     private Type userType;
