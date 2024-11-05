@@ -25,11 +25,11 @@ function sendRequest(url, data) {
         contentType: 'application/json',
         data: JSON.stringify(data),
         success: function (response) {
-            // alert("Успех\n\n" + response);
+            $(".error-messages").html('');
         },
         error: function (xhr, status, error) {
+            $(".error-messages").html('');
             if (xhr.responseJSON) {
-                $(".error-messages").html('');
                 let errorResponse = xhr.responseJSON;
 
                 //Ошибки валидации
@@ -46,10 +46,8 @@ function sendRequest(url, data) {
                 //другие ошибки сервера
                 else
                     printErrorMessage(errorResponse.message);
-
-
             } else {
-                console.error('Ошибка:', error);
+                console.error(error);
             }
         }
     });

@@ -68,25 +68,6 @@ public class UsersController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-//            StringBuilder message = new StringBuilder();
-
-//            if (!userDAO.existsByEmail(user.getEmail())) {
-//                message.append(
-//                        Message.build(
-//                                Message.Entity.USER,
-//                                Message.Identifier.EMAIL,
-//                                user.getEmail(),
-//                                Message.Status.NOT_FOUND
-//                        ));
-//            }
-
-//            if (!message.isEmpty()) {
-//                throw new ResponseStatusException(
-//                        HttpStatus.CONFLICT,
-//                        message.toString()
-//                );
-//            }
-
             var user = userDAO.getByEmailAndPassword(
                     signInRequestBody.getEmail(),
                     signInRequestBody.getPassword()
