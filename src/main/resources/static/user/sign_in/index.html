@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Soft Depot - Вход</title>
-    <link rel="stylesheet" href="/default/styles/base.css" />
-    <link id="color-scheme" rel="stylesheet" href="/default/styles/dark.css" />
-    <link rel="stylesheet" href="/user/sign_in/styles/index.css"/>
+    <link rel="stylesheet" href="/styles/base.css"/>
+    <link id="color-scheme" rel="stylesheet" href="/styles/dark.css"/>
+    <link rel="stylesheet" href="/user/auth/styles/index.css"/>
 </head>
 <body>
 <header>
     <!-- форма поиска -->
-<!--    <form method="get" id="search-form">-->
-<!--        <div class="loupe"></div>-->
-<!--        <input id="search" placeholder="Поиск..." />-->
-<!--    </form>-->
+    <!--    <form method="get" id="search-form">-->
+    <!--        <div class="loupe"></div>-->
+    <!--        <input id="search" placeholder="Поиск..." />-->
+    <!--    </form>-->
 
     <div class="header-buttons">
         <!-- Кнопка "Домой" -->
-        <a id="main-button" class="button" th:href="@{/}">
+        <a class="main-button button" href="/">
             <div class="logo"></div>
             <span class="store-name" title="Главная страница">SOFT DEPOT</span>
         </a>
@@ -26,59 +26,57 @@
             <!-- Тема -->
             <button class="change-theme button" title="Сменить тему" onclick="change_theme()"></button>
 
-<!--            &lt;!&ndash; Корзина &ndash;&gt;-->
-<!--            <button class="shopping-basket button" title="Корзина"></button>-->
+            <!--            &lt;!&ndash; Корзина &ndash;&gt;-->
+            <!--            <button class="shopping-basket button" title="Корзина"></button>-->
 
-<!--            &lt;!&ndash; Профиль &ndash;&gt;-->
-<!--            <div th:if="${user == null}">-->
-<!--                <a class="profile button"-->
-<!--                   title="Войти"-->
-<!--                   th:href="@{/sign-in}">-->
-<!--                </a>-->
-<!--            </div>-->
-<!--            <div th:unless="${user == null}">-->
-<!--                <div th:switch="${user.getUserType()}">-->
-<!--                    <a th:case="${typeCustomer}"-->
-<!--                       class="profile button"-->
-<!--                       title="Профиль"-->
-<!--                       th:href="@{/customer/id{id}(id=${user.getId()})}">-->
-<!--                    </a>-->
-<!--                    <a th:case="${typeAdministrator}"-->
-<!--                       class="profile button"-->
-<!--                       title="Профиль"-->
-<!--                       th:href="@{/administrator/id{id}(id=${user.getId()})}">-->
-<!--                    </a>-->
-<!--                    <a th:case="${typeDeveloper}"-->
-<!--                       class="profile button"-->
-<!--                       title="Профиль"-->
-<!--                       th:href="@{/developer/id{id}(id=${user.getId()})}">-->
-<!--                    </a>-->
-<!--                </div>-->
-<!--            </div>-->
+            <!--            &lt;!&ndash; Профиль &ndash;&gt;-->
+            <!--            <div th:if="${user == null}">-->
+            <!--                <a class="profile button"-->
+            <!--                   title="Войти"-->
+            <!--                   th:href="@{/sign-in}">-->
+            <!--                </a>-->
+            <!--            </div>-->
+            <!--            <div th:unless="${user == null}">-->
+            <!--                <div th:switch="${user.getUserType()}">-->
+            <!--                    <a th:case="${typeCustomer}"-->
+            <!--                       class="profile button"-->
+            <!--                       title="Профиль"-->
+            <!--                       th:href="@{/customer/id{id}(id=${user.getId()})}">-->
+            <!--                    </a>-->
+            <!--                    <a th:case="${typeAdministrator}"-->
+            <!--                       class="profile button"-->
+            <!--                       title="Профиль"-->
+            <!--                       th:href="@{/administrator/id{id}(id=${user.getId()})}">-->
+            <!--                    </a>-->
+            <!--                    <a th:case="${typeDeveloper}"-->
+            <!--                       class="profile button"-->
+            <!--                       title="Профиль"-->
+            <!--                       th:href="@{/developer/id{id}(id=${user.getId()})}">-->
+            <!--                    </a>-->
+            <!--                </div>-->
+            <!--            </div>-->
         </div>
     </div>
 </header>
 <main>
-    <form th:method="POST"
-          th:action="@{/sign-in/check}"
-    >
-        <span class="form-header">Вход</span>
-        <span style="color: red" id="error-message" th:text="${message}"></span>
+    <div class="form">
+        <span id="form-header">Вход</span>
+        <div class="error-messages"></div>
         <input class="input-field" type="email" id="email" name="email" placeholder="E-mail">
         <br/>
         <input class="input-field" type="password" id="password" name="password" placeholder="Пароль">
         <br/>
-        <span>
-            <a th:href="@{/registration}">Зарегистрируйтесь</a>, если у вас еще нет аккаунта!
+        <span id="registration-href">
+            <a href="/registration">Зарегистрируйтесь</a>, если у вас еще нет аккаунта!
         </span>
-        <input type="submit" title="Войти" value="Войти" class="button">
-    </form>
+        <button id="submit" title="Войти" value="Войти" class="button" onclick="signIn()">Войти</button>
+    </div>
 </main>
 <!--<footer>-->
 <!--    <span>Курсовая работа студента группы 21ПИнж(б)РПиС Петрова Алексея<br />2024 г.</span>-->
 <!--</footer>-->
-<script src="/default/scripts/jquery-3.7.1.min.js"></script>
-<script src="/default/scripts/theme.js"></script>
-<script src="/default/scripts/main.js"></script>
+<script src="/scripts/jquery-3.7.1.min.js"></script>
+<script src="/scripts/theme.js"></script>
+<script src="/user/auth/scripts/form.js"></script>
 </body>
 </html>

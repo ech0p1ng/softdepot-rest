@@ -6,27 +6,36 @@ function registration() {
         userType: $('input[name="userType"]:checked').val()
     }
 
+    sendRequest("http://127.0.0.1:8080/softdepot-api/users/new", data);
+}
+
+function signIn() {
+    let data = {
+        email: $("#email").val(),
+        password: $("#password").val(),
+    }
+
+    sendRequest("http://127.0.0.1:8080/softdepot-api/users/sign-in", data);
+}
+
+function sendRequest(url, data) {
     $.ajax({
         method: "POST",
-        url: "http://127.0.0.1:8080/softdepot-api/users/new",
+        url: url,
         contentType: 'application/json',
         data: JSON.stringify(data),
         success: function (response) {
-            alert("Успех\n\n" + response);
+            // alert("Успех\n\n" + response);
         },
         error: function (xhr, status, error) {
-            // let errorResponse = new ErrorResponse(error);
-            // alert("Ошибка\n\n" + error.toString());
-            // console.error(JSON.parse(error));
             if (xhr.responseJSON) {
                 $(".error-messages").html('');
-                var errorResponse = xhr.responseJSON;
+                let errorResponse = xhr.responseJSON;
 
                 //Ошибки валидации
                 if (errorResponse.errors) {
                     let messages = [];
                     errorResponse.errors.forEach((error) => {
-                        // printErrorMessage(error.defaultMessage);
                         messages.push(error.defaultMessage);
                     });
                     messages.sort();
@@ -44,7 +53,6 @@ function registration() {
             }
         }
     });
-
 }
 
 function printErrorMessage(message) {

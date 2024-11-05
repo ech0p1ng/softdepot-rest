@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.softdepot.messages.Message;
 import ru.softdepot.core.dao.UserDAO;
 import ru.softdepot.core.models.User;
+import ru.softdepot.requestBodies.SignInRequestBody;
 
 @RestController
 @RequestMapping("softdepot-api/users")
@@ -25,23 +26,7 @@ public class UsersController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            System.out.println(user.getName());
-            System.out.println(user.getEmail());
-            System.out.println(user.getPassword());
-            System.out.println(user.getUserType());
-
             StringBuilder message = new StringBuilder();
-
-//            if (userDAO.existsByEmail(user.getEmail()))
-//                throw new ResponseStatusException(
-//                        HttpStatus.CONFLICT,
-//                        Message.build(
-//                                Message.Entity.USER,
-//                                Message.Identifier.EMAIL,
-//                                user.getEmail(),
-//                                Message.Status.ALREADY_EXISTS
-//                        )
-//                );
 
             if (userDAO.existsByEmail(user.getEmail())) {
                 message.append(
@@ -71,19 +56,50 @@ public class UsersController {
                 );
             }
 
-//            if (userDAO.existsByName(user.getName()))
-//                throw new ResponseStatusException(
-//                        HttpStatus.CONFLICT,
-//                        Message.build(
-//                                Message.Entity.USER,
-//                                Message.Identifier.NAME,
-//                                user.getName(),
-//                                Message.Status.ALREADY_EXISTS
-//                        )
-//                );
-
             userDAO.add(user);
             return ResponseEntity.ok().build();
+        }
+    }
+
+    @PostMapping("/sign-in")
+    public ResponseEntity<?> signIn(@Valid @RequestBody SignInRequestBody signInRequestBody,
+                                    BindingResult bindingResult) throws Exception {
+        if (bindingResult.hasErrors()) {
+            if (bindingResult instanceof BindException exception) throw exception;
+            else throw new BindException(bindingResult);
+        } else {
+//            StringBuilder message = new StringBuilder();
+
+//            if (!userDAO.existsByEmail(user.getEmail())) {
+//                message.append(
+//                        Message.build(
+//                                Message.Entity.USER,
+//                                Message.Identifier.EMAIL,
+//                                user.getEmail(),
+//                                Message.Status.NOT_FOUND
+//                        ));
+//            }
+
+//            if (!message.isEmpty()) {
+//                throw new ResponseStatusException(
+//                        HttpStatus.CONFLICT,
+//                        message.toString()
+//                );
+//            }
+
+            var user = userDAO.getByEmailAndPassword(
+                    signInRequestBody.getEmail(),
+                    signInRequestBody.getPassword()
+            );
+
+            if (user == null) {
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "Неверный email или пароль"
+                );
+            }
+
+            return ResponseEntity.ok().body(user);
         }
     }
 }

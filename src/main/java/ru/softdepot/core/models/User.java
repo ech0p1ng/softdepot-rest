@@ -10,7 +10,7 @@ public class User {
     public enum Type {Customer, Developer, Administrator}
     private int id;
 
-    @Email
+    @Email(message = "Некорректный email")
     @NotBlank(message = "Введите email")
     private String email;
 

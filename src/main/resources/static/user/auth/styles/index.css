@@ -91,6 +91,10 @@
     /*background-color: var(--bg-body);*/
 }
 
+#registration-href {
+    margin-bottom: 10px;
+}
+
 /* Checked */
 .radio-buttons-block input[type=radio]:checked + label {
     background-color: var(--bg-opacity);

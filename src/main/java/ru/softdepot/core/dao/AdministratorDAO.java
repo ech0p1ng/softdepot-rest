@@ -133,12 +133,6 @@ public class AdministratorDAO implements DAO<Administrator> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        if (admin == null) {
-            String msg = String.format("Administrator with [email=%s, password=%s] does not exist.", email, password);
-            throw new Exception(msg);
-        }
-
         return admin;
     }
 

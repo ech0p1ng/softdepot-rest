@@ -147,5 +147,14 @@ public class UserDAO implements DAO<User> {
         return false;
     }
 
+    public User getByEmailAndPassword(String email, String password) throws Exception {
+        var customer = customerDAO.getByEmailAndPassword(email, password);
+        if (customer != null) return customer;
+        var developer = developerDAO.getByEmailAndPassword(email, password);
+        if (developer != null) return developer;
+        var administrator = administratorDAO.getByEmailAndPassword(email, password);
+        if (administrator != null) return administrator;
+        return null;
+    }
 
 }

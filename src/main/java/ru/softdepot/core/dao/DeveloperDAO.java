@@ -147,10 +147,6 @@ public class DeveloperDAO implements DAO<Developer> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if (developer == null) {
-            String msg = String.format("Developer with [email=%s] does not exist.", email);
-            throw new Exception(msg);
-        }
         return developer;
     }
 

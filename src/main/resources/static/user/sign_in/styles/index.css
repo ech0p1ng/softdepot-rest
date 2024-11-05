@@ -1,4 +1,4 @@
-form {
+.form {
     display: flex;
     flex-direction: column;
     margin-left: auto;
@@ -11,7 +11,7 @@ form {
     padding: 10px;
 }
 
-form a, form span {
+.form a, .form span {
     padding: 0;
     margin-top: 10px;
     background-color: var(--search-bg-color);
@@ -20,16 +20,16 @@ form a, form span {
     font-size: 11px;
 }
 
-.form-header {
+#form-header {
     font-size: 16pt;
 }
 
-form a {
+.form a {
     text-underline-color: 1px var(--text-color);;
 }
 
 
-form input {
+.form input {
     height: 30px;
     padding: 0;
     background-color: var(--bg-body);
@@ -42,11 +42,11 @@ form input {
     padding: 0 10px 0 10px;
 }
 
-form input:focus {
+.form input:focus {
     background-color: var(--bg-color);
 }
 
-form .button {
+.form .button {
     height: 30px;
     border-radius: 10px;
     color: var(--text-color);
