@@ -1,5 +1,5 @@
 function registration() {
-    let data = {
+    var data = {
         name: $("#username").val(),
         email: $("#email").val(),
         password: $("#password").val(),
@@ -10,12 +10,15 @@ function registration() {
 }
 
 function signIn() {
-    let data = {
+    var data = {
         email: $("#email").val(),
         password: $("#password").val(),
     }
 
-    sendRequest("http://127.0.0.1:8080/softdepot-api/users/sign-in", data);
+    var response = sendRequest(
+        "http://127.0.0.1:8080/softdepot-api/users/sign-in",
+        data
+    );
 }
 
 function sendRequest(url, data) {
@@ -26,15 +29,16 @@ function sendRequest(url, data) {
         data: JSON.stringify(data),
         success: function (response) {
             $(".error-messages").html('');
+            return response;
         },
         error: function (xhr, status, error) {
             $(".error-messages").html('');
             if (xhr.responseJSON) {
-                let errorResponse = xhr.responseJSON;
+                var errorResponse = xhr.responseJSON;
 
                 //Ошибки валидации
                 if (errorResponse.errors) {
-                    let messages = [];
+                    var messages = [];
                     errorResponse.errors.forEach((error) => {
                         messages.push(error.defaultMessage);
                     });
@@ -51,13 +55,16 @@ function sendRequest(url, data) {
             }
         }
     });
+    return null;
 }
 
 function printErrorMessage(message) {
-    console.error(message);
     var arr = message.split("\n");
     arr.forEach((msg) => {
-        $(".error-messages").append('<span style="color: red" class="error-message">' + msg + '</span> <br/>');
+        console.error(msg);
+        $(".error-messages").append(
+            '<span style="color: red" class="error-message">' + msg + '</span> <br/>'
+        );
     });
 
 }

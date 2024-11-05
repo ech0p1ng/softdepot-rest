@@ -75,7 +75,7 @@ public class UsersController {
 
             if (user == null) {
                 throw new ResponseStatusException(
-                        HttpStatus.CONFLICT,
+                        HttpStatus.UNAUTHORIZED,
                         "Неверный email или пароль"
                 );
             }

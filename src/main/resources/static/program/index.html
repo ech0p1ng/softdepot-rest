@@ -1,127 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/styles/base.css" />
-        <link rel="stylesheet" href="/program/styles/index.css" />
-        <link rel="stylesheet" href="/cart/styles/cart.css" />
-        <link id="color-scheme" rel="stylesheet" href="/styles/dark.css" />
-        <title id="page-title">Soft Depot - GAME_NAME</title>
-    </head>
-    <body>
-        <header>
-            <!-- форма поиска -->
-            <form method="get" id="search-form">
-                <div class="loupe"></div>
-                <input id="search" placeholder="Поиск..." />
-            </form>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="/styles/base.css"/>
+    <link rel="stylesheet" href="/program/styles/index.css"/>
+    <link rel="stylesheet" href="/cart/styles/cart.css"/>
+    <link id="color-scheme" rel="stylesheet" href="/styles/dark.css"/>
+    <title id="page-title">Soft Depot - GAME_NAME</title>
+</head>
+<body>
+<header>
+    <!-- форма поиска -->
+    <form method="get" id="search-form">
+        <div class="loupe"></div>
+        <input id="search" placeholder="Поиск..."/>
+    </form>
 
-            <div class="header-buttons">
-                <!-- Кнопка "Домой" -->
-                <a class="button main-button" href="/">
-                    <div class="logo"></div>
-                    <span class="store-name" title="Главная страница">SOFT DEPOT</span>
-                </a>
+    <div class="header-buttons">
+        <!-- Кнопка "Домой" -->
+        <a class="button main-button" href="/">
+            <div class="logo"></div>
+            <span class="store-name" title="Главная страница">SOFT DEPOT</span>
+        </a>
 
-                <div class="right-buttons-panel">
-                    <!-- Тема -->
-                    <button class="change-theme button" title="Сменить тему" onclick="change_theme()"></button>
+        <div class="right-buttons-panel">
+            <!-- Тема -->
+            <button class="change-theme button" title="Сменить тему" onclick="change_theme()"></button>
 
-                    <!-- Корзина -->
-                    <div th:if="${user != null && user.getUserType() == typeCustomer}">
-                        <button class="shopping-basket button" title="Корзина" onclick="show_cart()"></button>
-                    </div>
+            <!-- Корзина -->
+            <div th:if="${user != null && user.getUserType() == typeCustomer}">
+                <button class="shopping-basket button" title="Корзина" onclick="show_cart()"></button>
+            </div>
 
-                    <!-- Профиль -->
-                    <div th:if="${user == null}">
-                        <a class="profile button" title="Войти" th:href="@{/sign-in}"> </a>
-                    </div>
-                    <div th:unless="${user == null}">
-                        <div th:switch="${user.getUserType()}">
-                            <a th:case="${typeCustomer}" class="profile button" title="Профиль" th:href="@{/customer/id{id}(id=${user.getId()})}"> </a>
-                            <a th:case="${typeAdministrator}" class="profile button" title="Профиль" th:href="@{/administrator/id{id}(id=${user.getId()})}"> </a>
-                            <a th:case="${typeDeveloper}" class="profile button" title="Профиль" th:href="@{/developer/id{id}(id=${user.getId()})}"> </a>
-                        </div>
-                    </div>
+            <!-- Профиль -->
+            <div th:if="${user == null}">
+                <a class="profile button" title="Войти" th:href="@{/sign-in}"> </a>
+            </div>
+            <div th:unless="${user == null}">
+                <div th:switch="${user.getUserType()}">
+                    <a th:case="${typeCustomer}" class="profile button" title="Профиль"
+                       th:href="@{/customer/id{id}(id=${user.getId()})}"> </a>
+                    <a th:case="${typeAdministrator}" class="profile button" title="Профиль"
+                       th:href="@{/administrator/id{id}(id=${user.getId()})}"> </a>
+                    <a th:case="${typeDeveloper}" class="profile button" title="Профиль"
+                       th:href="@{/developer/id{id}(id=${user.getId()})}"> </a>
                 </div>
             </div>
-        </header>
-        <main>
-            <h1 class="game-name-big game-name">GAME_NAME</h1>
-            <div class="game-highlights">
-                <div class="videos-and-screenshots">
-                    <div class="screenshots-viewer">
-<!--                        <img id="current-screenshot" src="" />-->
-                    </div>
-                    <div class="screenshots-tape">
-<!--                        <img class="screenshot-on-tape" src="" onclick="change_current_screenshot.apply(this)" />-->
-                    </div>
-                </div>
-
-                <div class="header-and-short-description">
-                    <img class="header" />
-                    <div id="short-description">GAME_SHORT_DESCRIPTION</div>
-                    <div class="score-block">
-                        <span>Пользователи оценивают </span>
-                        <span class="game-name">GAME_NAME</span>
-                        <span> на </span>
-                        <span id="score">GAME_ESTIMATION</span>
-                        <span> баллов из 5.</span>
-                    </div>
-                </div>
+        </div>
+    </div>
+</header>
+<main>
+    <h1 class="game-name-big game-name">GAME_NAME</h1>
+    <div class="game-highlights">
+        <div class="videos-and-screenshots">
+            <div class="screenshots-viewer">
+                <!--                        <img id="current-screenshot" src="" />-->
             </div>
-            <div id="get-product-block">
+            <div class="screenshots-tape">
+                <!--                        <img class="screenshot-on-tape" src="" onclick="change_current_screenshot.apply(this)" />-->
+            </div>
+        </div>
+
+        <div class="header-and-short-description">
+            <img class="header"/>
+            <div id="short-description">GAME_SHORT_DESCRIPTION</div>
+            <div class="score-block">
+                <span>Пользователи оценивают </span>
+                <span class="game-name">GAME_NAME</span>
+                <span> на </span>
+                <span id="score">GAME_ESTIMATION</span>
+                <span> баллов из 5.</span>
+            </div>
+        </div>
+    </div>
+    <div id="get-product-block">
                 <span id="buy-invite">
                     Приобрести
                     <span class="game-name">GAME_NAME</span>
                 </span>
-                <div id="price-and-buy">
-                    <span id="price" ></span>
-                    <button class="add-to-cart" style="z-index: 2" onclick="add_to_cart_from_list(event)">
-                        <span>Добавить в корзину</span>
-                    </button>
-                </div>
-            </div>
-            <h1 id="description-header">Об игре</h1>
-            <div id="big-description">
-                <span id="description-text">GAME_DESCRIPTION</span>
-            </div>
+        <div id="price-and-buy">
+            <span id="price"></span>
+            <button class="add-to-cart" style="z-index: 2" onclick="add_to_cart_from_list(event)">
+                <span>Добавить в корзину</span>
+            </button>
+        </div>
+    </div>
+    <h1 id="description-header">Об игре</h1>
+    <div id="big-description">
+        <span id="description-text">GAME_DESCRIPTION</span>
+    </div>
 
-            <!-- Корзина -->
-            <div id="cart-bg">
-                <div id="cart-opened">
-                    <div id="cart-header">
-                        <span id="cart-title">Корзина</span>
-                        <button id="cart-exit-button" class="exit-button button close-button"></button>
-                    </div>
-                    <div id="cart-games-list">
-                        <!--                        <div th:each="program : ${programsInCart}" class="cart-game-row">-->
-                        <!--                            <img class="preview" th:src="${program.getHeaderUrl()}" />-->
-                        <!--                            <a class="cart-game-description" th:href="@{/program/id{id}(id=${program.getId()})}" target="_blank">-->
-                        <!--                                <span class="cart-game-title" th:text="${program.getName()}">GAME_NAME</span>-->
-                        <!--                            </a>-->
-                        <!--                            <div class="cart-game-price">-->
-                        <!--                                <span class="cart-game-price-title" th:text="${program.getPriceAsString()}">GAME_PRICE</span>-->
-                        <!--                                <button class="cart-game-remove button"></button>-->
-                        <!--                            </div>-->
-                        <!--                        </div>-->
-                    </div>
-                    <div id="cart-total-title">
-                        <span>Итого</span>
-                        <span id="total-cost">0 руб.</span>
-                    </div>
-                </div>
+    <!-- Корзина -->
+    <div id="cart-bg">
+        <div id="cart-opened">
+            <div id="cart-header">
+                <span id="cart-title">Корзина</span>
+                <button id="cart-exit-button" class="exit-button button close-button"></button>
             </div>
-        </main>
-        <!--        <footer>-->
-        <!--            <span>Курсовая работа студента группы 21ПИнж(б)РПиС Петрова Алексея<br />2024 г.</span>-->
-        <!--        </footer>-->
+            <div id="cart-games-list">
+                <!--                        <div th:each="program : ${programsInCart}" class="cart-game-row">-->
+                <!--                            <img class="preview" th:src="${program.getHeaderUrl()}" />-->
+                <!--                            <a class="cart-game-description" th:href="@{/program/id{id}(id=${program.getId()})}" target="_blank">-->
+                <!--                                <span class="cart-game-title" th:text="${program.getName()}">GAME_NAME</span>-->
+                <!--                            </a>-->
+                <!--                            <div class="cart-game-price">-->
+                <!--                                <span class="cart-game-price-title" th:text="${program.getPriceAsString()}">GAME_PRICE</span>-->
+                <!--                                <button class="cart-game-remove button"></button>-->
+                <!--                            </div>-->
+                <!--                        </div>-->
+            </div>
+            <div id="cart-total-title">
+                <span>Итого</span>
+                <span id="total-cost">0 руб.</span>
+            </div>
+        </div>
+    </div>
+</main>
+<!--        <footer>-->
+<!--            <span>Курсовая работа студента группы 21ПИнж(б)РПиС Петрова Алексея<br />2024 г.</span>-->
+<!--        </footer>-->
 
-        <script src="/scripts/jquery-3.7.1.min.js"></script>
-        <script src="/scripts/theme.js"></script>
-        <script src="/scripts/game.js"></script>
-        <script src="/cart/scripts/cart.js"></script>
-        <script src="/program/scripts/loadcontent.js"></script>
-    </body>
+<script src="/scripts/jquery-3.7.1.min.js"></script>
+<script src="/scripts/theme.js"></script>
+<script src="/scripts/game.js"></script>
+<script src="/cart/scripts/cart.js"></script>
+<script src="/program/scripts/loadcontent.js"></script>
+<script src="/scripts/cookies.js"></script>
+</body>
 </html>
