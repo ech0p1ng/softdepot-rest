@@ -7,7 +7,11 @@ import org.hibernate.validator.constraints.Length;
 
 
 public class User {
-    public enum Type {Customer, Developer, Administrator}
+    public enum Type {
+        Customer,
+        Developer,
+        Administrator
+    }
     private int id;
 
     @Email(message = "Некорректный email")
