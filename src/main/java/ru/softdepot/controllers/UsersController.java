@@ -2,8 +2,11 @@ package ru.softdepot.controllers;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,7 @@ import ru.softdepot.requestBodies.SignInRequestBody;
 @AllArgsConstructor
 public class UsersController {
     private final UserDAO userDAO;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/new")
     public ResponseEntity<?> newUser(@Valid @RequestBody User user,
@@ -68,19 +72,28 @@ public class UsersController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            var user = userDAO.getByEmailAndPassword(
-                    signInRequestBody.getEmail(),
-                    signInRequestBody.getPassword()
-            );
+            try {
 
-            if (user == null) {
+//                var user = userDAO.getByEmailAndPassword(
+//                        signInRequestBody.getEmail(),
+//                        signInRequestBody.getPassword()
+//                );
+
+                var userToken = new UsernamePasswordAuthenticationToken(
+                        signInRequestBody.getEmail(),
+                        signInRequestBody.getPassword()
+                );
+
+                authenticationManager.authenticate(userToken);
+
+                return ResponseEntity.ok().build();
+            } catch (Exception e) {
+                e.printStackTrace();
                 throw new ResponseStatusException(
                         HttpStatus.UNAUTHORIZED,
                         "Неверный email или пароль"
                 );
             }
-
-            return ResponseEntity.ok().body(user);
         }
     }
 }

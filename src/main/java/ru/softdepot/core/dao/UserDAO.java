@@ -1,17 +1,24 @@
 package ru.softdepot.core.dao;
 
-import org.springframework.stereotype.Component;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import ru.softdepot.core.models.Administrator;
 import ru.softdepot.core.models.Customer;
 import ru.softdepot.core.models.Developer;
 import ru.softdepot.core.models.User;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
-@Component
+@Service
 @Repository
-public class UserDAO implements DAO<User> {
+public class UserDAO implements DAO<User>, UserDetailsService {
     CustomerDAO customerDAO = new CustomerDAO();
     DeveloperDAO developerDAO = new DeveloperDAO();
     AdministratorDAO administratorDAO = new AdministratorDAO();
@@ -50,6 +57,20 @@ public class UserDAO implements DAO<User> {
             }
         }
 //        return -1;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        var user = getByEmail(username);
+
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + user.getUserType().name().toUpperCase()));
+
+        System.out.println(grantedAuthorities.get(0).getAuthority());
+
+        return new org.springframework.security.core.userdetails
+                .User(user.getEmail(), user.getPassword(), grantedAuthorities);
     }
 
     @Override
@@ -147,18 +168,19 @@ public class UserDAO implements DAO<User> {
         return false;
     }
 
-    public User getByName(String name) {
+    public User getByEmail(String email) {
         try {
+            System.out.println(email);
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT email, password FROM customer WHERE customer_name=? " +
+                    "SELECT email, password FROM customer WHERE email=? " +
                             "UNION " +
-                            "SELECT email, password FROM developer WHERE developer_name=? " +
+                            "SELECT email, password FROM developer WHERE email=? " +
                             "UNION " +
-                            "SELECT email, password FROM administrator WHERE administrator_name=?"
+                            "SELECT email, password FROM administrator WHERE email=?"
             );
-            preparedStatement.setString(1, name);
-            preparedStatement.setString(2, name);
-            preparedStatement.setString(3, name);
+            preparedStatement.setString(1, email);
+            preparedStatement.setString(2, email);
+            preparedStatement.setString(3, email);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return getByEmailAndPassword(

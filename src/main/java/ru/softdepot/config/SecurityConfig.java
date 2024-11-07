@@ -13,13 +13,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import ru.softdepot.core.dao.UserDAO;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        return new MyUserDetailsService();
+    public UserDetailsService userDetailsService() {
+        return new UserDAO();
     }
 
     @Bean
@@ -27,7 +28,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/porno").hasAnyRole("Customer")
+                        .requestMatchers("/porno").hasAnyAuthority("ROLE_CUSTOMER")
                         .anyRequest().permitAll())
                 .formLogin(login -> login
                         .loginPage("/sign-in")
@@ -45,7 +46,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService(passwordEncoder()));
+        authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
