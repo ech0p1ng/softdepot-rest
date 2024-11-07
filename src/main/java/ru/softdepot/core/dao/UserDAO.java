@@ -42,30 +42,22 @@ public class UserDAO implements DAO<User>, UserDetailsService {
 
     @Override
     public int add(User user) throws Exception {
-        switch (user.getUserType()) {
-            case Customer: {
-                return customerDAO.add(new Customer(user));
-            }
-            case Developer: {
-                return developerDAO.add(new Developer(user));
-            }
-            case Administrator: {
-                return administratorDAO.add(new Administrator(user));
-            }
-            default: {
-                throw new Exception("Неверная роль пользователя");
-            }
-        }
+        return switch (user.getUserType()) {
+            case Customer -> customerDAO.add(new Customer(user));
+            case Developer -> developerDAO.add(new Developer(user));
+            case Administrator -> administratorDAO.add(new Administrator(user));
+        };
 //        return -1;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user = getByEmail(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        var user = getByEmail(email);
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + user.getUserType().name().toUpperCase()));
+//        grantedAuthorities.add(new SimpleGrantedAuthority(user.getUserType().name().toUpperCase()));
 
         System.out.println(grantedAuthorities.get(0).getAuthority());
 

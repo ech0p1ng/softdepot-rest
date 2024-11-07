@@ -28,8 +28,14 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/porno").hasAnyAuthority("ROLE_CUSTOMER")
+                        .requestMatchers(
+                                "/sign-in",
+                                "/registration",
+                                "/softdepot-api/users/sign-in",
+                                "/softdepot-api/users/new").anonymous() //только для незарегистрированных
+                        .requestMatchers("/porno").hasRole("CUSTOMER")
                         .anyRequest().permitAll())
+
                 .formLogin(login -> login
                         .loginPage("/sign-in")
                         .permitAll())

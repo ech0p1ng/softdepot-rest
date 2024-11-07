@@ -7,10 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.softdepot.config.SecurityConfig;
 import ru.softdepot.messages.Message;
 import ru.softdepot.core.dao.UserDAO;
 import ru.softdepot.core.models.User;
@@ -22,6 +24,7 @@ import ru.softdepot.requestBodies.SignInRequestBody;
 public class UsersController {
     private final UserDAO userDAO;
     private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/new")
     public ResponseEntity<?> newUser(@Valid @RequestBody User user,
@@ -60,6 +63,7 @@ public class UsersController {
                 );
             }
 
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             userDAO.add(user);
             return ResponseEntity.ok().build();
         }
@@ -79,10 +83,12 @@ public class UsersController {
 //                        signInRequestBody.getPassword()
 //                );
 
+
                 var userToken = new UsernamePasswordAuthenticationToken(
                         signInRequestBody.getEmail(),
                         signInRequestBody.getPassword()
                 );
+
 
                 authenticationManager.authenticate(userToken);
 
