@@ -147,6 +147,31 @@ public class UserDAO implements DAO<User> {
         return false;
     }
 
+    public User getByName(String name) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT email, password FROM customer WHERE customer_name=? " +
+                            "UNION " +
+                            "SELECT email, password FROM developer WHERE developer_name=? " +
+                            "UNION " +
+                            "SELECT email, password FROM administrator WHERE administrator_name=?"
+            );
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, name);
+            preparedStatement.setString(3, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return getByEmailAndPassword(
+                        resultSet.getString("email"),
+                        resultSet.getString("password")
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public User getByEmailAndPassword(String email, String password) throws Exception {
         var customer = customerDAO.getByEmailAndPassword(email, password);
         if (customer != null) return customer;

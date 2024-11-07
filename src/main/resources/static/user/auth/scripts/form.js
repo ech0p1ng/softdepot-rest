@@ -29,6 +29,7 @@ function sendRequest(url, data) {
         data: JSON.stringify(data),
         success: function (response) {
             $(".error-messages").html('');
+            window.location.href="/";
             return response;
         },
         error: function (xhr, status, error) {
@@ -67,4 +68,8 @@ function printErrorMessage(message) {
         );
     });
 
+}
+
+window.onload = () => {
+    setTheme();
 }
