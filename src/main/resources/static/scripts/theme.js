@@ -19,7 +19,4 @@ function setTheme() {
     if (theme === "light") $("#color-scheme").attr("href", LIGHT_THEME_CSS);
 }
 
-// window.onload += () => {
-    // var next_theme = localStorage.getItem("color-scheme");
-    // setTheme();
-// };
+window.addEventListener("load", setTheme);

@@ -20,7 +20,8 @@ function setCookie(name, value, cookieExpireDays) {
     cookieExpireDate.setDate(cookieExpireDate.getDate() + cookieExpireDays);
     let cookie =
         name + "=" + value + ";" +
-        "SameSite=Strict";
+        "SameSite=Strict;" +
+        "Path=/";
 
     if (cookieExpireDays > 0) {
         cookie += "expires=" + cookieExpireDate.toUTCString() + ";"

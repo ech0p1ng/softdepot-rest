@@ -12,6 +12,9 @@ $(document).ready(function () {
             let game = new Game(data);
             game.setProgramPage();
         },
+        error: function (error) {
+            window.location.href="/";
+        }
     });
 });
 

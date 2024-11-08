@@ -29,6 +29,7 @@ header {
     justify-content: space-around;
     position: fixed;
     z-index: 2024;
+    backdrop-filter: blur(10px); /* Размытие фона */
 }
 
 #search-form {

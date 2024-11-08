@@ -1,5 +1,4 @@
-window.onload = () => {
-    setTheme();
+window.addEventListener("load", function (){
     $.ajax({
         method: "GET",
         url: "http://127.0.0.1:8080/softdepot-api/products",
@@ -11,4 +10,4 @@ window.onload = () => {
             });
         },
     });
-};
+});
