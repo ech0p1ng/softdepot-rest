@@ -5,8 +5,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import ru.softdepot.config.MyUserDetails;
 import ru.softdepot.core.models.Administrator;
 import ru.softdepot.core.models.Customer;
 import ru.softdepot.core.models.Developer;
@@ -50,18 +50,15 @@ public class UserDAO implements DAO<User>, UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        var user = getByEmail(email);
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        var user = getByUserName(userName);
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + user.getUserType().name().toUpperCase()));
-//        grantedAuthorities.add(new SimpleGrantedAuthority(user.getUserType().name().toUpperCase()));
-
-        System.out.println(grantedAuthorities.get(0).getAuthority());
 
         return new org.springframework.security.core.userdetails
-                .User(user.getEmail(), user.getPassword(), grantedAuthorities);
+                .User(user.getName(), user.getPassword(), grantedAuthorities);
     }
 
     @Override
@@ -159,15 +156,15 @@ public class UserDAO implements DAO<User>, UserDetailsService {
         return false;
     }
 
-    public User getByEmail(String email) {
+    public User getByUserName(String email) {
         try {
             System.out.println(email);
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT email, password FROM customer WHERE email=? " +
+                    "SELECT email, password FROM customer WHERE customer_name=? " +
                             "UNION " +
-                            "SELECT email, password FROM developer WHERE email=? " +
+                            "SELECT email, password FROM developer WHERE developer_name=? " +
                             "UNION " +
-                            "SELECT email, password FROM administrator WHERE email=?"
+                            "SELECT email, password FROM administrator WHERE administrator_name=?"
             );
             preparedStatement.setString(1, email);
             preparedStatement.setString(2, email);

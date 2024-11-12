@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,13 +41,16 @@ public class SecurityConfig {
                                 "/softdepot-api/users/sign-in",
                                 "/softdepot-api/users/new").anonymous() // доступ только для незарегистрированных
                         .requestMatchers("/porno").hasRole("CUSTOMER")
-                        .anyRequest().authenticated()) // аутентификация для остальных запросов
+                        .anyRequest().permitAll()) // аутентификация для остальных запросов
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Добавление JWT фильтра
                 .formLogin(login -> login
                         .loginPage("/sign-in")
                         .permitAll())
                 .logout(logout -> logout
                         .permitAll())
+                //отключение сессий
+                .sessionManagement(sessionManagement -> sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
 

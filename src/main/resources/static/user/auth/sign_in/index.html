@@ -17,44 +17,14 @@
 
     <div class="header-buttons">
         <!-- Кнопка "Домой" -->
-        <a class="main-button button" href="/static">
+        <a id="main-button" class="button" href="/">
             <div class="logo"></div>
-            <span class="store-name" title="Главная страница">SOFT DEPOT</span>
+            <span class="store-name" title="SOFT DEPOT">SOFT DEPOT</span>
         </a>
 
         <div class="right-buttons-panel">
             <!-- Тема -->
             <button class="change-theme button" title="Сменить тему" onclick="change_theme()"></button>
-
-            <!--            &lt;!&ndash; Корзина &ndash;&gt;-->
-            <!--            <button class="shopping-basket button" title="Корзина"></button>-->
-
-            <!--            &lt;!&ndash; Профиль &ndash;&gt;-->
-            <!--            <div th:if="${user == null}">-->
-            <!--                <a class="profile button"-->
-            <!--                   title="Войти"-->
-            <!--                   th:href="@{/sign-in}">-->
-            <!--                </a>-->
-            <!--            </div>-->
-            <!--            <div th:unless="${user == null}">-->
-            <!--                <div th:switch="${user.getUserType()}">-->
-            <!--                    <a th:case="${typeCustomer}"-->
-            <!--                       class="profile button"-->
-            <!--                       title="Профиль"-->
-            <!--                       th:href="@{/customer/id{id}(id=${user.getId()})}">-->
-            <!--                    </a>-->
-            <!--                    <a th:case="${typeAdministrator}"-->
-            <!--                       class="profile button"-->
-            <!--                       title="Профиль"-->
-            <!--                       th:href="@{/administrator/id{id}(id=${user.getId()})}">-->
-            <!--                    </a>-->
-            <!--                    <a th:case="${typeDeveloper}"-->
-            <!--                       class="profile button"-->
-            <!--                       title="Профиль"-->
-            <!--                       th:href="@{/developer/id{id}(id=${user.getId()})}">-->
-            <!--                    </a>-->
-            <!--                </div>-->
-            <!--            </div>-->
         </div>
     </div>
 </header>
@@ -62,7 +32,7 @@
     <div class="form">
         <span id="form-header">Вход</span>
         <div class="error-messages"></div>
-        <input class="input-field" type="email" id="email" name="email" placeholder="E-mail">
+        <input class="input-field" type="text" id="username" name="username" placeholder="Имя пользователя">
         <br/>
         <input class="input-field" type="password" id="password" name="password" placeholder="Пароль">
         <br/>

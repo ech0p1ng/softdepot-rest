@@ -14,8 +14,8 @@ public class User {
     }
     private int id;
 
-    @Email(message = "Некорректный email")
-    @NotBlank(message = "Введите email")
+//    @Email(message = "Некорректный email")
+//    @NotBlank(message = "Введите email")
     private String email;
 
     @NotBlank(message = "Введите имя")

@@ -1,7 +1,7 @@
 function registration() {
     var data = {
-        name: $("#username").val(),
-        email: $("#email").val(),
+        userName: $("#username").val(),
+        // email: $("#email").val(),
         password: $("#password").val(),
         userType: $('input[name="userType"]:checked').val()
     }
@@ -23,7 +23,7 @@ function registration() {
 
 function signIn() {
     var data = {
-        email: $("#email").val(),
+        userName: $("#username").val(),
         password: $("#password").val(),
     }
 
@@ -34,7 +34,7 @@ function signIn() {
         data: JSON.stringify(data),
         success: function (response) {
             $(".error-messages").html('');
-            setAuthToken(response, 0)
+            /* setAuthToken(response, 0);*/
             window.location.href = "/";
             return response;
         },
