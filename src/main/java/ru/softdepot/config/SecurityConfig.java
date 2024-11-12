@@ -32,7 +32,7 @@ public class SecurityConfig {
                                 "/sign-in",
                                 "/registration",
                                 "/softdepot-api/users/sign-in",
-                                "/softdepot-api/users/new").anonymous() //только для незарегистрированных
+                                "/softdepot-api/users/new").permitAll() //только для незарегистрированных
                         .requestMatchers("/porno").hasRole("CUSTOMER")
                         .anyRequest().permitAll())
 

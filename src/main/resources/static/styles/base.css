@@ -84,7 +84,7 @@ header img {
     background-color: var(--bg-opacity);
 }
 
-.main-button {
+#main-button {
     height: 100%;
     align-items: center;
     display: flex;
@@ -110,13 +110,18 @@ header img {
     background-color: var(--bg-no-opacity);
 }
 
-header button {
+#main-button:hover {
+    cursor: pointer;
+    background-color: var(--bg-no-opacity);
+}
+
+header .button {
     height: 40px;
     width: 40px;
     margin-left: 5px;
 }
 
-header button img {
+header .button img {
     height: 30px;
     width: 30px;
 }

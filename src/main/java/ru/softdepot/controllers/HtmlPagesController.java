@@ -1,8 +1,13 @@
 package ru.softdepot.controllers;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import ru.softdepot.config.MyUserDetails;
+import ru.softdepot.core.models.User;
 
 @Controller
 public class HtmlPagesController {
@@ -18,7 +23,7 @@ public class HtmlPagesController {
 
     @GetMapping("/registration")
     public String registrationPage() {
-        return "/user/registration/index.html";
+        return "/user/auth/registration/index.html";
     }
 
     @GetMapping("/porno")
@@ -28,6 +33,17 @@ public class HtmlPagesController {
 
     @GetMapping("/sign-in")
     public String signInPage() {
-        return "/user/sign_in/index.html";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
+            User user = userDetails.getUser();
+            System.out.println(user);
+            return "reditect:/";
+        } else {
+            System.out.println("Нет авторизованного пользователя");
+        }
+
+        return "/user/auth/sign_in/index.html";
     }
 }

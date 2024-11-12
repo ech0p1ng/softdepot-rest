@@ -41,3 +41,12 @@ function removeCookie(name) {
         name + ";" +
         "expires=" + date;
 }
+
+
+function setAuthToken(value, cookieExpireDays) {
+    setCookie("auth-token", value, cookieExpireDays);
+}
+
+function getAuthToken() {
+    return getCookie("auth-token");
+}

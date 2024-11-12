@@ -1,4 +1,4 @@
-window.addEventListener("load", function (){
+window.addEventListener("load", function () {
     $.ajax({
         method: "GET",
         url: "http://127.0.0.1:8080/softdepot-api/products",
@@ -10,4 +10,21 @@ window.addEventListener("load", function (){
             });
         },
     });
+
+    let token = getAuthToken();
+    if (token == null) {
+        $("#user-profile-button").attr("href", "/sign-in")
+    } else {
+        $.ajax({
+            method: "GET",
+            url: "http://127.0.0.1:8080/softdepot-api/users?" + token,
+            dataType: "json",
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (xhr, status, error) {
+
+            }
+        });
+    }
 });

@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Repository
 public class UserDAO implements DAO<User>, UserDetailsService {
     CustomerDAO customerDAO = new CustomerDAO();
     DeveloperDAO developerDAO = new DeveloperDAO();

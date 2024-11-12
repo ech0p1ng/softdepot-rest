@@ -2,16 +2,19 @@ package ru.softdepot.controllers;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.softdepot.config.JwtTokenProvider;
+import ru.softdepot.config.MyUserDetails;
 import ru.softdepot.config.SecurityConfig;
 import ru.softdepot.messages.Message;
 import ru.softdepot.core.dao.UserDAO;
@@ -25,6 +28,7 @@ public class UsersController {
     private final UserDAO userDAO;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/new")
     public ResponseEntity<?> newUser(@Valid @RequestBody User user,
@@ -65,6 +69,7 @@ public class UsersController {
 
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userDAO.add(user);
+
             return ResponseEntity.ok().build();
         }
     }
@@ -77,22 +82,18 @@ public class UsersController {
             else throw new BindException(bindingResult);
         } else {
             try {
-
-//                var user = userDAO.getByEmailAndPassword(
-//                        signInRequestBody.getEmail(),
-//                        signInRequestBody.getPassword()
-//                );
-
-
-                var userToken = new UsernamePasswordAuthenticationToken(
-                        signInRequestBody.getEmail(),
-                        signInRequestBody.getPassword()
+                Authentication authentication = authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                signInRequestBody.getEmail(),
+                                signInRequestBody.getPassword()
+                        )
                 );
 
+                SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                authenticationManager.authenticate(userToken);
+                String token = jwtTokenProvider.generateToken(authentication);
 
-                return ResponseEntity.ok().build();
+                return ResponseEntity.ok().header("Authorization-Token", token).body(token);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new ResponseStatusException(
@@ -101,5 +102,12 @@ public class UsersController {
                 );
             }
         }
+    }
+
+    @GetMapping()
+    public ResponseEntity<?> getUserByToken(@RequestParam("token") String token) throws Exception {
+        var email = jwtTokenProvider.getUsername(token);
+        var userDetails = (MyUserDetails) userDAO.loadUserByUsername(email);
+        return ResponseEntity.ok().body(userDetails.getUser());
     }
 }

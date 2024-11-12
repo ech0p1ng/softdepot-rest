@@ -6,7 +6,19 @@ function registration() {
         userType: $('input[name="userType"]:checked').val()
     }
 
-    sendRequest("http://127.0.0.1:8080/softdepot-api/users/new", data);
+    $.ajax({
+        method: "POST",
+        url: "http://127.0.0.1:8080/softdepot-api/users/new",
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function (response) {
+            $(".error-messages").html('');
+            window.location.href = "/sign-in";
+            return response;
+        },
+        error: errorResponse
+    });
+
 }
 
 function signIn() {
@@ -15,47 +27,43 @@ function signIn() {
         password: $("#password").val(),
     }
 
-    var response = sendRequest(
-        "http://127.0.0.1:8080/softdepot-api/users/sign-in",
-        data
-    );
-}
-
-function sendRequest(url, data) {
     $.ajax({
         method: "POST",
-        url: url,
+        url: "http://127.0.0.1:8080/softdepot-api/users/sign-in",
         contentType: 'application/json',
         data: JSON.stringify(data),
         success: function (response) {
             $(".error-messages").html('');
-            window.location.href="/";
+            setAuthToken(response, 0)
+            window.location.href = "/";
             return response;
         },
-        error: function (xhr, status, error) {
-            $(".error-messages").html('');
-            if (xhr.responseJSON) {
-                var errorResponse = xhr.responseJSON;
-
-                //Ошибки валидации
-                if (errorResponse.errors) {
-                    var messages = [];
-                    errorResponse.errors.forEach((error) => {
-                        messages.push(error.defaultMessage);
-                    });
-                    messages.sort();
-                    messages.forEach((message) => {
-                        printErrorMessage(message);
-                    });
-                }
-                //другие ошибки сервера
-                else
-                    printErrorMessage(errorResponse.message);
-            } else {
-                console.error(error);
-            }
-        }
+        error: errorResponse
     });
+}
+
+function errorResponse(xhr, status, error) {
+    $(".error-messages").html('');
+    if (xhr.responseJSON) {
+        var errorResponse = xhr.responseJSON;
+
+        //Ошибки валидации
+        if (errorResponse.errors) {
+            var messages = [];
+            errorResponse.errors.forEach((error) => {
+                messages.push(error.defaultMessage);
+            });
+            messages.sort();
+            messages.forEach((message) => {
+                printErrorMessage(message);
+            });
+        }
+        //другие ошибки сервера
+        else
+            printErrorMessage(errorResponse.message);
+    } else {
+        console.error(error);
+    }
     return null;
 }
 
