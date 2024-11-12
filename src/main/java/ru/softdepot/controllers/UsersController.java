@@ -93,7 +93,7 @@ public class UsersController {
 
                 String token = jwtTokenProvider.generateToken(authentication);
 
-                return ResponseEntity.ok().header("Authorization-Token", token).body(token);
+                return ResponseEntity.ok().header("Authorization", "Bearer " + token).body(token);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new ResponseStatusException(

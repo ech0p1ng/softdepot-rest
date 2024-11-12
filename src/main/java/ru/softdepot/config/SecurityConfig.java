@@ -1,5 +1,6 @@
 package ru.softdepot.config;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,14 +14,19 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.softdepot.core.dao.UserDAO;
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig {
+    private final UserDAO userDAO;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserDAO();
+        return userDAO;
     }
 
     @Bean
@@ -32,10 +38,10 @@ public class SecurityConfig {
                                 "/sign-in",
                                 "/registration",
                                 "/softdepot-api/users/sign-in",
-                                "/softdepot-api/users/new").permitAll() //только для незарегистрированных
+                                "/softdepot-api/users/new").anonymous() // доступ только для незарегистрированных
                         .requestMatchers("/porno").hasRole("CUSTOMER")
-                        .anyRequest().permitAll())
-
+                        .anyRequest().authenticated()) // аутентификация для остальных запросов
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Добавление JWT фильтра
                 .formLogin(login -> login
                         .loginPage("/sign-in")
                         .permitAll())
