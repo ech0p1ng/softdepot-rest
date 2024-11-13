@@ -1,19 +1,4 @@
-class Game {
-    // constructor(name, preview_img, url, price, tags, score, description, big_description) {
-    //     this.name = name;
-    //     this.preview_img = preview_img;
-    //     this.url = url;
-    //     this.price = price;
-    //     this.tags = tags;
-    //     this.score = score.toFixed(1);
-    //     // this.score = Number(((score / 100) * 5).toFixed(1));
-    //     this.game_row = null;
-    //     this.description = description;
-    //     this.big_description = big_description;
-    //     this.in_cart = false;
-    //     this._add_to_cart_button = null;
-    // }
-
+class Program {
     constructor(data) {
         this.id = data.id;
         this.name = data.name;
@@ -89,7 +74,7 @@ class Game {
     //Создание строки в каталоге
     getGameRowPreview() {
         let game_row = $(
-            '<div class="game-row" style="z-index: 1">' +
+            '<div class="game-row" id="main-page-game-row-' + this.id + '" style="z-index: 1">' +
             '  <a href="/programs/' + this.id + '" class="preview" target="_blank" class="description">' +
             '    <img class="preview" src="' + this.headerUrl + '" /></a>' +
             '	<a href="/programs/' + this.id + '" target="_blank" class="description">' +
@@ -114,7 +99,8 @@ class Game {
         return game_row;
     }
 
-    get_cart_game_row() {
+    //Строка в корзине
+    getCartGameRow() {
         let cart_game_row = document.createElement("div");
         let cart_game_preview = document.createElement("img");
         let cart_game_description = document.createElement("a");
@@ -147,6 +133,7 @@ class Game {
         return cart_game_row;
     }
 
+    //Заполнение данных на странице программы
     setProgramPage() {
         $("#page-title").html("Soft Depot - " + this.name);
         $(".header").attr("src", this.headerUrl);

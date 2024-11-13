@@ -9,7 +9,7 @@ $(document).ready(function () {
         // contentType: "application/json;charset=UTF-8",
         dataType: "json",
         success: function (data) {
-            let game = new Game(data);
+            let game = new Program(data);
             game.setProgramPage();
         },
         error: function (error) {
