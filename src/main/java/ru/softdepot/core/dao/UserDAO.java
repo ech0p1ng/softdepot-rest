@@ -156,9 +156,9 @@ public class UserDAO implements DAO<User>, UserDetailsService {
         return false;
     }
 
-    public User getByUserName(String email) {
+    public User getByUserName(String userName) {
         try {
-            System.out.println(email);
+            System.out.println(userName);
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT email, password FROM customer WHERE customer_name=? " +
                             "UNION " +
@@ -166,9 +166,9 @@ public class UserDAO implements DAO<User>, UserDetailsService {
                             "UNION " +
                             "SELECT email, password FROM administrator WHERE administrator_name=?"
             );
-            preparedStatement.setString(1, email);
-            preparedStatement.setString(2, email);
-            preparedStatement.setString(3, email);
+            preparedStatement.setString(1, userName);
+            preparedStatement.setString(2, userName);
+            preparedStatement.setString(3, userName);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return getByEmailAndPassword(

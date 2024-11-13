@@ -10,6 +10,7 @@ public class Customer extends User {
     private String profileImgUrl;
     private BigDecimal balance;
     private Type type = Type.Customer;
+    private String pageUrl;
 
     public Customer(int id, String name, String email, String password, String profileImgUrl, BigDecimal balance) {
         super(id, email, password, name, Type.Customer);
@@ -18,6 +19,7 @@ public class Customer extends User {
         this.email = email;
         this.password = password;
         this.profileImgUrl = profileImgUrl;
+        this.pageUrl = super.getPageUrl();
         setBalance(balance);
         this.type = Type.Customer;
     }
@@ -31,6 +33,7 @@ public class Customer extends User {
         this.type = user.getUserType();
         this.profileImgUrl = null;
         this.balance = new BigDecimal(0);
+        this.pageUrl = super.getPageUrl();
     }
 
     public int getId() {

@@ -11,6 +11,8 @@ import ru.softdepot.messages.Message;
 import ru.softdepot.core.dao.DeveloperDAO;
 import ru.softdepot.core.models.Developer;
 
+import java.sql.SQLException;
+
 @RestController
 @RequestMapping("softdepot-api/developers")
 @AllArgsConstructor
@@ -101,5 +103,10 @@ public class DevelopersController {
 
         developerDAO.delete(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllDevelopers() {
+        return ResponseEntity.ok(developerDAO.getAll());
     }
 }

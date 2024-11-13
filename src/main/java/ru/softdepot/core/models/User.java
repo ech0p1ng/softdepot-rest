@@ -1,8 +1,6 @@
 package ru.softdepot.core.models;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
 
 
@@ -26,6 +24,8 @@ public class User {
     @Length(min = 8, max = 30, message = "Пароль должен быть длиной от 8 до 30 символов")
     private String password;
 
+    private String pageUrl;
+
     private Type userType;
 
     public User(int id, String email, String password, String name, Type userType) {
@@ -34,6 +34,7 @@ public class User {
         this.name = name;
         this.userType = userType;
         this.id = id;
+        this.pageUrl = getPageUrl();
     }
 
     public User(String name, String email, String password, Type userType) {
@@ -41,6 +42,7 @@ public class User {
         this.password = password;
         this.name = name;
         this.userType = userType;
+        this.pageUrl = getPageUrl();
     }
 
     public User() {
@@ -80,5 +82,9 @@ public class User {
 
     public int getId() {
         return id;
+    }
+
+    public String getPageUrl() {
+        return "/" + userType.name().toLowerCase() + "/" + id;
     }
 }

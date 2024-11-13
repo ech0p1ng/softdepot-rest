@@ -32,9 +32,9 @@ function signIn() {
         url: "http://127.0.0.1:8080/softdepot-api/users/sign-in",
         contentType: 'application/json',
         data: JSON.stringify(data),
+        credentials: "include",
         success: function (response) {
             $(".error-messages").html('');
-            /* setAuthToken(response, 0);*/
             window.location.href = "/";
             return response;
         },

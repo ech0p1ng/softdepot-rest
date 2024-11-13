@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -99,7 +100,7 @@ public class UsersController {
                         .httpOnly(true)
                         .secure(false) //HTTPS
                         .path("/")
-                        .maxAge(3600) // Срок жизни cookie (в секундах)
+                        .maxAge(3600 * 24 * 7) // Срок жизни cookie (в секундах)
                         .build();
 
                 return ResponseEntity.ok()
@@ -130,11 +131,26 @@ public class UsersController {
                 .build();
     }
 
-
-    @GetMapping()
-    public ResponseEntity<?> getUserByToken(@RequestParam("token") String token) throws Exception {
-        var username = jwtTokenProvider.getUsername(token);
-        var userDetails = (MyUserDetails) userDAO.loadUserByUsername(username);
-        return ResponseEntity.ok().body(userDetails.getUser());
+    @GetMapping("/current")
+    public ResponseEntity<?> getUserByToken() throws Exception {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication != null && authentication.isAuthenticated()
+//                && !(authentication instanceof AnonymousAuthenticationToken)) {
+//            var userDetails = (MyUserDetails) authentication.getPrincipal();
+//            return ResponseEntity.ok().body(userDetails.getUser());
+//        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            var userAuth = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+            var user =  userDAO.getByUserName(userAuth.getUsername());
+            return ResponseEntity.ok().body(user);
+        }
+        else {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Вы не авторизованы"
+            );
+        }
     }
 }

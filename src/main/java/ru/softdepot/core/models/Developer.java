@@ -7,14 +7,16 @@ public class Developer extends User {
     private String password;
     private String profileImgUrl;
     private Type type = Type.Developer;
+    private String pageUrl;
 
-    public Developer(int id, String name, String email, String password, String profile_img_url) {
+    public Developer(int id, String name, String email, String password, String profileImgUrl) {
         super(id, email, password, name, Type.Developer);
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
-        this.profileImgUrl = profile_img_url;
+        this.profileImgUrl = profileImgUrl;
+        this.pageUrl = super.getPageUrl();
     }
 
     public Developer(User user) {
@@ -25,6 +27,7 @@ public class Developer extends User {
         this.password = user.getPassword();
         this.type = user.getUserType();
         this.profileImgUrl = "";
+        this.pageUrl = super.getPageUrl();
     }
 
     public Developer() {}

@@ -6,6 +6,7 @@ public class Administrator extends User {
     private String password;
     private String name;
     private Type userType = Type.Administrator;
+    private String pageUrl;
 
     public Administrator(int id, String email, String password, String name) {
         super(id, email, password, name, Type.Administrator);
@@ -14,6 +15,7 @@ public class Administrator extends User {
         this.password = password;
         this.name = name;
         this.userType = Type.Administrator;
+        this.pageUrl = super.getPageUrl();
     }
 
     public Administrator(User user){
@@ -23,6 +25,7 @@ public class Administrator extends User {
         this.password = user.getPassword();
         this.name = user.getName();
         this.userType = user.getUserType();
+        this.pageUrl = super.getPageUrl();
     }
 
     public Administrator() {

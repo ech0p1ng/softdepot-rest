@@ -291,4 +291,29 @@ public class DeveloperDAO implements DAO<Developer> {
         }
         return false;
     }
+
+    public List<Developer> getAll() {
+        try {
+            List<Developer> developers = new ArrayList<>();
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM developer"
+            );
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                developers.add(new Developer(
+                        resultSet.getInt("id"),
+                        resultSet.getString("developer_name"),
+                        resultSet.getString("email"),
+                        resultSet.getString("password"),
+                        resultSet.getString("profile_img_url")
+                ));
+            }
+            return developers;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
