@@ -50,8 +50,41 @@ public class CartsController {
     public ResponseEntity<?> addProgram(@PathVariable("userId") int id,
                                         @RequestParam("programId") int programId) {
 
-        var errorMessage = check(id, programId);
-        if (errorMessage != null) throw errorMessage;
+//        var errorMessage = check(id, programId);
+//        if (errorMessage != null) throw errorMessage;
+
+        if (!customerDAO.exists(id))
+            throw  new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.CUSTOMER,
+                            Message.Identifier.ID,
+                            id,
+                            Message.Status.NOT_FOUND
+                    )
+            );
+
+        if (!programDAO.exists(programId))
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.PRODUCT,
+                            Message.Identifier.ID,
+                            programId,
+                            Message.Status.NOT_FOUND
+                    )
+            );
+
+        if (cartDAO.containsProgram(id, programId))
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.CART,
+                            Message.Identifier.ID,
+                            programId,
+                            Message.Status.ALREADY_EXISTS
+                    )
+            );
 
         cartDAO.addProgram(id, programId);
         return ResponseEntity.ok().build();

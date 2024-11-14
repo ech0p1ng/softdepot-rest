@@ -17,6 +17,10 @@ body {
     background-image: url("svg/profile-white.svg");
 }
 
+.login {
+    background-image: url("svg/door-white.svg");
+}
+
 .logo {
     background-image: url("svg/train-white.svg");
 }

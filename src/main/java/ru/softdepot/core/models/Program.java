@@ -36,6 +36,8 @@ public class Program {
     private MultipartFile logo;
     private String headerUrl;
 
+    private String pageUrl;
+
 //    private AppConfig appConfig;
 //
 //    @Autowired
@@ -55,6 +57,7 @@ public class Program {
         this.categories = categories;
         setFilesPath(id);
         setName(name);
+        setPageUrl();
     }
 
     public Program(String name, BigDecimal price, String fullDescription,
@@ -66,6 +69,7 @@ public class Program {
         this.categories = categories;
         setFilesPath(id);
         setName(name);
+        setPageUrl();
     }
 
     public Program(String name, BigDecimal price, String description,
@@ -76,6 +80,7 @@ public class Program {
         this.shortDescription = shortDescription;
         setFilesPath(id);
         setName(name);
+        setPageUrl();
     }
 
     public Program(int id) {
@@ -98,8 +103,17 @@ public class Program {
         setMacosInstaller(macosInstaller);
         setHeaderImg(headerImg);
         setScreenshots(screenshots);
+        setPageUrl();
     }
 
+
+    public String getPageUrl() {
+        return pageUrl;
+    }
+
+    public void setPageUrl() {
+        this.pageUrl = "/programs/"+this.id;
+    }
 
     public void setFilesPath(int id) {
         this.filesPath = "program/content/" + id;

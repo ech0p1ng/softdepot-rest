@@ -19,15 +19,24 @@ class User {
         /*Загрузка данных о пользователе*/
         $.ajax({
             method: "GET",
-            url: "http://127.0.0.1:8080/softdepot-api/users/current",
+            url: BACKEND_URL + "softdepot-api/users/current",
             dataType: "json",
             success: function (response) {
                 USER = new User(response);
-                /*Ссылка на профиль*/
+
                 $("#user-profile-button").attr("href", USER.pageUrl);
+                $("#user-profile-button").attr("title", "Профиль");
+                $("#user-profile-button").addClass("profile");
+                $("#user-profile-button").removeClass("login");
+
+
+                if (USER.userType === "Customer") {
+                    let cartButton = $('<button class="shopping-basket button" title="Корзина" onclick="Cart.show()"></button>');
+                    $(".right-buttons-panel").children().eq(0).after(cartButton);
+                }
             },
             error: function (xhr, status, error) {
-                console.error("Ошибка загрузки данных пользователя: ", error);
+                console.error("Ошибка загрузки данных пользователя: ", xhr.responseJSON.message);
             }
         });
     }

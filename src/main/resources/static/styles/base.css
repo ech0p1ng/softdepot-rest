@@ -134,6 +134,10 @@ header .button img {
     align-items: center;
 }
 
+.login {
+    background-image: url("svg/door-white.svg");
+}
+
 .right-buttons-panel {
     display: flex;
     flex-direction: row;

@@ -11,32 +11,7 @@
     <title>Soft Depot</title>
 </head>
 <body>
-<header>
-    <!-- форма поиска -->
-    <form method="get" id="search-form">
-        <div class="loupe"></div>
-        <input id="search" placeholder="Поиск..."/>
-    </form>
 
-    <div class="header-buttons">
-        <!-- Кнопка "Домой" -->
-        <a id="main-button" class="button" href="/">
-            <div class="logo"></div>
-            <span class="store-name" title="SOFT DEPOT">SOFT DEPOT</span>
-        </a>
-
-        <div class="right-buttons-panel">
-            <!-- Тема -->
-            <button class="change-theme button" title="Сменить тему" onclick="change_theme()"></button>
-
-            <!-- Корзина -->
-            <button class="shopping-basket button" title="Корзина" onclick="show_cart()"></button>
-
-            <!-- Профиль -->
-            <a id="user-profile-button" class="profile button" title="Профиль"></a>
-        </div>
-    </div>
-</header>
 <main>
     <div id="games-list"></div>
     <!-- Корзина -->
@@ -68,10 +43,11 @@
 </body>
 
 <script src="/scripts/jquery-3.7.1.min.js"></script>
+<script src="/scripts/main.js"></script>
 <script src="/scripts/program.js"></script>
 <script src="/scripts/user.js"></script>
 <script src="/scripts/theme.js"></script>
-<script src="/mainpage/scripts/main.js"></script>
+<script src="/mainpage/scripts/mainPage.js"></script>
 <script src="/cart/scripts/cart.js"></script>
 <script src="/scripts/cookies.js"></script>
 </html>

@@ -2,14 +2,14 @@ const DARK_THEME_CSS = "/styles/dark.css";
 const LIGHT_THEME_CSS = "/styles/light.css";
 
 function change_theme() {
-    var theme = getCookie("theme");
+    let theme = getCookie("theme");
     if (theme === "dark") setCookie("theme", "light", 0);
     if (theme === "light") setCookie("theme", "dark", 0);
     setTheme();
 }
 
 function setTheme() {
-    var theme = getCookie("theme");
+    let theme = getCookie("theme");
     console.log("cookie = ", theme);
     if (theme == null) {
         theme = "dark";

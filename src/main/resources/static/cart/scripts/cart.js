@@ -1,36 +1,46 @@
-function show_cart() {
-    $("#cart-games-list").empty();
+class Cart {
+    static show() {
+        $("#cart-games-list").empty();
+        Cart.update(true);
+    }
 
-    $.ajax({
-       method: "GET",
-        url: "http://127.0.0.1:8080/softdepot-api/carts/" + USER.id,
-        dataType: "json",
-        success: function (cartOfGames) {
-            cartOfGames.forEach((game) => {
-                let game_row = game.getCartGameRow();
-                $("#cart-games-list").append(game_row);
-            });
+    static update(showCart) {
+        $("#cart-games-list").empty();
 
-            //Подсчет суммы в корзине
-            let sum = 0;
-            cartOfGames.forEach((game) => {
-                sum += game.price;
-            });
-            $("#total-cost").html(sum + " руб.");
+        $.ajax({
+            method: "GET",
+            url: BACKEND_URL + "softdepot-api/carts/" + USER.id,
+            dataType: "json",
+            success: function (response) {
+                let sum = 0;
 
-            $("#cart-bg").css("visibility", "inherit");
-        },
-        error: function (xhr, status, error) {
-            alert("Не удалось загрузить корзину");
-            console.error(error);
-        }
-    });
+                $("#cart-games-list").html('');
+                response.forEach((responseElem) => {
+                    let program = Program.catalogue.find(arrayElem => arrayElem.id === responseElem.id);
+                    if (program) {
+                        $("#cart-games-list").append(program.getCartGameRow());
+                        sum += program.price;
+                    } else {
+                        console.error("Не удалось в каталоге найти в корзине программу с id = " + responseElem.id);
+                    }
+                });
 
+                $("#total-cost").html(sum + " руб.");
+                if (showCart)
+                    $("#cart-bg").css("visibility", "inherit");
+            },
+            error: function (xhr, status, error) {
+                alert("Не удалось загрузить корзину");
+                console.error(error);
+            }
+        });
+    }
 
+    static close() {
+        $("#cart-bg").css("visibility", "hidden");
+    }
 }
 
-function close_cart() {
-    $("#cart-bg").css("visibility", "hidden");
-}
 
-$("#cart-exit-button").on("click", close_cart);
+
+$("#cart-exit-button").on("click", Cart.close);

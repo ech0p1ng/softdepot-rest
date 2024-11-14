@@ -3,15 +3,18 @@ package ru.softdepot.controllers;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
+import ru.softdepot.core.dao.*;
+import ru.softdepot.core.models.Customer;
+import ru.softdepot.core.models.User;
 import ru.softdepot.messages.Message;
-import ru.softdepot.core.dao.CategoryDAO;
-import ru.softdepot.core.dao.DeveloperDAO;
-import ru.softdepot.core.dao.ProgramDAO;
 import ru.softdepot.core.models.Program;
 
 @RestController
@@ -21,6 +24,7 @@ public class ProductsController {
     private final ProgramDAO programDAO;
     private final DeveloperDAO developerDAO;
     private final CategoryDAO categoryDAO;
+    private final UserDAO userDAO;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findProgram(@PathVariable("id") int id) throws Exception {
@@ -184,6 +188,26 @@ public class ProductsController {
 
     @GetMapping
     public ResponseEntity<?> getPrograms() {
-        return ResponseEntity.ok().body(programDAO.getAll());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            var userAuth = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+            var user = userDAO.getByUserName(userAuth.getUsername());
+
+            var allPrograms = programDAO.getAll();
+
+            if (user.getUserType() == User.Type.Customer) {
+                for (int i = 0; i < allPrograms.size(); i++) {
+                    var program = allPrograms.get(i);
+
+                    var inCart = programDAO.isInCart(program, (Customer) user);
+                    program.setInCart(inCart);
+                    allPrograms.set(i, program);
+                }
+            }
+            return ResponseEntity.ok().body(allPrograms);
+        } else {
+            return ResponseEntity.ok().body(programDAO.getAll());
+        }
     }
 }

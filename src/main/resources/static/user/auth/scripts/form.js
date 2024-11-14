@@ -8,7 +8,7 @@ function registration() {
 
     $.ajax({
         method: "POST",
-        url: "http://127.0.0.1:8080/softdepot-api/users/new",
+        url: BACKEND_URL + "softdepot-api/users/new",
         contentType: 'application/json',
         data: JSON.stringify(data),
         success: function (response) {
@@ -29,7 +29,7 @@ function signIn() {
 
     $.ajax({
         method: "POST",
-        url: "http://127.0.0.1:8080/softdepot-api/users/sign-in",
+        url: BACKEND_URL + "softdepot-api/users/sign-in",
         contentType: 'application/json',
         data: JSON.stringify(data),
         credentials: "include",
@@ -78,6 +78,6 @@ function printErrorMessage(message) {
 
 }
 
-window.onload = () => {
-    setTheme();
-}
+window.addEventListener("load", function () {
+    addHeader(false,false);
+});

@@ -16,6 +16,7 @@ public class ProgramDAO implements DAO<Program> {
     private static CategoryDAO categoryDAO = new CategoryDAO();
     private static DegreeOfBelongingDAO degreeOfBelongingDAO = new DegreeOfBelongingDAO();
     private static ReviewDAO reviewDAO = new ReviewDAO();
+    private static CartDAO cartDAO = new CartDAO();
 
     private static Connection connection;
 
@@ -426,5 +427,9 @@ public class ProgramDAO implements DAO<Program> {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public boolean isInCart(Program program, Customer customer) {
+        return cartDAO.containsProgram(customer.getId(), program.getId());
     }
 }
