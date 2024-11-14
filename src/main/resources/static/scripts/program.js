@@ -1,5 +1,9 @@
+const addToCartHtml = '<span>Добавить в корзину</span>';
+const removeFromCartHtml = '<span>Удалить из корзины</span>';
+
 class Program {
-    static catalogue = []
+    static catalogue = [];
+
     constructor(data) {
         this.id = data.id;
         this.name = data.name;
@@ -65,14 +69,9 @@ class Program {
             '</div>'
         );
 
-        this.gameRowCart
-            .find('.cart-game-remove.button')
-            .on('click', () => {
-                this.removeFromCart();
-            });
-
         this.setCatalogueRowButton();
     }
+
 
     //Определение цвета оценки по числу (0 - красный, 5 - зеленый)
     static getScoreColor(score) {
@@ -102,8 +101,7 @@ class Program {
                 .on('click', () => {
                     this.removeFromCart();
                 });
-        }
-        else {
+        } else {
             this.gameRowCatalogue
                 .find('.add-to-cart')
                 .off('click')
@@ -113,7 +111,6 @@ class Program {
         }
     }
 
-
     setCatalogueRowButton() {
         if (this.inCart) {
             this.gameRowCatalogue
@@ -121,29 +118,42 @@ class Program {
                 .find('.add-to-cart')
                 .addClass('remove-from-cart')
                 .removeClass('add-to-cart')
-                .html('<span>Удалить из корзины</span>')
-                // .off('click') //удаляет старые обработчики события
-                // .on('click', () => {
-                //     this.removeFromCart();
-                // });
+                .html(removeFromCartHtml)
 
-        }
-        else {
+        } else {
             this.gameRowCatalogue
                 .find('.remove-from-cart')
                 .addClass('add-to-cart')
                 .removeClass('remove-from-cart')
-                .html('<span>Добавить в корзину</span>')
-                // .off('click')
-                // .on('click', () => {
-                //     this.addToCart();
-                // });
+                .html(addToCartHtml)
         }
         this.setEventsForCatalogueRowButton();
     }
 
+    setProgramPageAddToCartButton() {
+        if (this.inCart) {
+            $("#add-to-cart-from-page")
+                .addClass('remove-from-cart')
+                .removeClass('add-to-cart')
+                .html(removeFromCartHtml)
+                .off('click')
+                .on('click', () => {
+                    this.removeFromCart();
+                });
+        }
+        else {
+            $("#add-to-cart-from-page")
+                .addClass('add-to-cart')
+                .removeClass('remove-from-cart')
+                .html(addToCartHtml)
+                .off('click')
+                .on('click', () => {
+                    this.addToCart();
+                });
+        }
+    }
+
     addToCart() {
-        // cart_of_games.push(this);
         this.inCart = true;
         $.ajax({
             method: "POST",
@@ -152,17 +162,16 @@ class Program {
             data: null,
             success: (response) => {
                 this.setCatalogueRowButton();
+                this.setProgramPageAddToCartButton();
+                Cart.update(false);
             },
             error: (xhr, status, message) => {
                 console.error(xhr.responseJSON.message);
                 alert("Не удалось добавить " + this.name + " в корзину.\n" + xhr.responseJSON.message);
             }
         });
-        // this._add_to_cart_button.innerHTML = "<span>Удалить из корзины</span>";
-        // this._add_to_cart_button.className = "remove-from-cart";
     }
 
-    // удаление из корзины
     removeFromCart() {
         // cart_of_games.splice(cart_of_games.indexOf(this), 1);
         this.inCart = false;
@@ -173,6 +182,7 @@ class Program {
             data: null,
             success: (response) => {
                 this.setCatalogueRowButton();
+                this.setProgramPageAddToCartButton();
                 Cart.update(false);
             },
             error: (xhr, status, message) => {
@@ -184,16 +194,6 @@ class Program {
         // this._add_to_cart_button.className = "add-to-cart";
     }
 
-    // changeAddToCartButton() {
-    //     if (this.in_cart) {
-    //         this._add_to_cart_button.innerHTML = "<span>Добавить в корзину</span>";
-    //         this._add_to_cart_button.className = "add-to-cart";
-    //     } else {
-    //         this._add_to_cart_button.innerHTML = "<span>Удалить из корзины</span>";
-    //         this._add_to_cart_button.className = "remove-from-cart";
-    //     }
-    // }
-
     //Создание строки в каталоге
     getGameRowPreview() {
         return this.gameRowCatalogue;
@@ -201,37 +201,12 @@ class Program {
 
     //Строка в корзине
     getCartGameRow() {
-        // let cart_game_row = document.createElement("div");
-        // let cart_game_preview = document.createElement("img");
-        // let cart_game_description = document.createElement("a");
-        // let cart_game_title = document.createElement("span");
-        // let cart_game_price = document.createElement("div");
-        // let cart_game_price_title = document.createElement("span");
-        // let cart_game_remove = document.createElement("button");
-        //
-        // cart_game_row.className = "cart-game-row";
-        // cart_game_preview.className = "preview";
-        // cart_game_description.className = "cart-game-description";
-        // cart_game_title.className = "cart-game-title";
-        // cart_game_price.className = "cart-game-price";
-        // cart_game_price_title.className = "cart-game-price-title";
-        // cart_game_remove.className = "cart-game-remove button close-button-bright";
-        //
-        // cart_game_preview.src = this.headerUrl;
-        // cart_game_description.href = this.pageUrl;
-        // cart_game_title.innerHTML = this.name;
-        // cart_game_price_title.innerHTML = this.price > 0 ? this.price + " руб." : "Бесплатно";
-        // cart_game_remove.onclick = () => {
-        //     this.removeFromCart();
-        //     show_cart();
-        // };
-        //
-        // cart_game_description.append(cart_game_title);
-        // cart_game_price.append(cart_game_price_title, cart_game_remove);
-        // cart_game_row.append(cart_game_preview, cart_game_description, cart_game_price);
-        //
-        // return cart_game_row;
-
+        this.gameRowCart
+            .find('.cart-game-remove.button')
+            .off('click')
+            .on('click', () => {
+                this.removeFromCart();
+            });
         return this.gameRowCart;
 
     }
@@ -242,11 +217,13 @@ class Program {
         $(".header").attr("src", this.headerUrl);
         $("#short-description").html(this.shortDescription);
         $(".game-name").html(this.name);
-        $("#score").html(this.averageEstimation);
-        $("#score").attr("style", "color: " + Program.getScoreColor(this.averageEstimation));
+        $("#score")
+            .html(this.averageEstimation)
+            .attr("style", "color: " + Program.getScoreColor(this.averageEstimation));
         $("#description-text").html(this.fullDescription);
         $("#price").html(this.priceAsString);
-        $(".add-to-cart").attr("program-id", this.id);
+
+        this.setProgramPageAddToCartButton();
 
         let first = true;
         this.screenshotsUrl.forEach((img) => {
@@ -258,5 +235,23 @@ class Program {
             $(".screenshots-tape").append(screenshot);
         });
 
+        $.ajax({
+            method: "GET",
+            url: BACKEND_URL + "softdepot-api/reviews?programId=" + this.id,
+            type: "json",
+            success: (response) => {
+                response.forEach(elem => {
+                    let review = new Review(elem);
+                    $("#reviews-header").css("visibility", "visible");
+                    $(".reviews")
+                        .css("visibility", "visible")
+                        .append(review.getReviewRow());
+                })
+            },
+            error: (xhr, status, error) => {
+                console.log(xhr.responseJSON.message);
+
+            }
+        });
     }
 }

@@ -18,7 +18,7 @@ public class Customer extends User {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.profileImgUrl = profileImgUrl;
+        setProfileImgUrl(profileImgUrl);
         this.pageUrl = super.getPageUrl();
         setBalance(balance);
         this.type = Type.Customer;
@@ -31,7 +31,7 @@ public class Customer extends User {
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.type = user.getUserType();
-        this.profileImgUrl = null;
+        setProfileImgUrl(null);
         this.balance = new BigDecimal(0);
         this.pageUrl = super.getPageUrl();
     }
@@ -77,7 +77,11 @@ public class Customer extends User {
     }
 
     public void setProfileImgUrl(String profileImgUrl) {
-        this.profileImgUrl = profileImgUrl;
+        if (profileImgUrl == null) {
+            this.profileImgUrl = "/styles/images/profile-white.png";
+        } else {
+            this.profileImgUrl = profileImgUrl;
+        }
     }
 
     public Type getType() {

@@ -1,16 +1,19 @@
-$(document).ready(function () {
+window.addEventListener("load", function () {
     // Получаем ID программы из URL
     var url = window.location.href;
     var id = url.substring(url.lastIndexOf("/") + 1);
 
+
+    addHeader(true, true);
+
     $.ajax({
         method: "GET",
         url: BACKEND_URL + "softdepot-api/products/" + id,
-        // contentType: "application/json;charset=UTF-8",
         dataType: "json",
-        success: function (data) {
-            let game = new Program(data);
-            game.setProgramPage();
+        success: function (response) {
+            let program = new Program(response);
+            program.setProgramPage();
+            Program.catalogue.push(program);
         },
         error: function (error) {
             window.location.href="/";

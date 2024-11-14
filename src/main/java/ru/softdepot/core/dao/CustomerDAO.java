@@ -2,7 +2,6 @@ package ru.softdepot.core.dao;
 
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import ru.softdepot.core.models.*;
 
 import java.math.BigDecimal;
@@ -324,15 +323,13 @@ public class CustomerDAO implements DAO<Customer> {
 
 
     public int addReview(Review review) throws Exception {
-        Customer customer = getById(review.getCustomerId());
-        Program program = programDAO.getById(review.getProgramId());
-
-        if (hasPurchasedProgram(customer, program)) {
+        if (hasPurchasedProgram(review.getCustomer(), review.getProgram())) {
             return reviewDAO.add(review);
         }
         else {
             String msg = String.format("Customer \"%s\" [id=%d] does not have a program \"%s\" [id=%d]",
-                    customer.getName(), customer.getId(), program.getName(), program.getId());
+                    review.getCustomer().getName(), review.getCustomer().getId(),
+                    review.getProgram().getName(), review.getProgram().getId());
 
             throw new Exception(msg);
         }
@@ -340,11 +337,11 @@ public class CustomerDAO implements DAO<Customer> {
 
     public void deleteReview(Customer customer, Review review) throws Exception {
 
-        if (review.getCustomerId() != customer.getId()) {
+        if (review.getCustomer().getId() != customer.getId()) {
             String msg =
                     String.format("Customer [id=%d] can not delete review " +
                                     "[id=%d] of another customer [id=%d]",
-                    customer, review, review.getCustomerId());
+                    customer, review, review.getCustomer());
             throw new Exception(msg);
         }
         else {
@@ -366,9 +363,9 @@ public class CustomerDAO implements DAO<Customer> {
     }
 
     public void updateReview(Customer customer, Review review) throws Exception {
-        if (review.getCustomerId() != customer.getId()) {
+        if (review.getCustomer().getId() != customer.getId()) {
             String msg = String.format("Customer [id=%d] can not update review [id=%d] of another customer [id=%d]",
-                    customer.getId(), review.getId(), review.getCustomerId());
+                    customer.getId(), review.getId(), review.getCustomer());
             throw new Exception(msg);
         }
         reviewDAO.update(review);
@@ -378,7 +375,7 @@ public class CustomerDAO implements DAO<Customer> {
         return reviewDAO.get(customer.getId(), program.getId());
     }
 
-    public List<Review> getAllReviewsByCustomer(Customer customer) {
+    public List<Review> getAllReviewsByCustomer(Customer customer) throws Exception {
         return reviewDAO.getAllByCustomer(customer.getId());
     }
 

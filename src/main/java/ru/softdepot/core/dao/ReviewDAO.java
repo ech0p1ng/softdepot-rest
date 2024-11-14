@@ -1,9 +1,8 @@
 package ru.softdepot.core.dao;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import ru.softdepot.core.models.Customer;
-import ru.softdepot.core.models.Program;
 import ru.softdepot.core.models.Review;
 
 import java.sql.*;
@@ -15,6 +14,9 @@ import java.util.List;
 @Repository
 public class ReviewDAO implements DAO<Review> {
     private static Connection connection;
+
+    private static CustomerDAO customerDAO = new CustomerDAO();
+    private static ProgramDAO programDAO = new ProgramDAO();
 
     static {
         try {
@@ -32,15 +34,15 @@ public class ReviewDAO implements DAO<Review> {
 
     @Override
     public int add(Review review) throws Exception {
-        if (!exists(review.getCustomerId(), review.getProgramId())) {
+        if (!exists(review.getCustomer().getId(), review.getProgram().getId())) {
             try {
                 PreparedStatement statement = connection.prepareStatement(
                         "INSERT INTO review (customer_id, program_id, estimation, review_text, date_time) " +
                                 "VALUES (?, ?, ?, ?, ?) RETURNING id"
                 );
 
-                statement.setInt(1, review.getCustomerId());
-                statement.setInt(2, review.getProgramId());
+                statement.setInt(1, review.getCustomer().getId());
+                statement.setInt(2, review.getProgram().getId());
                 statement.setInt(3, review.getEstimation());
                 statement.setString(4, review.getReviewText());
                 statement.setTimestamp(5, DataBase.convertToTimestamp(review.getDateTime()));
@@ -55,7 +57,7 @@ public class ReviewDAO implements DAO<Review> {
         }
         else {
             String msg = String.format("Review of customer [id=%d] already exists",
-                    review.getCustomerId());
+                    review.getCustomer());
             throw new Exception(msg);
         }
         return -1;
@@ -67,8 +69,8 @@ public class ReviewDAO implements DAO<Review> {
             PreparedStatement statement = connection.prepareStatement(
                     "UPDATE review SET customer_id=?, program_id=?,estimation=?, review_text=?,date_time=? WHERE id=?"
             );
-            statement.setInt(1, review.getCustomerId());
-            statement.setInt(2, review.getProgramId());
+            statement.setInt(1, review.getCustomer().getId());
+            statement.setInt(2, review.getProgram().getId());
             statement.setInt(3, review.getEstimation());
             statement.setString(4, review.getReviewText());
             statement.setTimestamp(5, DataBase.convertToTimestamp(review.getDateTime()));
@@ -93,7 +95,7 @@ public class ReviewDAO implements DAO<Review> {
     }
 
     @Override
-    public Review getById(int id) {
+    public Review getById(int id) throws Exception {
         Review review = null;
         try {
             PreparedStatement statement = connection.prepareStatement(
@@ -105,10 +107,14 @@ public class ReviewDAO implements DAO<Review> {
             if (resultSet.next()) {
                 OffsetDateTime dateTime =
                         DataBase.convertToDateTime(resultSet.getTimestamp("date_time"));
+
+                var customer = customerDAO.getById(resultSet.getInt("customer_id"));
+                var program = programDAO.getById(resultSet.getInt("program_id"));
+
                 review = new Review(
                         id,
-                        resultSet.getInt("customer_id"),
-                        resultSet.getInt("program_id"),
+                        customer,
+                        program,
                         resultSet.getInt("estimation"),
                         resultSet.getString("review_text"),
                         dateTime
@@ -131,11 +137,17 @@ public class ReviewDAO implements DAO<Review> {
             statement.setInt(1, customerId);
             statement.setInt(2, programId);
             ResultSet resultSet = statement.executeQuery();
+
+
+
             if (resultSet.next()) {
+                var customer = customerDAO.getById(customerId);
+                var program = programDAO.getById(programId);
+
                 review = new Review(
                     resultSet.getInt("id"),
-                        customerId,
-                        programId,
+                        customer,
+                        program,
                         resultSet.getInt("estimation"),
                         resultSet.getString("review_text"),
                         DataBase.convertToDateTime(resultSet.getTimestamp("date_time"))
@@ -193,7 +205,7 @@ public class ReviewDAO implements DAO<Review> {
         return exists;
     }
 
-    public List<Review> getAllByCustomer(int customerId) {
+    public List<Review> getAllByCustomer(int customerId) throws Exception {
         List<Review> reviews = new ArrayList<>();
         try {
             PreparedStatement statement = connection.prepareStatement(
@@ -211,7 +223,7 @@ public class ReviewDAO implements DAO<Review> {
         return reviews;
     }
 
-    public List<Review> getAllAboutProgram(int programId) {
+    public List<Review> getAllAboutProgram(int programId) throws Exception {
         List<Review> reviews = new ArrayList<Review>();
         try {
             PreparedStatement statement = connection.prepareStatement(

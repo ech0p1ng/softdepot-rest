@@ -17,12 +17,12 @@ class Cart {
                 $("#cart-games-list").html('');
                 response.forEach((responseElem) => {
                     let program = Program.catalogue.find(arrayElem => arrayElem.id === responseElem.id);
-                    if (program) {
-                        $("#cart-games-list").append(program.getCartGameRow());
-                        sum += program.price;
-                    } else {
-                        console.error("Не удалось в каталоге найти в корзине программу с id = " + responseElem.id);
-                    }
+
+                    if (program) program.setProgramPageAddToCartButton();
+                    else program = new Program(responseElem);
+
+                    $("#cart-games-list").append(program.getCartGameRow());
+                    sum += program.price;
                 });
 
                 $("#total-cost").html(sum + " руб.");
@@ -40,7 +40,6 @@ class Cart {
         $("#cart-bg").css("visibility", "hidden");
     }
 }
-
 
 
 $("#cart-exit-button").on("click", Cart.close);

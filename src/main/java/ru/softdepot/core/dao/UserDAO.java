@@ -158,7 +158,6 @@ public class UserDAO implements DAO<User>, UserDetailsService {
 
     public User getByUserName(String userName) {
         try {
-            System.out.println(userName);
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT email, password FROM customer WHERE customer_name=? " +
                             "UNION " +

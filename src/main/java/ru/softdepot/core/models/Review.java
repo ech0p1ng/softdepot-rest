@@ -4,25 +4,18 @@ import java.time.OffsetDateTime;
 
 public class Review {
     private int id;
-    private int customerId;
-    private int programId;
+    private Customer customer;
+    private Program program;
     private int estimation;
     private String reviewText;
     private OffsetDateTime dateTime;
     private String programName;
 
-    public Review(int id, int customerId, int programId, int estimation, String reviewText, OffsetDateTime dateTime) {
+    public Review(int id, Customer customer, Program program, int estimation, String reviewText, OffsetDateTime dateTime) {
         this.id = id;
-        this.customerId = customerId;
-        this.programId = programId;
-        setEstimation(estimation);
-        this.reviewText = reviewText;
-        this.dateTime = dateTime;
-    }
-
-    public Review(int customerId, int programId, int estimation, String reviewText, OffsetDateTime dateTime) {
-        this.customerId = customerId;
-        this.programId = programId;
+        this.customer = customer;
+        this.customer.setPassword(null);
+        this.program = program;
         setEstimation(estimation);
         this.reviewText = reviewText;
         this.dateTime = dateTime;
@@ -40,20 +33,20 @@ public class Review {
         return id;
     }
 
-    public int getCustomerId() {
-        return customerId;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
-    public int getProgramId() {
-        return programId;
+    public Program getProgram() {
+        return program;
     }
 
-    public void setProgramId(int programId) {
-        this.programId = programId;
+    public void setProgram(Program program) {
+        this.program = program;
     }
 
     public int getEstimation() {

@@ -29,18 +29,18 @@ public class ReviewsController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            var errorMessage = check(review.getCustomerId(), review.getProgramId());
+            var errorMessage = check(review.getCustomer().getId(), review.getProgram().getId());
             if (errorMessage != null) throw errorMessage;
 
-            if (reviewDAO.exists(review.getCustomerId(), review.getProgramId()))
+            if (reviewDAO.exists(review.getCustomer().getId(), review.getProgram().getId()))
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT,
                         Message.build(
                                 Message.Entity.REVIEW,
                                 Message.Identifier.ID,
                                 String.format("id %s покупателя и id %s товара",
-                                        review.getCustomerId(),
-                                        review.getProgramId()),
+                                        review.getCustomer(),
+                                        review.getProgram()),
                                 Message.Status.ALREADY_EXISTS
                         )
                 );
@@ -69,7 +69,7 @@ public class ReviewsController {
                         )
                 );
 
-            var errorMessage = check(review.getCustomerId(), review.getProgramId());
+            var errorMessage = check(review.getCustomer().getId(), review.getProgram().getId());
             if (errorMessage != null) throw errorMessage;
 
             reviewDAO.update(review);
@@ -78,7 +78,7 @@ public class ReviewsController {
     }
 
     @GetMapping(params = {"programId"})
-    public ResponseEntity<?> getReviewsForProgram(@RequestParam("programId") int programId) {
+    public ResponseEntity<?> getReviewsForProgram(@RequestParam("programId") int programId) throws Exception {
         if (!programDAO.exists(programId))
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
@@ -94,7 +94,7 @@ public class ReviewsController {
     }
 
     @GetMapping(params = {"customerId"})
-    public ResponseEntity<?> getReviewsOfCustomer(@RequestParam("customerId") int customerId) {
+    public ResponseEntity<?> getReviewsOfCustomer(@RequestParam("customerId") int customerId) throws Exception {
         if (!customerDAO.exists(customerId))
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
@@ -119,7 +119,7 @@ public class ReviewsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getReviewById(@PathVariable("id") int id) {
+    public ResponseEntity<?> getReviewById(@PathVariable("id") int id) throws Exception {
         if (!reviewDAO.exists(id))
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,

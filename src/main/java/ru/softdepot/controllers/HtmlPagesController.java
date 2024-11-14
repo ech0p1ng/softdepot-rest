@@ -38,10 +38,7 @@ public class HtmlPagesController {
                 && !(authentication instanceof AnonymousAuthenticationToken)) {
             MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
             User user = userDetails.getUser();
-            System.out.println(user);
             return "reditect:/";
-        } else {
-            System.out.println("Нет авторизованного пользователя");
         }
 
         return "/user/auth/sign_in/index.html";

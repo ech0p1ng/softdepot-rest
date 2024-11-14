@@ -245,9 +245,6 @@ public class Program {
     }
 
     public String getFilesPath() {
-//        System.out.println(this.filesPath);
-//        System.out.println(appConfig.getFileUploadPath());
-//        return Paths.get(appConfig.getFileUploadPath(), this.filesPath).toString();
         return this.filesPath;
     }
 

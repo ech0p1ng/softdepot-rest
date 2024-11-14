@@ -13,7 +13,7 @@ class User {
         this.pageUrl = response.pageUrl;
     }
 
-    static loadUserData () {
+    static loadUserData() {
         $("#user-profile-button").attr("href", "/sign-in")
 
         /*Загрузка данных о пользователе*/
@@ -24,10 +24,11 @@ class User {
             success: function (response) {
                 USER = new User(response);
 
-                $("#user-profile-button").attr("href", USER.pageUrl);
-                $("#user-profile-button").attr("title", "Профиль");
-                $("#user-profile-button").addClass("profile");
-                $("#user-profile-button").removeClass("login");
+                $("#user-profile-button")
+                    .attr("href", USER.pageUrl)
+                    .attr("title", "Профиль")
+                    .addClass("profile")
+                    .removeClass("login");
 
 
                 if (USER.userType === "Customer") {

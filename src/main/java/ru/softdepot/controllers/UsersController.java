@@ -133,12 +133,6 @@ public class UsersController {
 
     @GetMapping("/current")
     public ResponseEntity<?> getUserByToken() throws Exception {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication != null && authentication.isAuthenticated()
-//                && !(authentication instanceof AnonymousAuthenticationToken)) {
-//            var userDetails = (MyUserDetails) authentication.getPrincipal();
-//            return ResponseEntity.ok().body(userDetails.getUser());
-//        }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {

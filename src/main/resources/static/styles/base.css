@@ -168,3 +168,31 @@ main {
     margin-right: auto;
     padding-top: 60px;
 }
+
+/*ОТЗЫВЫ*/
+
+.review {
+    padding: 10px;
+    margin-top: 10px;
+    background-color: var(--bg-opacity);
+    border-radius: 10px;
+}
+
+.review-user {
+    color: var(--text-color);
+    text-decoration: none;
+    height: 50px;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+}
+
+.review-username {
+    margin-left: 10px;
+}
+
+.review-user-profile-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+}

@@ -11,11 +11,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
-import ru.softdepot.core.dao.*;
+import ru.softdepot.core.dao.CategoryDAO;
+import ru.softdepot.core.dao.DeveloperDAO;
+import ru.softdepot.core.dao.ProgramDAO;
+import ru.softdepot.core.dao.UserDAO;
 import ru.softdepot.core.models.Customer;
+import ru.softdepot.core.models.Program;
 import ru.softdepot.core.models.User;
 import ru.softdepot.messages.Message;
-import ru.softdepot.core.models.Program;
 
 @RestController
 @AllArgsConstructor
@@ -39,9 +42,21 @@ public class ProductsController {
                     )
             );
 
-        var program = programDAO.getById(id);
-        System.out.println(program.getFilesPath());
-        return ResponseEntity.ok().body(program);
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication != null && authentication.isAuthenticated()
+//                && !(authentication instanceof AnonymousAuthenticationToken)) {
+//            var userAuth = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+//            var user = userDAO.getByUserName(userAuth.getUsername());
+
+        var user = getCurrentUser();
+        if (user != null) {
+            if (user.getUserType() == User.Type.Customer) {
+                var program = programDAO.getById(id);
+                program.setInCart(programDAO.isInCart(program, (Customer) user));
+                return ResponseEntity.ok().body(program);
+            }
+        }
+        return ResponseEntity.ok().body(programDAO.getById(id));
     }
 
     @PatchMapping("/{id}")
@@ -173,14 +188,6 @@ public class ProductsController {
                         )
                 );
 
-
-//            int id = this.programDAO.add(program);
-//            Program programResult = this.programDAO.getById(id);
-//            return ResponseEntity
-//                    .created(uriComponentsBuilder
-//                            .replacePath("/softdepot-api/products/{id}")
-//                            .build(Map.of("id", id)))
-//                    .body(programResult);
             programDAO.add(program);
             return ResponseEntity.ok().build();
         }
@@ -188,26 +195,31 @@ public class ProductsController {
 
     @GetMapping
     public ResponseEntity<?> getPrograms() {
+        var user = getCurrentUser();
+        if (user != null) {
+            if (user.getUserType() == User.Type.Customer) {
+                var allPrograms = programDAO.getAll();
+
+                for (int i = 0; i < allPrograms.size(); i++) {
+                    var program = allPrograms.get(i);
+                    program.setInCart(programDAO.isInCart(program, (Customer) user));
+                    allPrograms.set(i, program);
+                }
+
+                return ResponseEntity.ok().body(allPrograms);
+            }
+        }
+        return ResponseEntity.ok().body(programDAO.getAll());
+    }
+
+    private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {
             var userAuth = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
             var user = userDAO.getByUserName(userAuth.getUsername());
-
-            var allPrograms = programDAO.getAll();
-
-            if (user.getUserType() == User.Type.Customer) {
-                for (int i = 0; i < allPrograms.size(); i++) {
-                    var program = allPrograms.get(i);
-
-                    var inCart = programDAO.isInCart(program, (Customer) user);
-                    program.setInCart(inCart);
-                    allPrograms.set(i, program);
-                }
-            }
-            return ResponseEntity.ok().body(allPrograms);
-        } else {
-            return ResponseEntity.ok().body(programDAO.getAll());
+            return user;
         }
+        return null;
     }
 }
