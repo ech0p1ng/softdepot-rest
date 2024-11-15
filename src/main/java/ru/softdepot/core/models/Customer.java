@@ -73,15 +73,14 @@ public class Customer extends User {
     }
 
     public String getProfileImgUrl() {
+        if (profileImgUrl == null) {
+            return User.profileImgPlaceholderUrl;
+        }
         return profileImgUrl;
     }
 
     public void setProfileImgUrl(String profileImgUrl) {
-        if (profileImgUrl == null) {
-            this.profileImgUrl = "/styles/images/profile-white.png";
-        } else {
-            this.profileImgUrl = profileImgUrl;
-        }
+        this.profileImgUrl = profileImgUrl;
     }
 
     public Type getType() {

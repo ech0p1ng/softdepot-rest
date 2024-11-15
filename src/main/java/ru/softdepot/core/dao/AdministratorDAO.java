@@ -117,12 +117,12 @@ public class AdministratorDAO implements DAO<Administrator> {
         return admin;
     }
 
-    public Administrator getByEmailAndPassword(String email, String password) throws Exception {
+    public Administrator getByNameAndPassword(String email, String password) throws Exception {
         Administrator admin = null;
 
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "SELECT * FROM administrator WHERE email=? AND password=?"
+                    "SELECT * FROM administrator WHERE administrator_name=? AND password=?"
             );
             statement.setString(1, email);
             statement.setString(2, password);

@@ -218,12 +218,12 @@ public class CustomerDAO implements DAO<Customer> {
         return customers;
     }
 
-    public Customer getByEmailAndPassword(String email, String password) throws Exception {
+    public Customer getByNameAndPassword(String email, String password) throws Exception {
         Customer customer = null;
 
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "SELECT * FROM customer WHERE email=? AND password=?"
+                    "SELECT * FROM customer WHERE customer_name=? AND password=?"
             );
             statement.setString(1, email);
             statement.setString(2, password);

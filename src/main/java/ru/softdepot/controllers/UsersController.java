@@ -21,6 +21,7 @@ import ru.softdepot.config.MyUserDetails;
 import ru.softdepot.messages.Message;
 import ru.softdepot.core.dao.UserDAO;
 import ru.softdepot.core.models.User;
+import ru.softdepot.requestBodies.RegistrationRequestBody;
 import ru.softdepot.requestBodies.SignInRequestBody;
 
 @RestController
@@ -33,43 +34,32 @@ public class UsersController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/new")
-    public ResponseEntity<?> newUser(@Valid @RequestBody User user,
+    public ResponseEntity<?> newUser(@Valid @RequestBody RegistrationRequestBody body,
                                      BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            StringBuilder message = new StringBuilder();
-
-            if (userDAO.existsByName(user.getName())) {
-                message.append(
-                        Message.build(
-                                Message.Entity.USER,
-                                Message.Identifier.NAME,
-                                user.getName(),
-                                Message.Status.ALREADY_EXISTS
-                        ));
-            }
-
-            if (userDAO.existsByName(user.getName())) {
-                if (!message.isEmpty()) message.append("\n");
-                message.append(
-                        Message.build(
-                                Message.Entity.USER,
-                                Message.Identifier.NAME,
-                                user.getName(),
-                                Message.Status.ALREADY_EXISTS
-                        ));
-            }
-
-            if (!message.isEmpty()) {
+            if (userDAO.existsByName(body.getName())) {
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT,
-                        message.toString()
+                        Message.build(
+                                Message.Entity.USER,
+                                Message.Identifier.NAME,
+                                body.getName(),
+                                Message.Status.ALREADY_EXISTS
+                        )
                 );
             }
 
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            User user = new User(
+                    body.getName(),
+                    null,
+                    null,
+                    body.getUserType()
+            );
+
+            user.setPassword(passwordEncoder.encode(body.getPassword()));
             userDAO.add(user);
 
             return ResponseEntity.ok().build();
@@ -137,10 +127,9 @@ public class UsersController {
         if (authentication != null && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {
             var userAuth = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
-            var user =  userDAO.getByUserName(userAuth.getUsername());
+            var user = userDAO.getByUserName(userAuth.getUsername());
             return ResponseEntity.ok().body(user);
-        }
-        else {
+        } else {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     "Вы не авторизованы"

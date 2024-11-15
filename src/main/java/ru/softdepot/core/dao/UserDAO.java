@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.softdepot.config.MyUserDetails;
 import ru.softdepot.core.models.Administrator;
 import ru.softdepot.core.models.Customer;
 import ru.softdepot.core.models.Developer;
@@ -41,6 +40,7 @@ public class UserDAO implements DAO<User>, UserDetailsService {
 
     @Override
     public int add(User user) throws Exception {
+
         return switch (user.getUserType()) {
             case Customer -> customerDAO.add(new Customer(user));
             case Developer -> developerDAO.add(new Developer(user));
@@ -159,19 +159,19 @@ public class UserDAO implements DAO<User>, UserDetailsService {
     public User getByUserName(String userName) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT email, password FROM customer WHERE customer_name=? " +
+                    "SELECT password FROM customer WHERE customer_name=? " +
                             "UNION " +
-                            "SELECT email, password FROM developer WHERE developer_name=? " +
+                            "SELECT password FROM developer WHERE developer_name=? " +
                             "UNION " +
-                            "SELECT email, password FROM administrator WHERE administrator_name=?"
+                            "SELECT password FROM administrator WHERE administrator_name=?"
             );
             preparedStatement.setString(1, userName);
             preparedStatement.setString(2, userName);
             preparedStatement.setString(3, userName);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                return getByEmailAndPassword(
-                        resultSet.getString("email"),
+                return getByNameAndPassword(
+                        userName,
                         resultSet.getString("password")
                 );
             }
@@ -181,12 +181,12 @@ public class UserDAO implements DAO<User>, UserDetailsService {
         return null;
     }
 
-    public User getByEmailAndPassword(String email, String password) throws Exception {
-        var customer = customerDAO.getByEmailAndPassword(email, password);
+    public User getByNameAndPassword(String name, String password) throws Exception {
+        var customer = customerDAO.getByNameAndPassword(name, password);
         if (customer != null) return customer;
-        var developer = developerDAO.getByEmailAndPassword(email, password);
+        var developer = developerDAO.getByNameAndPassword(name, password);
         if (developer != null) return developer;
-        var administrator = administratorDAO.getByEmailAndPassword(email, password);
+        var administrator = administratorDAO.getByNameAndPassword(name, password);
         if (administrator != null) return administrator;
         return null;
     }

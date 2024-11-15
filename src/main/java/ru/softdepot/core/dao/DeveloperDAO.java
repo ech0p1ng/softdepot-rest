@@ -2,7 +2,6 @@ package ru.softdepot.core.dao;
 
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import ru.softdepot.core.models.DailyStats;
 import ru.softdepot.core.models.Developer;
 import ru.softdepot.core.models.Program;
@@ -124,12 +123,12 @@ public class DeveloperDAO implements DAO<Developer> {
         return developer;
     }
 
-    public Developer getByEmailAndPassword(String email, String password) throws Exception {
+    public Developer getByNameAndPassword(String email, String password) throws Exception {
         Developer developer = null;
 
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "SELECT * FROM developer WHERE email=? AND password=?"
+                    "SELECT * FROM developer WHERE developer_name=? AND password=?"
             );
             statement.setString(1, email);
             statement.setString(2, password);

@@ -15,7 +15,7 @@ public class Developer extends User {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.profileImgUrl = profileImgUrl;
+        setProfileImgUrl(profileImgUrl);
         this.pageUrl = super.getPageUrl();
     }
 
@@ -26,7 +26,7 @@ public class Developer extends User {
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.type = user.getUserType();
-        this.profileImgUrl = "";
+        setProfileImgUrl(null);
         this.pageUrl = super.getPageUrl();
     }
 
@@ -64,11 +64,15 @@ public class Developer extends User {
         return profileImgUrl;
     }
 
-    public void setProfileImgUrl(String profileImgUrl) {
-        this.profileImgUrl = profileImgUrl;
-    }
-
     public Type getType() {
         return type;
+    }
+
+    public void setProfileImgUrl(String profileImgUrl) {
+        if (profileImgUrl == null) {
+            this.profileImgUrl = User.profileImgPlaceholderUrl;
+        } else {
+            this.profileImgUrl = profileImgUrl;
+        }
     }
 }

@@ -9,11 +9,14 @@ public class User {
         Customer,
         Developer,
         Administrator
-    }
+        }
+
+    public static final String profileImgPlaceholderUrl ="/styles/images/profile-white.png";
+
     private int id;
 
-//    @Email(message = "Некорректный email")
-//    @NotBlank(message = "Введите email")
+    //    @Email(message = "Некорректный email")
+    //    @NotBlank(message = "Введите email")
     private String email;
 
     @NotBlank(message = "Введите имя")
@@ -27,6 +30,7 @@ public class User {
     private String pageUrl;
 
     private Type userType;
+
 
     public User(int id, String email, String password, String name, Type userType) {
         this.email = email;
