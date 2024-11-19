@@ -1,3 +1,21 @@
+let STAR_FILL = null;
+let STAR_OUTLINE = null;
+
+window.addEventListener('load', function () {
+    fetch('/styles/svg/star-fill.svg')
+        .then(response => response.text())
+        .then(data => {
+            STAR_FILL = data;
+            console.log(STAR_FILL);
+        });
+    fetch('/styles/svg/star-outline.svg')
+        .then(response => response.text())
+        .then(data => {
+            STAR_OUTLINE = data;
+            console.log(STAR_OUTLINE);
+        });
+});
+
 class Review {
     constructor(response) {
         this.id = response.id;
@@ -15,12 +33,22 @@ class Review {
             '        <span class="review-username">' + this.customer.name + '</span>' +
             '    </a>' +
             '    <br />' +
-            '    <span class="review-estimation" style="color: ' + Program.getScoreColor(this.estimation) + '">' + this.estimation + ' / 5</span>' +
-            '    <br />' +
+            '    <div class="review-estimation" style="color: ' + Program.getScoreColor(this.estimation) + '"></div>' +
             '    <br />' +
             '    <span class="review-text">' + this.reviewText + '</span>' +
             '</div>'
         );
+
+        for (let i = 0; i < this.estimation; i++) {
+            this.reviewRow
+                .find(".review-estimation")
+                .append(STAR_FILL);
+        }
+        for (let i = 0; i < 5 - this.estimation; i++) {
+            this.reviewRow
+                .find(".review-estimation")
+                .append(STAR_OUTLINE);
+        }
     }
 
     getReviewRow() {

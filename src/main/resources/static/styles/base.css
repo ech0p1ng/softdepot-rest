@@ -196,3 +196,9 @@ main {
     height: 50px;
     border-radius: 25px;
 }
+
+.review-estimation {
+    display: flex;
+    height: 25px;
+    width: 125px;
+}
