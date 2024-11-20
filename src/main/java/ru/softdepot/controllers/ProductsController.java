@@ -11,10 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
-import ru.softdepot.core.dao.CategoryDAO;
-import ru.softdepot.core.dao.DeveloperDAO;
-import ru.softdepot.core.dao.ProgramDAO;
-import ru.softdepot.core.dao.UserDAO;
+import ru.softdepot.core.dao.*;
 import ru.softdepot.core.models.Customer;
 import ru.softdepot.core.models.Program;
 import ru.softdepot.core.models.User;
@@ -28,6 +25,8 @@ public class ProductsController {
     private final DeveloperDAO developerDAO;
     private final CategoryDAO categoryDAO;
     private final UserDAO userDAO;
+    private final CustomerDAO customerDAO;
+    private final ReviewDAO reviewDAO;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findProgram(@PathVariable("id") int id) throws Exception {
@@ -51,8 +50,19 @@ public class ProductsController {
         var user = getCurrentUser();
         if (user != null) {
             if (user.getUserType() == User.Type.Customer) {
+                //Проверка корзины
                 var program = programDAO.getById(id);
-                program.setInCart(programDAO.isInCart(program, (Customer) user));
+                program.setIsInCart(programDAO.isInCart(program, (Customer) user));
+
+                //Проверка отзыва
+                try {
+                    var review = customerDAO.getReview((Customer) user, program);
+                    program.setHasReview(review != null);
+                } catch (Exception e) {
+                }
+
+                //Проверка приобретения программы
+                program.setIsPurchased(customerDAO.hasPurchasedProgram((Customer) user, program));
                 return ResponseEntity.ok().body(program);
             }
         }
@@ -202,7 +212,7 @@ public class ProductsController {
 
                 for (int i = 0; i < allPrograms.size(); i++) {
                     var program = allPrograms.get(i);
-                    program.setInCart(programDAO.isInCart(program, (Customer) user));
+                    program.setIsInCart(programDAO.isInCart(program, (Customer) user));
                     allPrograms.set(i, program);
                 }
 

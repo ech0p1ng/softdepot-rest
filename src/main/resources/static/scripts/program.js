@@ -30,6 +30,10 @@ class Program {
         this.screenshotsUrl = data.screenshotsUrl;
         this.priceAsString = data.priceAsString;
         this.pageUrl = data.pageUrl;
+        this.isInCart = data.isInCart;
+        this.hasReview = data.hasReview;
+        this.isPurchased = data.isPurchased;
+
 
         //Строка в каталоге
         this.gameRowCatalogue = $(

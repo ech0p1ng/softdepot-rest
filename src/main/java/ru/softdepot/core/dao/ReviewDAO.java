@@ -54,8 +54,7 @@ public class ReviewDAO implements DAO<Review> {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             String msg = String.format("Review of customer [id=%d] already exists",
                     review.getCustomer());
             throw new Exception(msg);
@@ -130,39 +129,27 @@ public class ReviewDAO implements DAO<Review> {
     public Review get(int customerId, int programId) throws Exception {
         Review review = null;
 
-        try {
-            PreparedStatement statement = connection.prepareStatement(
+        PreparedStatement statement = connection.prepareStatement(
                 "SELECT * FROM review WHERE customer_id=? AND program_id=?"
-            );
-            statement.setInt(1, customerId);
-            statement.setInt(2, programId);
-            ResultSet resultSet = statement.executeQuery();
+        );
+        statement.setInt(1, customerId);
+        statement.setInt(2, programId);
+        ResultSet resultSet = statement.executeQuery();
 
 
+        if (resultSet.next()) {
+            var customer = customerDAO.getById(customerId);
+            var program = programDAO.getById(programId);
 
-            if (resultSet.next()) {
-                var customer = customerDAO.getById(customerId);
-                var program = programDAO.getById(programId);
-
-                review = new Review(
+            review = new Review(
                     resultSet.getInt("id"),
-                        customer,
-                        program,
-                        resultSet.getInt("estimation"),
-                        resultSet.getString("review_text"),
-                        DataBase.convertToDateTime(resultSet.getTimestamp("date_time"))
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+                    customer,
+                    program,
+                    resultSet.getInt("estimation"),
+                    resultSet.getString("review_text"),
+                    DataBase.convertToDateTime(resultSet.getTimestamp("date_time"))
+            );
         }
-
-        if (review == null) {
-            String msg  = String.format("Сustomer [id=%d] review about the program [id=%d] does not exist.",
-                    customerId, programId);
-            throw new Exception(msg);
-        }
-
         return review;
     }
 

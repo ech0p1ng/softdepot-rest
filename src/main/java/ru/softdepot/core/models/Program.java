@@ -1,14 +1,10 @@
 package ru.softdepot.core.models;
 
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import ru.softdepot.config.AppConfig;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +18,6 @@ public class Program {
     private int developerId;
     private String shortDescription;
     private List<Category> categories;
-    private boolean inCart = false;
 
     private float averageEstimation;
     private String filesPath;
@@ -35,6 +30,10 @@ public class Program {
     private List<MultipartFile> screenshots;
     private MultipartFile logo;
     private String headerUrl;
+
+    private boolean isInCart = false;
+    private boolean hasReview = false;
+    private boolean isPurchased = false;
 
     private String pageUrl;
 
@@ -319,11 +318,27 @@ public class Program {
         return headerUrl;
     }
 
-    public boolean isInCart() {
-        return inCart;
+    public boolean getIsInCart() {
+        return isInCart;
     }
 
-    public void setInCart(boolean inCart) {
-        this.inCart = inCart;
+    public void setIsInCart(boolean isInCart) {
+        this.isInCart = isInCart;
+    }
+
+    public boolean getIsPurchased() {
+        return isPurchased;
+    }
+
+    public void setIsPurchased(boolean isPurchased) {
+        this.isPurchased = isPurchased;
+    }
+
+    public boolean getHasReview() {
+        return hasReview;
+    }
+
+    public void setHasReview(boolean hasReview) {
+        this.hasReview = hasReview;
     }
 }
