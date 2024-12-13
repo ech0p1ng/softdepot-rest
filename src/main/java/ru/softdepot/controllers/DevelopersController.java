@@ -34,6 +34,7 @@ public class DevelopersController {
         }
 
         var developer = developerDAO.getById(id);
+        developer.setPassword(null);
         return ResponseEntity.ok().body(developer);
     }
 

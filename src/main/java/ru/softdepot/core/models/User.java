@@ -89,6 +89,6 @@ public class User {
     }
 
     public String getPageUrl() {
-        return "/" + userType.name().toLowerCase() + "/" + id;
+        return "/" + userType.name().toLowerCase() + "s/" + id;
     }
 }

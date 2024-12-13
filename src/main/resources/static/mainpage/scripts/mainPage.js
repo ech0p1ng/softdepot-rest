@@ -1,8 +1,6 @@
 window.addEventListener("load", function () {
     addHeader(true, true);
 
-
-
     $.ajax({
         method: "GET",
         url: BACKEND_URL + "softdepot-api/products",

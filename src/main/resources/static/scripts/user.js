@@ -41,6 +41,15 @@ class User {
             }
         });
     }
+
+    setPage() {
+        $("#page-title").html("Soft Depot - " + this.name);
+
+
+        if (this.type === "Developer") {
+
+        }
+    }
 }
 
 window.addEventListener("load", User.loadUserData);

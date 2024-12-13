@@ -43,4 +43,9 @@ public class HtmlPagesController {
 
         return "/user/auth/sign_in/index.html";
     }
+
+    @GetMapping("/developers/{developerId}")
+    public String developerPage(@PathVariable("developerId") String developerId) {
+        return "/user/dev/index.html";
+    }
 }

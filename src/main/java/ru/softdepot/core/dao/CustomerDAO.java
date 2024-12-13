@@ -158,7 +158,8 @@ public class CustomerDAO implements DAO<Customer> {
                         resultSet.getInt("id"),
                         resultSet.getString("customer_name"),
                         resultSet.getString("email"),
-                        resultSet.getString("password"),
+                        //resultSet.getString("password"),
+                        null,
                         resultSet.getString("profile_img_url"),
                         resultSet.getBigDecimal("balance")
                 ));

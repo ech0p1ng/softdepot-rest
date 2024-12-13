@@ -86,7 +86,9 @@ public class CustomersController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCustomer(@PathVariable("id") int id) throws Exception {
-        return ResponseEntity.ok().body(customerDAO.getById(id));
+        var customer = customerDAO.getById(id);
+        customer.setPassword(null);
+        return ResponseEntity.ok().body(customer);
     }
 
     @GetMapping

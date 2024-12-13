@@ -17,11 +17,10 @@ function addHeader(addSearchForm, addProfileButton) {
 
     if (addSearchForm) {
         header.prepend(
-            '    <!-- форма поиска -->' +
-            '    <form method="get" id="search-form">' +
-            '        <div class="loupe"></div>' +
-            '        <input id="search" placeholder="Поиск..."/>' +
-            '    </form>'
+            '<form method="get" id="search-form">' +
+            '    <div class="loupe"></div>' +
+            '    <input id="search" placeholder="Поиск..."/>' +
+            '</form>'
         );
     }
 

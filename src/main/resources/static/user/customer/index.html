@@ -1,100 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/default/styles/base.css" />
-        <link id="color-scheme" rel="stylesheet" href="/default/styles/dark.css" />
-        <link rel="stylesheet" href="/default/cart/styles/cart.css" />
-        <!-- <link rel="stylesheet" href="styles/dark.css" /> -->
-        <title>Soft Depot</title>
-    </head>
-    <body>
-        <header>
-            <!-- форма поиска -->
-<!--            <form method="get" id="search-form">-->
-<!--                <div class="loupe"></div>-->
-<!--                <input id="search" placeholder="Поиск..." />-->
-<!--            </form>-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles/base.css" />
+    <link rel="stylesheet" href="/program/styles/index.css" />
+    <link rel="stylesheet" href="/cart/styles/cart.css" />
+    <link id="color-scheme" rel="stylesheet" href="/styles/dark.css" />
+    <title id="page-title">Soft Depot - DEVELOPER_NAME</title>
+</head>
+<body>
+<main>
+</main>
+</body>
 
-            <div class="header-buttons">
-                <!-- Кнопка "Домой" -->
-                <a id="main-button" class="button" th:href="@{/}">
-                    <div class="logo"></div>
-                    <span class="store-name" title="Главная страница">SOFT DEPOT</span>
-                </a>
-
-                <div class="right-buttons-panel">
-                    <!-- Тема -->
-                    <button class="change-theme button" title="Сменить тему" onclick="change_theme()"></button>
-
-                    <!-- Корзина -->
-                    <button class="shopping-basket button" title="Корзина" onclick="Cart.show()"></button>
-
-                    <!-- Выход -->
-                    <a class="profile-exit-button button" title="Выход" th:href="@{/log-out}"></a>
-                </div>
-            </div>
-        </header>
-        <main>
-<!--            Приобретенные программы-->
-            <div id="games-list">
-                <div class="game-row" style="z-index: 1;" th:each="program : ${purchasedPrograms}">
-                    <img class="preview" th:src="${program.getHeaderUrl()}">
-                    <a th:href="@{/program/id{id}(id=${program.getId()})}" target="_blank" class="description">
-                        <div>
-                            <span class="name" th:text="${program.getName()}">GAME_NAME</span>
-                            <br>
-                            <span class="tags">GAME_TAGS</span>
-                        </div>
-                        <span class="score" title="Оценка пользователей" th:text="${program.getAverageEstimation()}">GAME_ESTIMATION</span>
-                    </a>
-                    <div class="price-and-buy">
-                        <span class="price">
-                            <span th:text="${program.getPriceAsString()}">GAME_PRICE</span>
-                        </span>
-                        <button class="add-to-cart" style="z-index: 2;">
-                            <span>Добавить в корзину</span>
-                        </button>
-                    </div>
-                </div>
-
-
-            </div>
-            <!-- Корзина -->
-            <div id="cart-bg">
-                <div id="cart-opened">
-                    <div id="cart-header">
-                        <span id="cart-title">Корзина</span>
-                        <button id="cart-exit-button" class="exit-button button close-button"></button>
-                    </div>
-                    <div id="cart-games-list" th:each="program : ${programsInCart}">
-                        <div class="cart-game-row">
-                            <img class="preview" src="games/BeamNG_drive/images/header.jpg" />
-                            <a class="cart-game-description" href="games/BeamNG_drive/index.html">
-                                <span class="cart-game-title">BeamNG.drive</span>
-                            </a>
-                            <div class="cart-game-price">
-                                <span class="cart-game-price-title">400 руб.</span>
-                                <button class="cart-game-remove button">x</button>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div id="cart-total-title">
-                        <span>Итого</span>
-                        <span id="total-cost">0 руб.</span>
-                    </div>
-                </div>
-            </div>
-        </main>
-<!--        <footer>-->
-<!--            <span>Лабораторная работа №3 студента группы 21ПИнж(б)РПиС Петрова Алексея<br />5.04.2024</span>-->
-<!--        </footer>-->
-    </body>
-
-    <script src="/default/scripts/jquery-3.7.1.min.js"></script>
-    <script src="/default/cart/scripts/cart.js"></script>
-    <script src="/default/scripts/theme.js"></script>
-    <script src="/default/scripts/game-highlights.js"></script>
+<script src="/scripts/jquery-3.7.1.min.js"></script>
+<script src="/scripts/main.js"></script>
+<script src="/scripts/program.js"></script>
+<script src="/scripts/user.js"></script>
+<script src="/scripts/theme.js"></script>
+<script src="/cart/scripts/cart.js"></script>
+<script src="/scripts/cookies.js"></script>
+<script src="/user/dev/scripts/loadcontent.js"></script>
 </html>
