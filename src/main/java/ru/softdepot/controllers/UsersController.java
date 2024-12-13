@@ -28,10 +28,10 @@ import ru.softdepot.requestBodies.SignInRequestBody;
 @RequestMapping("softdepot-api/users")
 @AllArgsConstructor
 public class UsersController {
-    private final UserDAO userDAO;
-    private final AuthenticationManager authenticationManager;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private static UserDAO userDAO;
+    private static AuthenticationManager authenticationManager;
+    private static PasswordEncoder passwordEncoder;
+    private static JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/new")
     public ResponseEntity<?> newUser(@Valid @RequestBody RegistrationRequestBody body,
@@ -135,5 +135,16 @@ public class UsersController {
                     "Вы не авторизованы"
             );
         }
+    }
+
+    public static User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            var userAuth = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+            var user = userDAO.getByUserName(userAuth.getUsername());
+            return user;
+        }
+        return null;
     }
 }

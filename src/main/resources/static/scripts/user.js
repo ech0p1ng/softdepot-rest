@@ -44,6 +44,42 @@ class User {
 
     setPage() {
         $("#page-title").html("Soft Depot - " + this.name);
+        $(".avatar").attr("src", this.profileImgUrl);
+        $(".user-name").html(this.name);
+
+        var roleStr = "USER_ROLE";
+
+        switch (this.userType) {
+            case "Administrator": {
+                roleStr = "Администратор";
+                $(".user-role").html(roleStr);
+                break;
+            }
+            case "Developer": {
+                roleStr = "Разработчик";
+                $(".user-role").html(roleStr);
+                $.ajax({
+                    method: "GET",
+                    url: BACKEND_URL + "softdepot-api/products?developerId=" + this.id,
+                    dataType: "json",
+                    success: function (response) {
+                        response.forEach((element) => {
+                            var program = new Program(element);
+                            $("#developers-programs-list").append(program.getGameRowPreview());
+                        });
+                    },
+                    error: function(xhr,status,error) {
+
+                    }
+                });
+                break;
+            }
+            case "Customer": {
+                roleStr = "Покупатель";
+                $(".user-role").html(roleStr);
+                break;
+            }
+        }
 
 
         if (this.type === "Developer") {

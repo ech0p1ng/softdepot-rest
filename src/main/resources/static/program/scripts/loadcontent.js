@@ -16,7 +16,7 @@ window.addEventListener("load", function () {
             Program.catalogue.push(program);
         },
         error: function (error) {
-            window.location.href="/";
+            // window.location.href="/";
         }
     });
 });

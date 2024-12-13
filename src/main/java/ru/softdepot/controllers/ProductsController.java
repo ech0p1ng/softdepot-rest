@@ -17,6 +17,8 @@ import ru.softdepot.core.models.Program;
 import ru.softdepot.core.models.User;
 import ru.softdepot.messages.Message;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("softdepot-api/products")
@@ -41,13 +43,7 @@ public class ProductsController {
                     )
             );
 
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication != null && authentication.isAuthenticated()
-//                && !(authentication instanceof AnonymousAuthenticationToken)) {
-//            var userAuth = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
-//            var user = userDAO.getByUserName(userAuth.getUsername());
-
-        var user = getCurrentUser();
+        var user = UsersController.getCurrentUser();
         if (user != null) {
             if (user.getUserType() == User.Type.Customer) {
                 //Проверка корзины
@@ -204,11 +200,25 @@ public class ProductsController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getPrograms() {
-        var user = getCurrentUser();
+    public ResponseEntity<?> getPrograms(
+            @RequestParam(name = "developerId", required = false) String developerId) {
+
+        var user = UsersController.getCurrentUser();
         if (user != null) {
             if (user.getUserType() == User.Type.Customer) {
-                var allPrograms = programDAO.getAll();
+                List<Program> allPrograms;
+
+                if (developerId != null) {
+                    int devId = Integer.parseInt(developerId);
+                    try {
+                        allPrograms = developerDAO.getPrograms(devId);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    allPrograms = programDAO.getAll();
+                }
+
 
                 for (int i = 0; i < allPrograms.size(); i++) {
                     var program = allPrograms.get(i);
@@ -220,16 +230,5 @@ public class ProductsController {
             }
         }
         return ResponseEntity.ok().body(programDAO.getAll());
-    }
-
-    private User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()
-                && !(authentication instanceof AnonymousAuthenticationToken)) {
-            var userAuth = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
-            var user = userDAO.getByUserName(userAuth.getUsername());
-            return user;
-        }
-        return null;
     }
 }
