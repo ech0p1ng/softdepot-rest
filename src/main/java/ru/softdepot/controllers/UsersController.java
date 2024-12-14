@@ -28,10 +28,10 @@ import ru.softdepot.requestBodies.SignInRequestBody;
 @RequestMapping("softdepot-api/users")
 @AllArgsConstructor
 public class UsersController {
-    private static UserDAO userDAO;
-    private static AuthenticationManager authenticationManager;
-    private static PasswordEncoder passwordEncoder;
-    private static JwtTokenProvider jwtTokenProvider;
+    private UserDAO userDAO;
+    private AuthenticationManager authenticationManager;
+    private PasswordEncoder passwordEncoder;
+    private JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/new")
     public ResponseEntity<?> newUser(@Valid @RequestBody RegistrationRequestBody body,
@@ -137,7 +137,7 @@ public class UsersController {
         }
     }
 
-    public static User getCurrentUser() {
+    public static User getCurrentUser(UserDAO userDAO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {

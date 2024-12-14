@@ -11,6 +11,8 @@ import ru.softdepot.messages.Message;
 import ru.softdepot.core.dao.CustomerDAO;
 import ru.softdepot.core.models.Customer;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("softdepot-api/customers")
 @AllArgsConstructor
@@ -93,6 +95,7 @@ public class CustomersController {
 
     @GetMapping
     public ResponseEntity<?> getAllCustomers() {
-        return ResponseEntity.ok().body(customerDAO.getAll());
+        List<Customer> list = customerDAO.getAll();
+        return ResponseEntity.ok().body(list);
     }
 }

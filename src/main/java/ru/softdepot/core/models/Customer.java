@@ -72,15 +72,28 @@ public class Customer extends User {
         this.balance = balance;
     }
 
-    public String getProfileImgUrl() {
-        if (profileImgUrl == null) {
-            return User.profileImgPlaceholderUrl;
+    /**
+     * @param returnPlaceholder если у пользователя нет собственного аватара, то возвращается адрес плейсхолдера
+     * @return
+     */
+    public String getProfileImgUrl(boolean returnPlaceholder) {
+        if (this.profileImgUrl == User.profileImgPlaceholderUrl && !returnPlaceholder) {
+            return null;
+        } else {
+            return this.profileImgUrl;
         }
+    }
+
+    public String getProfileImgUrl() {
         return profileImgUrl;
     }
 
     public void setProfileImgUrl(String profileImgUrl) {
-        this.profileImgUrl = profileImgUrl;
+        if (profileImgUrl == null) {
+            this.profileImgUrl = User.profileImgPlaceholderUrl;
+        } else {
+            this.profileImgUrl = profileImgUrl;
+        }
     }
 
     public Type getType() {

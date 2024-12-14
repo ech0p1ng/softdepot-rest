@@ -35,7 +35,7 @@ public class DeveloperDAO implements DAO<Developer> {
 
     @Override
     public int add(Developer developer) throws Exception {
-        if (!exists(developer.getEmail())) {
+        if (!exists(developer.getName())) {
             try {
                 PreparedStatement statment = connection.prepareStatement(
                         "INSERT INTO developer (developer_name, email, password, profile_img_url) " +
@@ -45,7 +45,7 @@ public class DeveloperDAO implements DAO<Developer> {
                 statment.setString(1, developer.getName());
                 statment.setString(2, developer.getEmail());
                 statment.setString(3, developer.getPassword());
-                statment.setString(4, developer.getProfileImgUrl());
+                statment.setString(4, developer.getProfileImgUrl(false));
 
                 ResultSet resultSet = statment.executeQuery();
                 if (resultSet.next()) {
@@ -72,7 +72,7 @@ public class DeveloperDAO implements DAO<Developer> {
             statement.setString(1, developer.getName());
             statement.setString(2, developer.getEmail());
             statement.setString(3, developer.getPassword());
-            statement.setString(4, developer.getProfileImgUrl());
+            statement.setString(4, developer.getProfileImgUrl(false));
             statement.setInt(5, developer.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -236,14 +236,14 @@ public class DeveloperDAO implements DAO<Developer> {
         return stats;
     }
 
-    public boolean exists(String email) {
+    public boolean exists(String name) {
         boolean exists = false;
 
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "SELECT * FROM developer WHERE email=?"
+                    "SELECT * FROM developer WHERE developer_name=?"
             );
-            statement.setString(1, email);
+            statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 exists = true;

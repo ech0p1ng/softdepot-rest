@@ -30,7 +30,8 @@ public class Developer extends User {
         this.pageUrl = super.getPageUrl();
     }
 
-    public Developer() {}
+    public Developer() {
+    }
 
     public int getId() {
         return id;
@@ -60,12 +61,16 @@ public class Developer extends User {
         this.password = password;
     }
 
-    public String getProfileImgUrl() {
-        return profileImgUrl;
-    }
-
-    public Type getType() {
-        return type;
+    /**
+     * @param returnPlaceholder если у пользователя нет собственного аватара, то возвращается адрес плейсхолдера
+     * @return
+     */
+    public String getProfileImgUrl(boolean returnPlaceholder) {
+        if (this.profileImgUrl == User.profileImgPlaceholderUrl && !returnPlaceholder) {
+            return null;
+        } else {
+            return this.profileImgUrl;
+        }
     }
 
     public void setProfileImgUrl(String profileImgUrl) {
@@ -74,5 +79,9 @@ public class Developer extends User {
         } else {
             this.profileImgUrl = profileImgUrl;
         }
+    }
+
+    public Type getType() {
+        return type;
     }
 }

@@ -48,7 +48,7 @@ public class CustomerDAO implements DAO<Customer> {
             statement.setString(1, customer.getName());
             statement.setString(2, customer.getEmail());
             statement.setString(3, customer.getPassword());
-            statement.setString(4, customer.getProfileImgUrl());
+            statement.setString(4, customer.getProfileImgUrl(false));
             statement.setBigDecimal(5, customer.getBalance());
 
             ResultSet resultSet = statement.executeQuery();
@@ -72,7 +72,7 @@ public class CustomerDAO implements DAO<Customer> {
             statement.setString(1, customer.getName());
             statement.setString(2, customer.getEmail());
             statement.setString(3, customer.getPassword());
-            statement.setString(4, customer.getProfileImgUrl());
+            statement.setString(4, customer.getProfileImgUrl(false));
             statement.setBigDecimal(5, customer.getBalance());
             statement.setInt(6, customer.getId());
             statement.executeUpdate();
@@ -213,7 +213,7 @@ public class CustomerDAO implements DAO<Customer> {
             e.printStackTrace();
         }
         if (customers.size() == 0) {
-            String msg  = String.format("Customer with [name=%d] does not exist.", name);
+            String msg  = String.format("Customer with [name=%s] does not exist.", name);
             throw new Exception(msg);
         }
         return customers;

@@ -15,9 +15,8 @@ import java.sql.SQLException;
 
 @RestController
 @RequestMapping("softdepot-api/developers")
-@AllArgsConstructor
 public class DevelopersController {
-    private final DeveloperDAO developerDAO;
+    private final DeveloperDAO developerDAO = new DeveloperDAO();
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getDeveloperById(@PathVariable("id") int id) throws Exception {
@@ -46,7 +45,7 @@ public class DevelopersController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (developerDAO.exists(developer.getEmail())) {
+            if (developerDAO.exists(developer.getName())) {
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT,
                         Message.build(

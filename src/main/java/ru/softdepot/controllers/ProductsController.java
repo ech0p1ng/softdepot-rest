@@ -43,7 +43,7 @@ public class ProductsController {
                     )
             );
 
-        var user = UsersController.getCurrentUser();
+        var user = UsersController.getCurrentUser(userDAO);
         if (user != null) {
             if (user.getUserType() == User.Type.Customer) {
                 //Проверка корзины
@@ -203,7 +203,7 @@ public class ProductsController {
     public ResponseEntity<?> getPrograms(
             @RequestParam(name = "developerId", required = false) String developerId) {
 
-        var user = UsersController.getCurrentUser();
+        var user = UsersController.getCurrentUser(userDAO);
         if (user != null) {
             if (user.getUserType() == User.Type.Customer) {
                 List<Program> allPrograms;
