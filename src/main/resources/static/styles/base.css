@@ -23,13 +23,13 @@ body {
 header {
     height: 60px;
     width: 100%;
-    background-color: none;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     position: fixed;
     z-index: 2024;
     backdrop-filter: blur(10px); /* Размытие фона */
+    background: linear-gradient(to bottom, var(--bg-body), transparent);
 }
 
 #search-form {

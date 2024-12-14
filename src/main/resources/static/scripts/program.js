@@ -79,22 +79,25 @@ class Program {
 
     //Определение цвета оценки по числу (0 - красный, 5 - зеленый)
     static getScoreColor(score) {
-        let range = 512;
-        let r = 255;
-        let g = 0;
-        let b = 0;
-        let g1 = parseInt((range / 5) * parseFloat(score));
-        g += g1;
+        let range = 255 * 2;
 
-        if (g > 255) {
-            r -= g - 255;
-            g = 255;
+        let red = 255;
+        let green = 0;
+        let blue = 0;
+
+        let redRangeEnd = 2.2;
+
+        if (score > redRangeEnd) {
+            let position = (range / (5.0 - redRangeEnd) * (score - redRangeEnd));
+            green += position;
+
+            if (green > 255) {
+                red -= green - 255 + 1;
+                green = 255;
+            }
         }
-        r -= 64;
-        g -= 64;
-        b -= 64;
 
-        return "rgb(" + r + "," + g + "," + b + ")";
+        return "rgb(" + red + "," + green + "," + blue + ")";
     }
 
     setEventsForCatalogueRowButton() {
