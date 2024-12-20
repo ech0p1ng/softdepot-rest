@@ -2,7 +2,6 @@
 CREATE TABLE administrator
 (
     id                 SERIAL PRIMARY KEY,
-    email              varchar(50) UNIQUE,
     password           varchar(60) NOT NULL,
     administrator_name varchar(50) NOT NULL
 );
@@ -12,7 +11,6 @@ CREATE TABLE customer
 (
     id              SERIAL PRIMARY KEY,
     customer_name   varchar(50) NOT NULL,
-    email           varchar(50) UNIQUE,
     password        varchar(60) NOT NULL,
     profile_img_url varchar(200),
     balance         numeric(10, 2) CHECK (balance >= 0)
@@ -22,7 +20,6 @@ CREATE TABLE customer
 CREATE TABLE developer
 (
     id              SERIAL PRIMARY KEY,
-    email           varchar(50) UNIQUE,
     developer_name  varchar(50) NOT NULL,
     password        varchar(60) NOT NULL,
     profile_img_url varchar(200)
