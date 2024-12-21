@@ -58,6 +58,10 @@ class User {
             case "Developer": {
                 roleStr = "Разработчик";
                 $(".user-role").html(roleStr);
+                $("main").append('' +
+                    '<h1 id="developers-programs-header">Все программы</h1>' +
+                    '    <div id="developers-programs-list"></div>'
+                );
                 $.ajax({
                     method: "GET",
                     url: BACKEND_URL + "softdepot-api/products?developerId=" + this.id,
@@ -79,11 +83,6 @@ class User {
                 $(".user-role").html(roleStr);
                 break;
             }
-        }
-
-
-        if (this.type === "Developer") {
-
         }
     }
 }

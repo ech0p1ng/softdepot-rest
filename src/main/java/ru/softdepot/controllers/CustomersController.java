@@ -27,13 +27,13 @@ public class CustomersController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (customerDAO.exists(customer.getEmail())) {
+            if (customerDAO.exists(customer.getName())) {
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT,
                         Message.build(
                                 Message.Entity.CUSTOMER,
-                                Message.Identifier.EMAIL,
-                                customer.getEmail(),
+                                Message.Identifier.NAME,
+                                customer.getName(),
                                 Message.Status.ALREADY_EXISTS
                         )
                 );

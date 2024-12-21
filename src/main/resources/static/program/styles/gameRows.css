@@ -14,7 +14,7 @@
 
 .game-row:hover {
     cursor: pointer;
-    background-color: var(--bg-no-opacity);
+/*    background-color: var(--bg-no-opacity);*/
 }
 
 .game-row .preview {
@@ -39,6 +39,19 @@
     font-weight: bold;
 }
 
+.cant-buy {
+    background-color: var(--bg-no-opacity);
+    border: none;
+    color: var(--text-bright-color);
+    border-radius: 10px;
+    transition: background-color 0.3s ease-in-out;
+    font-size: 14px;
+}
+
+.cant-buy:hover {
+    cursor: pointer;
+}
+
 .price-and-buy {
     align-items: center;
     display: flex;
@@ -51,10 +64,23 @@
     transition: border-color 0.3s ease-in-out;
 }
 
+.price-no-buy {
+    align-items: center;
+    display: flex;
+    /*flex-direction: column;*/
+    justify-content: center;
+    padding: 10px 10px 10px 10px;
+    border-radius: 0 10px 10px 0;
+    border-left: 1px solid var(--bg-opacity);
+    min-width: 130px;
+    transition: border-color 0.3s ease-in-out;
+}
+
+/*
 .game-row:hover .price-and-buy {
     border-left: 1px solid var(--border-color);
 }
-
+*/
 .score {
     min-width: 140px;
     height: 100%;

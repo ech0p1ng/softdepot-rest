@@ -5,18 +5,16 @@ import java.math.BigDecimal;
 public class Customer extends User {
     private int id;
     private String name;
-    private String email;
     private String password;
     private String profileImgUrl;
     private BigDecimal balance;
     private Type type = Type.Customer;
     private String pageUrl;
 
-    public Customer(int id, String name, String email, String password, String profileImgUrl, BigDecimal balance) {
-        super(id, email, password, name, Type.Customer);
+    public Customer(int id, String name, String password, String profileImgUrl, BigDecimal balance) {
+        super(id, password, name, Type.Customer);
         this.id = id;
         this.name = name;
-        this.email = email;
         this.password = password;
         setProfileImgUrl(profileImgUrl);
         this.pageUrl = super.getPageUrl();
@@ -25,10 +23,9 @@ public class Customer extends User {
     }
 
     public Customer(User user) {
-        super(user.getId(), user.getEmail(), user.getPassword(), user.getName(), user.getUserType());
+        super(user.getId(), user.getPassword(), user.getName(), user.getUserType());
         this.id = user.getId();
         this.name = user.getName();
-        this.email = user.getEmail();
         this.password = user.getPassword();
         this.type = user.getUserType();
         setProfileImgUrl(null);
@@ -46,14 +43,6 @@ public class Customer extends User {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPassword() {

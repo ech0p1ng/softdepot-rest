@@ -1,33 +1,33 @@
 package ru.softdepot.controllers;
 
-import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import ru.softdepot.config.MyUserDetails;
+import ru.softdepot.core.dao.AdministratorDAO;
 import ru.softdepot.core.dao.CustomerDAO;
 import ru.softdepot.core.dao.DeveloperDAO;
 import ru.softdepot.core.dao.ProgramDAO;
 import ru.softdepot.core.models.User;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 @Controller
 public class HtmlPagesController {
     private static ProgramDAO programDAO = new ProgramDAO();
     private static DeveloperDAO developerDAO = new DeveloperDAO();
     private static CustomerDAO customerDAO = new CustomerDAO();
+    private static AdministratorDAO administratorDAO = new AdministratorDAO();
 
 
-    @GetMapping
-    public String mainPage() {
+//    @GetMapping()
+//    public String mainPage() {
+//        return "/mainpage/index.html";
+//    }
+
+    @GetMapping("/")
+    public String mainPage2() {
         return "/mainpage/index.html";
     }
 
@@ -70,17 +70,18 @@ public class HtmlPagesController {
         return "/user/auth/sign_in/index.html";
     }
 
-    @GetMapping("/developers/{developerId}")
-    public String developerPage(@PathVariable("developerId") String developerId) {
-        int id;
-        try {
-            id = Integer.parseInt(developerId);
-        } catch (Exception e) {
-            return "redirect:/";
-        }
+    //Страницы пользователей
+    @GetMapping("/{usersRole}/{userId:\\d+}")
+    public String developerPage(
+            @PathVariable("usersRole") String usersRole,
+            @PathVariable("userId") int id) {
+        boolean requestIsCorrect =
+                usersRole.equals("customers") && customerDAO.exists(id)
+                        || usersRole.equals("developers") && developerDAO.exists(id)
+                        || usersRole.equals("administrators") && administratorDAO.exists(id);
 
-        if (developerDAO.exists(id)) {
-            return "/user/dev/index.html";
+        if (requestIsCorrect) {
+            return "/user/index.html";
         } else {
             return "redirect:/";
         }

@@ -2,16 +2,14 @@ package ru.softdepot.core.models;
 
 public class Administrator extends User {
     private int id;
-    private String email;
     private String password;
     private String name;
     private Type userType = Type.Administrator;
     private String pageUrl;
 
-    public Administrator(int id, String email, String password, String name) {
-        super(id, email, password, name, Type.Administrator);
+    public Administrator(int id, String password, String name) {
+        super(id, password, name, Type.Administrator);
         this.id = id;
-        this.email = email;
         this.password = password;
         this.name = name;
         this.userType = Type.Administrator;
@@ -19,9 +17,8 @@ public class Administrator extends User {
     }
 
     public Administrator(User user){
-        super(user.getId(), user.getEmail(), user.getPassword(), user.getName(), user.getUserType());
+        super(user.getId(), user.getPassword(), user.getName(), user.getUserType());
         this.id = user.getId();
-        this.email = user.getEmail();
         this.password = user.getPassword();
         this.name = user.getName();
         this.userType = user.getUserType();
@@ -35,16 +32,6 @@ public class Administrator extends User {
     @Override
     public int getId() {
         return id;
-    }
-
-    @Override
-    public String getEmail() {
-        return email;
-    }
-
-    @Override
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     @Override

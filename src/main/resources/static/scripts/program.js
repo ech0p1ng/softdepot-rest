@@ -1,5 +1,7 @@
 const addToCartHtml = '<span>Добавить в корзину</span>';
 const removeFromCartHtml = '<span>Удалить из корзины</span>';
+const signInToBuyHtml = '<span>Войдите чтобы купить</span>';
+const onlyCustomerCanBuy = '<span>Только покупатель может купить</span>';
 
 class Program {
     static catalogue = [];
@@ -35,30 +37,6 @@ class Program {
         this.isPurchased = data.isPurchased;
 
 
-        //Строка в каталоге
-        this.gameRowCatalogue = $(
-            '<div class="game-row" id="main-page-game-row-' + this.id + '" style="z-index: 1">' +
-            '  <a href="' + this.pageUrl + '" class="preview" target="_blank" class="description">' +
-            '    <img class="preview" src="' + this.headerUrl + '" /></a>' +
-            '	<a href="' + this.pageUrl + '" target="_blank" class="description">' +
-            '		<div>' +
-            '			<span class="name">' + this.name + '</span>' +
-            '			<br />' +
-            '			<span class="tags">' + this.tagsAsString + '</span>' +
-            '		</div>' +
-            '        <span class="score" title="Оценка пользователей" style="color: ' + Program.getScoreColor(this.averageEstimation) + '">' + this.averageEstimation + '</span>' +
-            '	</a>' +
-            '    <div class="price-and-buy">' +
-            '        <span class="price">' +
-            '			<span>' + this.priceAsString + '</span>' +
-            '		</span>' +
-            '		<button class="add-to-cart" style="z-index: 2">' +
-            '			<span>Добавить в корзину</span>' +
-            '		</button>' +
-            '    </div>' +
-            '</div>'
-        );
-
         //Строка в корзине
         this.gameRowCart = $(
             '<div class="cart-game-row">' +
@@ -72,6 +50,89 @@ class Program {
             '    </div>' +
             '</div>'
         );
+
+        if (USER != null) {
+            if (USER.type === "Customer") {
+                //Строка в каталоге
+                this.gameRowCatalogue = $(
+                    '<div class="game-row" id="main-page-game-row-' + this.id + '" style="z-index: 1">' +
+                    '  <a href="' + this.pageUrl + '" class="preview" target="_blank" class="description">' +
+                    '    <img class="preview" src="' + this.headerUrl + '" /></a>' +
+                    '	<a href="' + this.pageUrl + '" target="_blank" class="description">' +
+                    '		<div>' +
+                    '			<span class="name">' + this.name + '</span>' +
+                    '			<br />' +
+                    '			<span class="tags">' + this.tagsAsString + '</span>' +
+                    '		</div>' +
+                    '        <span class="score" title="Оценка пользователей" style="color: ' + Program.getScoreColor(this.averageEstimation) + '">' + this.averageEstimation + '</span>' +
+                    '	</a>' +
+                    '    <div class="price-and-buy">' +
+                    '        <span class="price">' +
+                    '			<span>' + this.priceAsString + '</span>' +
+                    '		</span>' +
+                    '		<button class="add-to-cart" style="z-index: 2">' +
+                    // '			<span>Добавить в корзину</span>' +
+                    addToCartHtml+
+                    '		</button>' +
+                    '    </div>' +
+                    '</div>'
+                );
+            }
+            else {
+                //Строка в каталоге
+                this.gameRowCatalogue = $(
+                    '<div class="game-row" id="main-page-game-row-' + this.id + '" style="z-index: 1">' +
+                    '  <a href="' + this.pageUrl + '" class="preview" target="_blank" class="description">' +
+                    '    <img class="preview" src="' + this.headerUrl + '" /></a>' +
+                    '	<a href="' + this.pageUrl + '" target="_blank" class="description">' +
+                    '		<div>' +
+                    '			<span class="name">' + this.name + '</span>' +
+                    '			<br />' +
+                    '			<span class="tags">' + this.tagsAsString + '</span>' +
+                    '		</div>' +
+                    '        <span class="score" title="Оценка пользователей" style="color: ' + Program.getScoreColor(this.averageEstimation) + '">' + this.averageEstimation + '</span>' +
+                    '	</a>' +
+                    '    <div class="price-and-buy">' +
+                    '        <span class="price">' +
+                    '			<span>' + this.priceAsString + '</span>' +
+                    '		</span>' +
+                    '		<a href="/sign-in"  class="cant-buy" style="text-decoration: none; text-align: center; z-index: 2">' +
+                    // '			<span>Войдите чтобы купить</span>' +
+                    onlyCustomerCanBuy+
+                    '		</a>' +
+                    '    </div>' +
+                    '</div>'
+                );
+            }
+        }
+        else {
+            //Строка в каталоге
+            this.gameRowCatalogue = $(
+                '<div class="game-row" id="main-page-game-row-' + this.id + '" style="z-index: 1">' +
+                '  <a href="' + this.pageUrl + '" class="preview" target="_blank" class="description">' +
+                '    <img class="preview" src="' + this.headerUrl + '" /></a>' +
+                '	<a href="' + this.pageUrl + '" target="_blank" class="description">' +
+                '		<div>' +
+                '			<span class="name">' + this.name + '</span>' +
+                '			<br />' +
+                '			<span class="tags">' + this.tagsAsString + '</span>' +
+                '		</div>' +
+                '        <span class="score" title="Оценка пользователей" style="color: ' + Program.getScoreColor(this.averageEstimation) + '">' + this.averageEstimation + '</span>' +
+                '	</a>' +
+                '    <div class="price-and-buy">' +
+                '        <span class="price">' +
+                '			<span>' + this.priceAsString + '</span>' +
+                '		</span>' +
+                '		<a href="/sign-in"  class="cant-buy" style="text-decoration: none; text-align: center; z-index: 2">' +
+                // '			<span>Войдите чтобы купить</span>' +
+                signInToBuyHtml+
+                '		</a>' +
+                '    </div>' +
+                '</div>'
+            );
+        }
+
+
 
         this.setCatalogueRowButton();
     }
@@ -138,26 +199,55 @@ class Program {
     }
 
     setProgramPageAddToCartButton() {
-        if (this.inCart) {
-            $("#add-to-cart-from-page")
-                .addClass('remove-from-cart')
-                .removeClass('add-to-cart')
-                .html(removeFromCartHtml)
-                .off('click')
-                .on('click', () => {
-                    this.removeFromCart();
-                });
+        if (USER != null) {
+            if (USER.type === "Customer") {
+                if (this.inCart) {
+                    $("#add-to-cart-from-page")
+                        .addClass('remove-from-cart')
+                        .removeClass('add-to-cart')
+                        .html(removeFromCartHtml)
+                        .off('click')
+                        .on('click', () => {
+                            this.removeFromCart();
+                        });
+                }
+                else {
+                    $("#add-to-cart-from-page")
+                        .addClass('add-to-cart')
+                        .removeClass('remove-from-cart')
+                        .html(addToCartHtml)
+                        .off('click')
+                        .on('click', () => {
+                            this.addToCart();
+                        });
+                }
+            }
+            else {
+                $("#add-to-cart-from-page")
+                    .addClass('cant-buy')
+                    .removeClass('remove-from-cart')
+                    .removeClass('add-to-cart')
+                    .html(onlyCustomerCanBuy)
+                    .off('click')
+                    .on('click', () => {
+                        // this.addToCart();
+                        window.open("/sign-in")
+                    });
+            }
         }
         else {
             $("#add-to-cart-from-page")
-                .addClass('add-to-cart')
+                .addClass('cant-buy')
                 .removeClass('remove-from-cart')
-                .html(addToCartHtml)
+                .removeClass('add-to-cart')
+                .html(signInToBuyHtml)
                 .off('click')
                 .on('click', () => {
-                    this.addToCart();
+                    // this.addToCart();
+                    window.open("/sign-in")
                 });
         }
+
     }
 
     addToCart() {

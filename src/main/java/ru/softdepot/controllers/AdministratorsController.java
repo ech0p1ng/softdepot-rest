@@ -12,7 +12,7 @@ import ru.softdepot.core.dao.AdministratorDAO;
 import ru.softdepot.core.models.Administrator;
 
 @RestController
-@RequestMapping("softdepot-api/admins")
+@RequestMapping("softdepot-api/administrators")
 @AllArgsConstructor
 public class AdministratorsController {
     private final AdministratorDAO administratorDAO;
@@ -25,13 +25,13 @@ public class AdministratorsController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            if (administratorDAO.exists(administrator.getEmail())) {
+            if (administratorDAO.exists(administrator.getName())) {
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT,
                         Message.build(
                                 Message.Entity.ADMIN,
-                                Message.Identifier.EMAIL,
-                                administrator.getEmail(),
+                                Message.Identifier.NAME,
+                                administrator.getName(),
                                 Message.Status.NOT_FOUND
                         )
                 );

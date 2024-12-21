@@ -34,14 +34,13 @@ public class AdministratorDAO implements DAO<Administrator> {
 
     @Override
     public int add(Administrator admin) throws Exception {
-        if (!exists(admin.getEmail())) {
+        if (!exists(admin.getName())) {
             try {
                 PreparedStatement statement = connection.prepareStatement(
-                        "INSERT INTO administrator (email,password,administrator_name) VALUES (?,?,?) RETURNING id"
+                        "INSERT INTO administrator (password,administrator_name) VALUES (?,?) RETURNING id"
                 );
-                statement.setString(1, admin.getEmail());
-                statement.setString(2, admin.getPassword());
-                statement.setString(3, admin.getName());
+                statement.setString(1, admin.getPassword());
+                statement.setString(2, admin.getName());
                 ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
                     return resultSet.getInt("id");
@@ -51,8 +50,8 @@ public class AdministratorDAO implements DAO<Administrator> {
                 e.printStackTrace();
             }
         } else {
-            String msg = String.format("Administrator [name=%s or email=%s] already exists",
-                    admin.getName(), admin.getEmail());
+            String msg = String.format("Administrator [name=%s] already exists",
+                    admin.getName());
             throw new Exception(msg);
         }
         return -1;
@@ -63,11 +62,10 @@ public class AdministratorDAO implements DAO<Administrator> {
     public void update(Administrator admin) {
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE administrator SET email=?, password=? WHERE id=?"
+                    "UPDATE administrator SET password=? WHERE id=?"
             );
-            statement.setString(1, admin.getEmail());
-            statement.setString(2, admin.getPassword());
-            statement.setInt(3, admin.getId());
+            statement.setString(1, admin.getPassword());
+            statement.setInt(2, admin.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -101,7 +99,6 @@ public class AdministratorDAO implements DAO<Administrator> {
             if (resultSet.next()) {
                 admin = new Administrator(
                         id,
-                        resultSet.getString("email"),
                         resultSet.getString("password"),
                         resultSet.getString("administrator_name")
                 );
@@ -117,14 +114,14 @@ public class AdministratorDAO implements DAO<Administrator> {
         return admin;
     }
 
-    public Administrator getByNameAndPassword(String email, String password) throws Exception {
+    public Administrator getByNameAndPassword(String name, String password) throws Exception {
         Administrator admin = null;
 
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "SELECT * FROM administrator WHERE administrator_name=? AND password=?"
             );
-            statement.setString(1, email);
+            statement.setString(1, name);
             statement.setString(2, password);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -136,12 +133,12 @@ public class AdministratorDAO implements DAO<Administrator> {
         return admin;
     }
 
-    public boolean exists(String email) {
+    public boolean exists(String name) {
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "SELECT * FROM administrator WHERE email=?"
+                    "SELECT * FROM administrator WHERE administrator_name=?"
             );
-            statement.setString(1, email);
+            statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return true;
@@ -171,7 +168,6 @@ public class AdministratorDAO implements DAO<Administrator> {
             while (resultSet.next()) {
                 result.add(new Administrator(
                         resultSet.getInt("id"),
-                        resultSet.getString("email"),
                         resultSet.getString("password"),
                         resultSet.getString("administrator_name")
                 ));

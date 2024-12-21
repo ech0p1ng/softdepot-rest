@@ -37,19 +37,18 @@ public class CustomerDAO implements DAO<Customer> {
 
     @Override
     public int add(Customer customer) throws Exception {
-        if (exists(customer.getEmail())) {
+        if (exists(customer.getName())) {
             throw new Exception("Customer already exists!");
         }
         try{
             String sql =
-                    "INSERT INTO customer (customer_name, email, password, profile_img_url, balance) " +
-                    "VALUES(?,?,?,?,?) RETURNING id";
+                    "INSERT INTO customer (customer_name, password, profile_img_url, balance) " +
+                    "VALUES(?,?,?,?) RETURNING id";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, customer.getName());
-            statement.setString(2, customer.getEmail());
-            statement.setString(3, customer.getPassword());
-            statement.setString(4, customer.getProfileImgUrl(false));
-            statement.setBigDecimal(5, customer.getBalance());
+            statement.setString(2, customer.getPassword());
+            statement.setString(3, customer.getProfileImgUrl(false));
+            statement.setBigDecimal(4, customer.getBalance());
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -66,15 +65,14 @@ public class CustomerDAO implements DAO<Customer> {
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "UPDATE customer " +
-                            "SET customer_name=?, email=?, password=?, profile_img_url=?, balance=? " +
+                            "SET customer_name=?, password=?, profile_img_url=?, balance=? " +
                             "WHERE id=?"
             );
             statement.setString(1, customer.getName());
-            statement.setString(2, customer.getEmail());
-            statement.setString(3, customer.getPassword());
-            statement.setString(4, customer.getProfileImgUrl(false));
-            statement.setBigDecimal(5, customer.getBalance());
-            statement.setInt(6, customer.getId());
+            statement.setString(2, customer.getPassword());
+            statement.setString(3, customer.getProfileImgUrl(false));
+            statement.setBigDecimal(4, customer.getBalance());
+            statement.setInt(5, customer.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -109,7 +107,6 @@ public class CustomerDAO implements DAO<Customer> {
                 customer = new Customer(
                         id,
                         resultSet.getString("customer_name"),
-                        resultSet.getString("email"),
                         resultSet.getString("password"),
                         resultSet.getString("profile_img_url"),
                         resultSet.getBigDecimal("balance")
@@ -127,14 +124,14 @@ public class CustomerDAO implements DAO<Customer> {
         return customer;
     }
 
-    public boolean exists(String email) {
+    public boolean exists(String name) {
         boolean exists = false;
 
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "SELECT * FROM customer WHERE email=?"
+                    "SELECT * FROM customer WHERE customer_name=?"
             );
-            statement.setString(1, email);
+            statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 exists = true;
@@ -157,7 +154,6 @@ public class CustomerDAO implements DAO<Customer> {
                 result.add(new Customer(
                         resultSet.getInt("id"),
                         resultSet.getString("customer_name"),
-                        resultSet.getString("email"),
                         //resultSet.getString("password"),
                         null,
                         resultSet.getString("profile_img_url"),
@@ -202,7 +198,6 @@ public class CustomerDAO implements DAO<Customer> {
                 Customer customer = new Customer(
                         resultSet.getInt("id"),
                         resultSet.getString("customer_name"),
-                        resultSet.getString("email"),
                         resultSet.getString("password"),
                         resultSet.getString("profile_img_url"),
                         resultSet.getBigDecimal("balance")
@@ -219,14 +214,14 @@ public class CustomerDAO implements DAO<Customer> {
         return customers;
     }
 
-    public Customer getByNameAndPassword(String email, String password) throws Exception {
+    public Customer getByNameAndPassword(String name, String password) throws Exception {
         Customer customer = null;
 
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "SELECT * FROM customer WHERE customer_name=? AND password=?"
             );
-            statement.setString(1, email);
+            statement.setString(1, name);
             statement.setString(2, password);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -242,7 +237,7 @@ public class CustomerDAO implements DAO<Customer> {
 
     public List<Program> getPurchasedPrograms(Customer customer) throws Exception {
         List<Purchase> purchases = purchaseDAO.getPurchasesOfCustomer(customer);
-        if (purchases.size() == 0)
+        if (purchases.isEmpty())
             throw new Exception("No purchases found for customer [id=" + customer.getId() +"]");
 
         List<Program> programs = new ArrayList<>();

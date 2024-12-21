@@ -50,8 +50,8 @@ public class DevelopersController {
                         HttpStatus.CONFLICT,
                         Message.build(
                                 Message.Entity.DEVELOPER,
-                                Message.Identifier.EMAIL,
-                                developer.getEmail(),
+                                Message.Identifier.NAME,
+                                developer.getName(),
                                 Message.Status.ALREADY_EXISTS
                         )
                 );

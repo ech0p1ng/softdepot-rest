@@ -15,10 +15,6 @@ public class User {
 
     private int id;
 
-    //    @Email(message = "Некорректный email")
-    //    @NotBlank(message = "Введите email")
-    private String email;
-
     @NotBlank(message = "Введите имя")
     @Length(min = 5, max = 30, message = "Имя должно быть длиной от 5 до 30 символов")
     private String name;
@@ -32,8 +28,7 @@ public class User {
     private Type userType;
 
 
-    public User(int id, String email, String password, String name, Type userType) {
-        this.email = email;
+    public User(int id, String password, String name, Type userType) {
         this.password = password;
         this.name = name;
         this.userType = userType;
@@ -41,8 +36,7 @@ public class User {
         this.pageUrl = getPageUrl();
     }
 
-    public User(String name, String email, String password, Type userType) {
-        this.email = email;
+    public User(String name, String password, Type userType) {
         this.password = password;
         this.name = name;
         this.userType = userType;
@@ -52,13 +46,13 @@ public class User {
     public User() {
     }
 
-    public String getEmail() {
-        return email;
-    }
+//    public String getEmail() {
+//        return email;
+//    }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+//    public void setEmail(String email) {
+//        this.email = email;
+//    }
 
     public String getPassword() {
         return password;

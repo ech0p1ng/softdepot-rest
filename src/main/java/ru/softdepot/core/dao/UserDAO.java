@@ -112,36 +112,14 @@ public class UserDAO implements DAO<User>, UserDetailsService {
         return null;
     }
 
-    public boolean existsByEmail(String email) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT email FROM customer WHERE email=? " +
-                            "UNION " +
-                            "SELECT email FROM developer WHERE email=? " +
-                            "UNION " +
-                            "SELECT email FROM administrator WHERE email=?"
-            );
-            preparedStatement.setString(1, email);
-            preparedStatement.setString(2, email);
-            preparedStatement.setString(3, email);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public boolean existsByName(String name) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT email FROM customer WHERE customer_name=? " +
+                    "SELECT customer_name FROM customer WHERE customer_name=? " +
                             "UNION " +
-                            "SELECT email FROM developer WHERE developer_name=? " +
+                            "SELECT developer_name FROM developer WHERE developer_name=? " +
                             "UNION " +
-                            "SELECT email FROM administrator WHERE administrator_name=?"
+                            "SELECT administrator_name FROM administrator WHERE administrator_name=?"
             );
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, name);

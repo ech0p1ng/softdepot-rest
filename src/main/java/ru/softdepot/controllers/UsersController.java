@@ -55,7 +55,6 @@ public class UsersController {
             User user = new User(
                     body.getName(),
                     null,
-                    null,
                     body.getUserType()
             );
 

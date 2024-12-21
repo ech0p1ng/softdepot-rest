@@ -38,14 +38,13 @@ public class DeveloperDAO implements DAO<Developer> {
         if (!exists(developer.getName())) {
             try {
                 PreparedStatement statment = connection.prepareStatement(
-                        "INSERT INTO developer (developer_name, email, password, profile_img_url) " +
-                                "VALUES (?,?,?,?) " +
+                        "INSERT INTO developer (developer_name, password, profile_img_url) " +
+                                "VALUES (?,?,?) " +
                                 "RETURNING id"
                 );
                 statment.setString(1, developer.getName());
-                statment.setString(2, developer.getEmail());
-                statment.setString(3, developer.getPassword());
-                statment.setString(4, developer.getProfileImgUrl(false));
+                statment.setString(2, developer.getPassword());
+                statment.setString(3, developer.getProfileImgUrl(false));
 
                 ResultSet resultSet = statment.executeQuery();
                 if (resultSet.next()) {
@@ -55,8 +54,8 @@ public class DeveloperDAO implements DAO<Developer> {
                 e.printStackTrace();
             }
         } else {
-            String msg = String.format("Developer with [email=%s] or [name=%s] already exists.",
-                    developer.getEmail(), developer.getName());
+            String msg = String.format("Developer with [name=%s] already exists.",
+                    developer.getName());
             throw new Exception(msg);
         }
         return -1;
@@ -65,15 +64,14 @@ public class DeveloperDAO implements DAO<Developer> {
     @Override
     public void update(Developer developer) {
         try {
-            String sql = "UPDATE developer SET developer_name=?,email=?,password=?," +
+            String sql = "UPDATE developer SET developer_name=?,password=?," +
                     "profile_img_url=? WHERE id=?";
             PreparedStatement statement = connection.prepareStatement(sql);
 
             statement.setString(1, developer.getName());
-            statement.setString(2, developer.getEmail());
-            statement.setString(3, developer.getPassword());
-            statement.setString(4, developer.getProfileImgUrl(false));
-            statement.setInt(5, developer.getId());
+            statement.setString(2, developer.getPassword());
+            statement.setString(3, developer.getProfileImgUrl(false));
+            statement.setInt(4, developer.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -107,7 +105,6 @@ public class DeveloperDAO implements DAO<Developer> {
                 developer = new Developer(
                         resultSet.getInt("id"),
                         resultSet.getString("developer_name"),
-                        resultSet.getString("email"),
                         resultSet.getString("password"),
                         resultSet.getString("profile_img_url")
                 );
@@ -123,14 +120,14 @@ public class DeveloperDAO implements DAO<Developer> {
         return developer;
     }
 
-    public Developer getByNameAndPassword(String email, String password) throws Exception {
+    public Developer getByNameAndPassword(String name, String password) throws Exception {
         Developer developer = null;
 
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "SELECT * FROM developer WHERE developer_name=? AND password=?"
             );
-            statement.setString(1, email);
+            statement.setString(1, name);
             statement.setString(2, password);
 
             ResultSet resultSet = statement.executeQuery();
@@ -138,7 +135,6 @@ public class DeveloperDAO implements DAO<Developer> {
                 developer = new Developer(
                         resultSet.getInt("id"),
                         resultSet.getString("developer_name"),
-                        resultSet.getString("email"),
                         resultSet.getString("password"),
                         resultSet.getString("profile_img_url")
                 );
@@ -303,7 +299,6 @@ public class DeveloperDAO implements DAO<Developer> {
                 developers.add(new Developer(
                         resultSet.getInt("id"),
                         resultSet.getString("developer_name"),
-                        resultSet.getString("email"),
                         resultSet.getString("password"),
                         resultSet.getString("profile_img_url")
                 ));
