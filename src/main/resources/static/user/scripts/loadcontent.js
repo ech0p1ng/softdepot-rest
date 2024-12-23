@@ -1,3 +1,7 @@
+let userDataLoaded = false;
+
+$(window).on('userDataLoaded', function () {userDataLoaded = true;})
+
 window.addEventListener("load", function () {
     var url = window.location.href;
 
@@ -14,7 +18,13 @@ window.addEventListener("load", function () {
         dataType: "json",
         success: function (response) {
             userOfPage = new User(response);
-            userOfPage.setPage();
+
+            if (userDataLoaded) {
+                userOfPage.setPage()
+            }
+            else {
+                $(window).on('userDataLoaded', () => userOfPage.setPage());
+            }
         },
         error: function (xhr, status, error) {
             console.error("Ошибка загрузки данных пользователя: ", xhr.responseJSON.message);

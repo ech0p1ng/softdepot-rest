@@ -13,7 +13,6 @@ class Program {
         this.fullDescription = data.fullDescription;
         this.developerId = data.developerId;
         this.shortDescription = data.shortDescription;
-        this.inCart = data.inCart;
         this.averageEstimation = data.averageEstimation;
         this.nameForPath = data.nameForPath;
         this.winInstaller = data.winInstaller;
@@ -54,8 +53,9 @@ class Program {
         //Строка в каталоге
         this.gameRowCatalogue = $(
             '<div class="game-row" id="main-page-game-row-' + this.id + '" style="z-index: 1">' +
-            '  <a href="' + this.pageUrl + '" class="preview" target="_blank" class="description">' +
-            '    <img class="preview" src="' + this.headerUrl + '" /></a>' +
+            '   <a href="' + this.pageUrl + '" class="preview" target="_blank" class="description">' +
+            '     <img class="preview" src="' + this.headerUrl + '" />' +
+            '   </a>' +
             '	<a href="' + this.pageUrl + '" target="_blank" class="description">' +
             '		<div>' +
             '			<span class="name">' + this.name + '</span>' +
@@ -73,15 +73,11 @@ class Program {
             '</div>'
         );
 
-        // this.removeFromCartButton = $('<button class="remove-from-cart" style="z-index: 2">' + removeFromCartHtml +'</button>')
-        //     .on('click', () => this.removeFromCart());
-        //
-        // this.addToCartButton = $('<button class="add-to-cart" style="z-index: 2">' + addToCartHtml +'</button>')
-        //     .on('click', () => this.addToCart());
-
-        this.signInToBuyButton = $('<a href="/sign-in"  class="cant-buy" style="text-decoration: none; text-align: center; z-index: 2">' + signInToBuyHtml + '</a>');
-
-        this.onlyCustomerCanBuyButton = $('<a href="/sign-in"  class="cant-buy" style="text-decoration: none; text-align: center; z-index: 2">' + onlyCustomerCanBuy +'</a>');
+        this.gameRowCatalogue
+            .find('.add-to-cart')
+            .html(addToCartHtml)
+            .off('click')
+            .on('click', () => this.addToCart());
 
         this.setCatalogueRowButton();
     }
@@ -111,7 +107,7 @@ class Program {
     }
 
     setEventsForCatalogueRowButton() {
-        if (this.inCart) {
+        if (this.isInCart) {
             this.gameRowCatalogue
                 .find('.remove-from-cart')
                 .off('click')
@@ -129,22 +125,6 @@ class Program {
     }
 
     setCatalogueRowButton() {
-        // if (this.isInCart) {
-        //     this.gameRowCatalogue
-        //         //замена стиля кнопки
-        //         .find('.add-to-cart')
-        //         .addClass('remove-from-cart')
-        //         .removeClass('add-to-cart')
-        //         .html(removeFromCartHtml)
-        //
-        // } else {
-        //     this.gameRowCatalogue
-        //         .find('.remove-from-cart')
-        //         .addClass('add-to-cart')
-        //         .removeClass('remove-from-cart')
-        //         .html(addToCartHtml)
-        // }
-
         if (USER != null) {
             if (USER.type === "Customer") {
                 if (this.isPurchased) {
@@ -154,16 +134,14 @@ class Program {
                         .find('.add-to-cart').remove()
                         .find('remove-from-cart').remove();
                 }
-                else if (this.inCart) {
+                else if (this.isInCart) {
                     this.gameRowCatalogue
                         .find('.add-to-cart')
                         .addClass('remove-from-cart')
                         .removeClass('add-to-cart')
                         .html(removeFromCartHtml)
                         .off('click')
-                        .on('click', () => {
-                            this.removeFromCart();
-                        })
+                        .on('click', () => this.removeFromCart());
                 }
                 else {
                     this.gameRowCatalogue
@@ -172,9 +150,7 @@ class Program {
                         .removeClass('remove-from-cart')
                         .html(addToCartHtml)
                         .off('click')
-                        .on('click', () => {
-                            this.addToCart();
-                        })
+                        .on('click', () => this.addToCart());
 
                 }
             }
@@ -208,7 +184,7 @@ class Program {
                 if (this.isPurchased) {
                     $("#add-to-cart-from-page").remove();
                 }
-                if (this.inCart) {
+                if (this.isInCart) {
                     $("#add-to-cart-from-page")
                         .addClass('remove-from-cart')
                         .removeClass('add-to-cart')
@@ -237,7 +213,6 @@ class Program {
                     .html(onlyCustomerCanBuy)
                     .off('click')
                     .on('click', () => {
-                        // this.addToCart();
                         window.open("/sign-in")
                     });
             }
@@ -250,7 +225,6 @@ class Program {
                 .html(signInToBuyHtml)
                 .off('click')
                 .on('click', () => {
-                    // this.addToCart();
                     window.open("/sign-in")
                 });
         }
@@ -258,7 +232,7 @@ class Program {
     }
 
     addToCart() {
-        this.inCart = true;
+        this.isInCart = true;
         $.ajax({
             method: "POST",
             url: BACKEND_URL + "softdepot-api/carts/" + USER.id + "?programId=" + this.id,
@@ -267,7 +241,7 @@ class Program {
             success: (response) => {
                 this.setCatalogueRowButton();
                 this.setProgramPageAddToCartButton();
-                Cart.update(false);
+                // Cart.update(false);
             },
             error: (xhr, status, message) => {
                 console.error(xhr.responseJSON.message);
@@ -278,7 +252,7 @@ class Program {
 
     removeFromCart() {
         // cart_of_games.splice(cart_of_games.indexOf(this), 1);
-        this.inCart = false;
+        this.isInCart = false;
         $.ajax({
             method: "DELETE",
             url: BACKEND_URL + "softdepot-api/carts/" + USER.id + "?programId=" + this.id,

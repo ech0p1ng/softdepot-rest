@@ -19,19 +19,18 @@ class Cart {
     );
 
     static show() {
-        // $("#cart-games-list").empty();
         $('main').append(this.cart);
-        Cart.update(true);
+        Cart.update();
     }
 
-    static update(showCart) {
-        $("#cart-games-list").empty();
+    static update() {
+        this.cart.find("#cart-games-list").empty();
 
         $.ajax({
             method: "GET",
             url: BACKEND_URL + "softdepot-api/carts/" + USER.id,
             dataType: "json",
-            success: function (response) {
+            success: (response) => {
                 let sum = 0;
 
                 $("#cart-games-list").html('');
@@ -45,11 +44,9 @@ class Cart {
                     sum += program.price;
                 });
 
-                $("#total-cost").html(sum + " руб.");
-                if (showCart)
-                    $("#cart-bg").css("visibility", "inherit");
+                this.cart.find("#total-cost").html(sum + " руб.");
             },
-            error: function (xhr, status, error) {
+            error: (xhr, status, error) => {
                 alert("Не удалось загрузить корзину");
                 console.error(error);
             }
@@ -62,4 +59,4 @@ class Cart {
 }
 
 
-$("#cart-exit-button").on("click", Cart.close);
+$("#cart-exit-button").on("click", () => Cart.cart.remove());
