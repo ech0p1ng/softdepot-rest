@@ -1,6 +1,26 @@
 class Cart {
+
+    static cart = $('' +
+        '<!-- Корзина -->' +
+        '    <div id="cart-bg">' +
+        '        <div id="cart-opened">' +
+        '            <div id="cart-header">' +
+        '                <span id="cart-title">Корзина</span>' +
+        '                <button id="cart-exit-button" class="exit-button button close-button" onclick="Cart.close()"></button>' +
+        '            </div>' +
+        '            <div id="cart-games-list">' +
+        '            </div>' +
+        '            <div id="cart-total-title">' +
+        '                <span>Итого</span>' +
+        '                <span id="total-cost">0 руб.</span>' +
+        '            </div>' +
+        '        </div>' +
+        '    </div>'
+    );
+
     static show() {
-        $("#cart-games-list").empty();
+        // $("#cart-games-list").empty();
+        $('main').append(this.cart);
         Cart.update(true);
     }
 
@@ -37,7 +57,7 @@ class Cart {
     }
 
     static close() {
-        $("#cart-bg").css("visibility", "hidden");
+        this.cart.remove();
     }
 }
 

@@ -187,8 +187,26 @@ main {
     align-items: center;
 }
 
+.review-program {
+    color: var(--text-color);
+    text-decoration: none;
+    height: 50px;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+}
+
+.review-program-preview {
+    height: 100%;
+    border-radius: 10px;
+}
+
 .review-username {
     margin-left: 10px;
+}
+
+.review-program-name {
+     margin-left: 10px;
 }
 
 .review-user-profile-img {

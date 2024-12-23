@@ -17,6 +17,8 @@ public class ProgramDAO implements DAO<Program> {
     private static DegreeOfBelongingDAO degreeOfBelongingDAO = new DegreeOfBelongingDAO();
     private static ReviewDAO reviewDAO = new ReviewDAO();
     private static CartDAO cartDAO = new CartDAO();
+    private static CustomerDAO customerDAO = new CustomerDAO();
+    private static ProgramDAO programDAO = new ProgramDAO();
 
     private static Connection connection;
 
@@ -411,7 +413,25 @@ public class ProgramDAO implements DAO<Program> {
         return 0;
     }
 
+
+
     public boolean isInCart(Program program, Customer customer) {
         return cartDAO.containsProgram(customer.getId(), program.getId());
+    }
+
+    public boolean isPurchased(Program program, Customer customer) {
+        List<Program> purchasedPrograms;
+        try {
+            purchasedPrograms = customerDAO.getPurchasedPrograms(customer);
+            for (var p : purchasedPrograms) {
+                if (p.getId() == program.getId()) {
+                    return true;
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return false;
     }
 }

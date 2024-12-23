@@ -12,8 +12,8 @@ window.addEventListener("load", function () {
         dataType: "json",
         success: function (response) {
             let program = new Program(response);
-            program.setProgramPage();
             Program.catalogue.push(program);
+            program.setProgramPage();
         },
         error: function (error) {
             // window.location.href="/";

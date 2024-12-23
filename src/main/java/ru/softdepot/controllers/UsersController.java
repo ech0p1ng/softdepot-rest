@@ -141,8 +141,7 @@ public class UsersController {
         if (authentication != null && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)) {
             var userAuth = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
-            var user = userDAO.getByUserName(userAuth.getUsername());
-            return user;
+            return userDAO.getByUserName(userAuth.getUsername());
         }
         return null;
     }

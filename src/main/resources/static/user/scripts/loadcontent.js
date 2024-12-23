@@ -1,5 +1,4 @@
 window.addEventListener("load", function () {
-    // Получаем ID разработчика из URL
     var url = window.location.href;
 
     var urlParts = url.split("/");
@@ -11,7 +10,7 @@ window.addEventListener("load", function () {
 
     $.ajax({
         method: "GET",
-        url: BACKEND_URL + "softdepot-api/"+type+"/" + id,
+        url: BACKEND_URL + "softdepot-api/" + type + "/" + id,
         dataType: "json",
         success: function (response) {
             userOfPage = new User(response);

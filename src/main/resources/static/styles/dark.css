@@ -18,7 +18,11 @@ body {
 }
 
 .login {
-    background-image: url("svg/door-white.svg");
+    background-image: url("svg/login-white.svg");
+}
+
+.logout {
+    background-image: url("svg/logout-white.svg");
 }
 
 .logo {

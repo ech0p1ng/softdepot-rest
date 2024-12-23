@@ -3,9 +3,6 @@ package ru.softdepot.controllers;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +46,7 @@ public class ProductsController {
                 //Проверка корзины
                 var program = programDAO.getById(id);
                 program.setIsInCart(programDAO.isInCart(program, (Customer) user));
+                program.setIsPurchased(programDAO.isPurchased(program, (Customer) user));
 
                 //Проверка отзыва
                 try {
@@ -203,26 +201,27 @@ public class ProductsController {
     public ResponseEntity<?> getPrograms(
             @RequestParam(name = "developerId", required = false) String developerId) {
 
+
+        List<Program> allPrograms;
+
+        if (developerId != null) {
+            int devId = Integer.parseInt(developerId);
+            try {
+                allPrograms = developerDAO.getPrograms(devId);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            allPrograms = programDAO.getAll();
+        }
+
         var user = UsersController.getCurrentUser(userDAO);
         if (user != null) {
             if (user.getUserType() == User.Type.Customer) {
-                List<Program> allPrograms;
-
-                if (developerId != null) {
-                    int devId = Integer.parseInt(developerId);
-                    try {
-                        allPrograms = developerDAO.getPrograms(devId);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                } else {
-                    allPrograms = programDAO.getAll();
-                }
-
-
                 for (int i = 0; i < allPrograms.size(); i++) {
                     var program = allPrograms.get(i);
                     program.setIsInCart(programDAO.isInCart(program, (Customer) user));
+                    program.setIsPurchased(programDAO.isPurchased(program, (Customer) user));
                     allPrograms.set(i, program);
                 }
 

@@ -7,11 +7,15 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.softdepot.core.dao.*;
+import ru.softdepot.core.models.Customer;
+import ru.softdepot.core.models.Program;
+import ru.softdepot.core.models.User;
 import ru.softdepot.messages.Message;
-import ru.softdepot.core.dao.CustomerDAO;
-import ru.softdepot.core.dao.ProgramDAO;
-import ru.softdepot.core.dao.PurchaseDAO;
 import ru.softdepot.core.models.Purchase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/softdepot-api/purchases")
@@ -20,6 +24,9 @@ public class PurchasesController {
     private final PurchaseDAO purchaseDAO;
     private final ProgramDAO programDAO;
     private final CustomerDAO customerDAO;
+    private final DeveloperDAO developerDAO;
+    private final CategoryDAO categoryDAO;
+    private final UserDAO userDAO;
 
     @GetMapping
     public ResponseEntity<?> getAllPurchases() {
@@ -40,7 +47,29 @@ public class PurchasesController {
             );
 
         var purchases = purchaseDAO.getPurchasesOfCustomer(customerDAO.getById(customerId));
-        return ResponseEntity.ok().body(purchases);
+        List<Program> programs = new ArrayList<>();
+
+        var user = UsersController.getCurrentUser(userDAO);
+        if (user != null) {
+            if (user.getUserType() == User.Type.Customer) {
+                for (Purchase purchase : purchases) {
+                    var program = programDAO.getById(purchase.getProgramId());
+                    program.setIsInCart(programDAO.isInCart(program, (Customer) user));
+                    program.setIsPurchased(programDAO.isPurchased(program, (Customer) user));
+                    programs.add(program);
+                }
+
+                return ResponseEntity.ok().body(programs);
+            }
+        }
+        else {
+            for (Purchase purchase : purchases) {
+                var program = programDAO.getById(purchase.getProgramId());
+                programs.add(program);
+            }
+        }
+
+        return ResponseEntity.ok().body(programs);
     }
 
     @GetMapping(params = {"programId"})

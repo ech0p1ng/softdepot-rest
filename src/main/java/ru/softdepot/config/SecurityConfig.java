@@ -41,6 +41,7 @@ public class SecurityConfig {
                                 "/softdepot-api/users/sign-in",
                                 "/softdepot-api/users/new").anonymous() // доступ только для незарегистрированных
                         .requestMatchers("/porno").hasRole("CUSTOMER")
+                        .requestMatchers("/administrators/**").hasRole("ADMINISTRATOR")
                         .anyRequest().permitAll()) // аутентификация для остальных запросов
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Добавление JWT фильтра
                 .formLogin(login -> login
