@@ -34,6 +34,7 @@ class User {
             },
             error: function (xhr, status, error) {
                 console.error("Ошибка загрузки данных пользователя: ", xhr.responseJSON.message);
+                $(window).trigger('userDataLoaded');
             }
         });
     }
@@ -49,6 +50,7 @@ class User {
                     .removeClass("profile")
                     .addClass("logout")
                     .attr("href", "/")
+                    .attr("title", "Выйти")
                     .on("click", function () {
                         $.ajax({
                             method: "POST",
@@ -130,6 +132,8 @@ class User {
                     error: function(xhr,status,error) {
                     }
                 });
+
+
 
                 $.ajax({
                     method: "GET",

@@ -46,20 +46,29 @@ public class PurchasesController {
                     )
             );
 
-        var purchases = purchaseDAO.getPurchasesOfCustomer(customerDAO.getById(customerId));
+        var userOfPage = customerDAO.getById(customerId);
+        var currentUser = UsersController.getCurrentUser(userDAO);
+
+        var purchases = purchaseDAO.getPurchasesOfCustomer(userOfPage);
         List<Program> programs = new ArrayList<>();
 
-        var user = UsersController.getCurrentUser(userDAO);
-        if (user != null) {
-            if (user.getUserType() == User.Type.Customer) {
+
+        if (currentUser != null) {
+            if (currentUser.getUserType() == User.Type.Customer) {
                 for (Purchase purchase : purchases) {
                     var program = programDAO.getById(purchase.getProgramId());
-                    program.setIsInCart(programDAO.isInCart(program, (Customer) user));
-                    program.setIsPurchased(programDAO.isPurchased(program, (Customer) user));
+                    program.setIsInCart(programDAO.isInCart(program, (Customer) currentUser));
+                    program.setIsPurchased(programDAO.isPurchased(program, (Customer) currentUser));
                     programs.add(program);
                 }
 
                 return ResponseEntity.ok().body(programs);
+            }
+            else {
+                for (Purchase purchase : purchases) {
+                    var program = programDAO.getById(purchase.getProgramId());
+                    programs.add(program);
+                }
             }
         }
         else {
