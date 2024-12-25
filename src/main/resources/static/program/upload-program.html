@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/styles/base.css" />
+    <link rel="stylesheet" href="/program/styles/index.css" />
+    <link id="color-scheme" rel="stylesheet" href="/styles/dark.css" />
+
+    <link rel="stylesheet" href="/program/styles/upload-program.css" />
+
+    <title>Document</title>
+</head>
+<body>
+    <div id="pop-up-bg">
+        <div id="pop-up-opened">
+            <div id="pop-up-header">
+                <span id="pop-up-title">Добавление программы</span>
+                <button id="cart-exit-button" class="exit-button button close-button" onclick="UploadProgram().close()"></button>
+            </div>
+            <div id="pop-up-main">
+                <input type="text" class="input pop-up-one-line-input" name="programName" id="programName" placeholder="Название">
+                <input type="text" class="input pop-up-one-line-input" name="shortDescription" id="shortDescription" placeholder="Краткое описание">
+            </div>
+            <div id="pop-up-footer">
+                <div></div>
+                <!-- <span>Итого</span> -->
+                <!-- <span id="total-cost">0 руб.</span> -->
+                <div class="pop-up-buttons">
+                    <button class="button pop-up-footer-button">Отмена</button>
+                    <button class="button pop-up-footer-button">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/program/scripts/upload-program.js"></script>
+</body>
+</html>

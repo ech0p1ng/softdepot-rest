@@ -2,7 +2,7 @@ class Cart {
 
     static cart = $('' +
         '<!-- Корзина -->' +
-        '    <div id="cart-bg">' +
+        '    <div id="pop-up-bg">' +
         '        <div id="cart-opened">' +
         '            <div id="cart-header">' +
         '                <span id="cart-title">Корзина</span>' +

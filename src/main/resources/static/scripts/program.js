@@ -268,8 +268,6 @@ class Program {
                 alert("Не удалось удалить " + this.name + " из корзины");
             }
         });
-        // this._add_to_cart_button.innerHTML = "<span>Добавить в корзину</span>";
-        // this._add_to_cart_button.className = "add-to-cart";
     }
 
     //Создание строки в каталоге
