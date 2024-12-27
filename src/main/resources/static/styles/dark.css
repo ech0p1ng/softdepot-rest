@@ -43,6 +43,11 @@ body {
     background-repeat: no-repeat;
     background-position: center;
 }
+
+.close-button:hover {
+    background-color: red;
+}
+
 .close-button-bright {
     background-image: url("svg/cross-white.svg");
     background-size: 30px 30px;

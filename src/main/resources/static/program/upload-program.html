@@ -17,24 +17,38 @@
         <div id="pop-up-opened">
             <div id="pop-up-header">
                 <span id="pop-up-title">Добавление программы</span>
-                <button id="cart-exit-button" class="exit-button button close-button" onclick="UploadProgram().close()"></button>
+                <button id="pop-up-exit-button" class="exit-button button close-button" onclick="UploadProgram.close()"></button>
             </div>
-            <div id="pop-up-main">
+            <div class="pop-up-main">
                 <input type="text" class="input pop-up-one-line-input" name="programName" id="programName" placeholder="Название">
-                <input type="text" class="input pop-up-one-line-input" name="shortDescription" id="shortDescription" placeholder="Краткое описание">
+                <textarea type="text" class="input pop-up-multi-line-input" name="shortDescription" id="shortDescription" placeholder="Краткое описание"></textarea>
+                <textarea type="text" class="input pop-up-multi-line-input" name="fullDescription" id="fullDescription" placeholder="Полное описание"></textarea>
+                <input type="number" class="input pop-up-one-line-input" name="programName" id="price" placeholder="Стоимость (руб.)" min="0">
+                <div class="categories-selects">
+                    <div class="category-select-row">
+                        <select class="select pop-up-select-input" name="category-select">
+                            <option value="" class=".select-option" disabled selected>Выберите категорию...</option>
+                            <option value="Категория 1" class=".select-option">Категория 1</option>
+                            <option value="Категория 2" class=".select-option">Категория 2</option>
+                        </select>
+                        <input id="category1-degree-of-belonging" class="input pop-up-one-line-input" type="number" placeholder="Степень принадлежности" title="Степень принадлежности программы к категории" min="0" max="10" step="1">
+                        <button class="button exit-button close-button remove-button" id="remove-category1-button" title="Удалить категорию"></button>
+                    </div>
+                </div>
+                <button class="button pop-up-button" id="add-category-button"><span>Добавить категорию</span></button>
             </div>
             <div id="pop-up-footer">
                 <div></div>
-                <!-- <span>Итого</span> -->
-                <!-- <span id="total-cost">0 руб.</span> -->
-                <div class="pop-up-buttons">
-                    <button class="button pop-up-footer-button">Отмена</button>
-                    <button class="button pop-up-footer-button">OK</button>
+                <div class="pop-up-footer-buttons">
+                    <button  class="button pop-up-button cancel-button">Отмена</button>
+                    <button class="button pop-up-button ok-button">OK</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="/program/scripts/upload-program.js"></script>
+    <script src="/scripts/program.js"></script>
+    <script src="/scripts/tag.js"></script>
 </body>
 </html>

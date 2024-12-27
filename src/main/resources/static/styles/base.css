@@ -27,6 +27,32 @@ body {
     border-radius: 10px;
 }
 
+.select {
+    padding: 10px;
+    font: var(--font-default);
+    color: var(--text-color);
+    background-color: var(--bg-opacity);
+    border: 0px;
+    border-radius: 10px;
+}
+
+.select-option {
+    padding: 10px;
+    font: var(--font-default);
+    color: var(--text-color);
+    background-color: var(--bg-opacity);
+    border: 0px;
+    border-radius: 10px;
+}
+
+.select-option:disabled {
+    display: none;
+}
+
+.select-option:checked {
+    background-color: var(--bg-no-opacity);
+}
+
 /************************ header ************************/
 
 header {
@@ -244,4 +270,12 @@ main {
     left: 0;
     top: 0;
     z-index: 99999;
+}
+
+.ok-button:hover {
+    background-color: green;
+}
+
+.cancel-button:hover {
+    background-color: red;
 }
