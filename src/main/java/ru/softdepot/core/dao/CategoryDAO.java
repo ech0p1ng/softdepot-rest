@@ -13,6 +13,11 @@ import java.util.List;
 public class CategoryDAO implements DAO<Category>{
     private static Connection connection;
 
+    public enum Sort {
+        NAME,
+        DEFAULT
+    }
+
     static {
         try {
             Class.forName("org.postgresql.Driver");
@@ -115,13 +120,26 @@ public class CategoryDAO implements DAO<Category>{
         return category;
     }
 
-    public List<Category> getAll() {
+    public List<Category> getAll(Sort sort) {
         List<Category> categories = new ArrayList<Category>();
 
         try {
-            PreparedStatement statement = connection.prepareStatement(
-                "SELECT * FROM tag ORDER BY id"
-            );
+            PreparedStatement statement;
+            switch (sort) {
+                case NAME: {
+                    statement = connection.prepareStatement(
+                            "SELECT * FROM tag ORDER BY tag_name ASC"
+                    );
+                    break;
+                }
+                default: {
+                    statement = connection.prepareStatement(
+                            "SELECT * FROM tag ORDER BY id"
+                    );
+                    break;
+                }
+
+            }
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 categories.add(new Category(resultSet.getInt("id"), resultSet.getString("tag_name")));

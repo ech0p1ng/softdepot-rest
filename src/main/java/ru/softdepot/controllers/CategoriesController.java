@@ -18,8 +18,16 @@ public class CategoriesController {
     private final CategoryDAO categoryDAO;
 
     @GetMapping
-    public ResponseEntity<?> getAllCategories() {
-        return ResponseEntity.ok().body(categoryDAO.getAll());
+    public ResponseEntity<?> getAllCategories(@RequestParam(required = false, name = "sortBy") String sortBy) {
+        if (sortBy != null) {
+            var a = sortBy == "name";
+            var b = sortBy.equals("name");
+
+            if (sortBy.equals("name")) {
+                return ResponseEntity.ok().body(categoryDAO.getAll(CategoryDAO.Sort.NAME));
+            }
+        }
+        return ResponseEntity.ok().body(categoryDAO.getAll(CategoryDAO.Sort.DEFAULT));
     }
 
     @PostMapping("/new")
