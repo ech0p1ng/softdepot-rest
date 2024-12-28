@@ -105,7 +105,6 @@ class UploadProgram {
                                 alert("Ширина и высота изображения для логотипа должны быть равны");
                             }
                             else {
-                                previewContainer.append(imgPreviewContainer);
                                 changeImageTextFunc();
                             }
                         }
@@ -113,9 +112,9 @@ class UploadProgram {
                         img.src = event.target.result;
                     }
                     else if (imageType === ImageType.SCREENSHOTS) {
-                        previewContainer.append(imgPreviewContainer);
                         changeImageTextFunc();
                     }
+                    previewContainer.append(imgPreviewContainer);
 
                 }
 
