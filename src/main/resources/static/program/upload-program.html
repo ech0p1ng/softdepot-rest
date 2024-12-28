@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
 
     <title>Document</title>
 </head>
+
 <body>
     <div id="pop-up-bg">
         <div id="pop-up-opened">
@@ -19,6 +21,7 @@
                 <span id="pop-up-title">Добавление программы</span>
                 <button id="pop-up-exit-button" class="exit-button button close-button" onclick="UploadProgram.close()"></button>
             </div>
+
             <div class="pop-up-main">
                 <input type="text" class="input pop-up-one-line-input" name="programName" id="programName" placeholder="Название">
                 <textarea type="text" class="input pop-up-multi-line-input" name="shortDescription" id="shortDescription" placeholder="Краткое описание"></textarea>
@@ -26,13 +29,30 @@
                 <input type="number" class="input pop-up-one-line-input" name="programName" id="price" placeholder="Стоимость (руб.)" min="0">
                 <div class="categories-selects"></div>
                 <button class="button pop-up-button full-width-button" id="add-category-button"><span>Добавить категорию</span></button>
+
+                <div class="preview-container" id="logo-preview-container" style="max-width: 33%;"></div>
+
                 <div class="file-input button pop-up-button full-width-button" id="add-logo-container">
-                    <input type="file" id="add-logo-button"></input>
+                    <input type="file" accept=".png,.jpg,.jpeg" id="add-logo-button" class="file-upload-button"></input>
                     <span>Добавить логотип</span>
                 </div>
-                <div class="preview-container" id="logo-preview-container"></div>
 
+                <!-- <div class="preview-container" id="screenshots-preview-container">
+                    <div class="image-preview-container">
+                        <img src="/program/content/2/screenshots/sh02.jpg" class="image-preview">
+                        <div class="buttons-block">
+                            <button class="button edit-button edit" title="Заменить изображение"></button>
+                            <button class="button exit-button close-button" title="Удалить изображение"></button>
+                        </div>
+                    </div>
+                </div> -->
+
+                <div class="file-input button pop-up-button full-width-button" id="add-screenshots-container">
+                    <input type="file" accept=".png,.jpg,.jpeg" id="add-screenshots-button" class="file-upload-button" multiple></input>
+                    <span>Добавить скриншоты</span>
+                </div>
             </div>
+
             <div id="pop-up-footer">
                 <div style="height: 0px;"></div>
                 <div class="pop-up-footer-buttons">
@@ -49,4 +69,5 @@
     <script src="/scripts/tag.js"></script>
     <script src="/program/scripts/upload-program.js"></script>
 </body>
+
 </html>

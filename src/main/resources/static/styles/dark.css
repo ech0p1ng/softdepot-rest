@@ -7,6 +7,8 @@ body {
     --border-color: rgb(32, 32, 32);
     --text-color: white;
     --text-bright-color: white;
+    --red: rgba(255, 0, 0, 0.6);
+    --green: rgba(0, 255, 0, 0.6);
 }
 
 .shopping-basket {
@@ -45,11 +47,18 @@ body {
 }
 
 .close-button:hover {
-    background-color: red;
+    background-color: var(--red);
 }
 
 .close-button-bright {
     background-image: url("svg/cross-white.svg");
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.edit-button {
+    background-image: url("svg/change-circle-outline-rounded-white.svg");
     background-size: 30px 30px;
     background-repeat: no-repeat;
     background-position: center;

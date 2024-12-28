@@ -63,7 +63,8 @@ header {
     justify-content: space-around;
     position: fixed;
     z-index: 2024;
-    backdrop-filter: blur(10px); /* Размытие фона */
+    backdrop-filter: blur(10px);
+    /* Размытие фона */
     background: linear-gradient(to bottom, var(--bg-body), transparent);
 }
 
@@ -241,7 +242,7 @@ main {
 }
 
 .review-program-name {
-     margin-left: 10px;
+    margin-left: 10px;
 }
 
 .review-user-profile-img {
@@ -273,9 +274,9 @@ main {
 }
 
 .ok-button:hover {
-    background-color: green;
+    background-color: var(--green);
 }
 
 .cancel-button:hover {
-    background-color: red;
+    background-color: var(--red);
 }
