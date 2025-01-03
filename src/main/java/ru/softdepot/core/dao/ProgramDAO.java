@@ -4,10 +4,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.softdepot.core.models.*;
 
+import java.math.BigDecimal;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Component
 @Repository
@@ -118,7 +117,7 @@ public class ProgramDAO implements DAO<Program> {
                         resultSet.getString("description"),
                         resultSet.getInt("developer_id"),
                         resultSet.getString("short_description"),
-                        getTags(resultSet.getInt("id"))
+                        getCategories(resultSet.getInt("id"))
                 );
 
                 program.setHeaderUrl();
@@ -163,7 +162,7 @@ public class ProgramDAO implements DAO<Program> {
                         resultSet.getString("description"),
                         resultSet.getInt("developer_id"),
                         resultSet.getString("short_description"),
-                        getTags(resultSet.getInt("id"))
+                        getCategories(resultSet.getInt("id"))
                 );
                 program.setHeaderUrl();
                 program.setAverageEstimation(getAverageEstimation(program));
@@ -201,7 +200,7 @@ public class ProgramDAO implements DAO<Program> {
                         resultSet.getString("description"),
                         resultSet.getInt("developer_id"),
                         resultSet.getString("short_description"),
-                        getTags(resultSet.getInt("id"))
+                        getCategories(resultSet.getInt("id"))
                 );
                 program.setHeaderUrl();
                 program.setAverageEstimation(getAverageEstimation(program));
@@ -240,7 +239,7 @@ public class ProgramDAO implements DAO<Program> {
                         resultSet.getString("description"),
                         resultSet.getInt("developer_id"),
                         resultSet.getString("short_description"),
-                        getTags(resultSet.getInt("id"))
+                        getCategories(resultSet.getInt("id"))
                 );
                 program.setHeaderUrl();
                 program.setAverageEstimation(getAverageEstimation(program));
@@ -276,7 +275,7 @@ public class ProgramDAO implements DAO<Program> {
                         resultSet.getString("description"),
                         resultSet.getInt("developer_id"),
                         resultSet.getString("short_description"),
-                        getTags(resultSet.getInt("id"))
+                        getCategories(resultSet.getInt("id"))
                 );
                 program.setHeaderUrl();
                 program.setAverageEstimation(getAverageEstimation(program));
@@ -345,7 +344,7 @@ public class ProgramDAO implements DAO<Program> {
         return false;
     }
 
-    public List<Category> getTags(int programId)  {
+    public List<Category> getCategories(int programId)  {
         List<DegreeOfBelonging> degreeOfBelongingList = degreeOfBelongingDAO.getAllForProgram(programId);
         List<Category> categoryList = new ArrayList<>();
 
@@ -433,5 +432,94 @@ public class ProgramDAO implements DAO<Program> {
             throw new RuntimeException(e);
         }
         return false;
+    }
+
+    public List<Program> getRecommendations(Customer customer, double minEstimation, double maxPrice) throws Exception {
+        var allPrograms = programDAO.getAll();
+        List<Program> purchasedPrograms = null;
+        try {
+            purchasedPrograms = customerDAO.getPurchasedPrograms(customer);
+        } catch (Exception e) {
+            throw new Exception("У покупателя с id=" + customer.getId() + " не найдено приобретенных программ");
+        }
+
+        var allCategories = categoryDAO.getAll(CategoryDAO.Sort.DEFAULT);
+        int lastId = allCategories.getLast().getId();
+
+        //dob - degree of belonging
+        List<List<Double>> purchasedProgramsDob = new ArrayList<>();
+
+        for (var purchasedProgram : purchasedPrograms) {
+            purchasedProgramsDob.add(
+                    getDegreesOfBelonging(purchasedProgram, lastId)
+            );
+        }
+
+        //средняя степень принадлежности к каждой программе в библиотеке
+        List<Double> avgDegreesOfBelonging = new ArrayList<>();
+
+        for (int categoryId = 0; categoryId <= lastId; categoryId++) {
+            double avgDegreeOfBelonging = 0.0;
+            for (int programsDobId = 0; programsDobId < purchasedProgramsDob.size(); programsDobId++) {
+                avgDegreeOfBelonging += purchasedProgramsDob.get(programsDobId).get(categoryId);
+            }
+            avgDegreeOfBelonging /= lastId;
+            avgDegreesOfBelonging.add(avgDegreeOfBelonging);
+        }
+
+        //Составление списка рекомендаций
+        List<Recomendation> recommendations = new ArrayList<>();
+
+        for (var program : allPrograms) {
+            var degreesOfBelonging = getDegreesOfBelonging(program, lastId);
+            var distance = getEuclideanDistance(
+                    avgDegreesOfBelonging,
+                    degreesOfBelonging
+            );
+
+            boolean priceIsGood = program.getPrice().compareTo(new BigDecimal(maxPrice)) <= 0;
+            boolean estimationIsGood = program.getAverageEstimation() >= minEstimation;
+
+            if (estimationIsGood && priceIsGood) {
+                recommendations.add(new Recomendation(
+                        program,
+                        distance
+                ));
+            }
+        }
+
+        recommendations.sort(new RecommendationsComparator());
+        if (recommendations.size() > 100)
+            recommendations = recommendations.subList(0, 100);
+        List<Program> result = new ArrayList<>();
+        for (var recommendation : recommendations)
+            result.add(recommendation.program());
+        return result;
+    }
+
+    private static Double getEuclideanDistance(List<Double> a, List<Double> b) {
+        Double sum = 0.0;
+
+        for (var i = 0; i < a.size(); i++) {
+            sum += Math.pow(a.get(i) - b.get(i), 2);
+        }
+
+        return Math.sqrt(sum);
+    }
+
+    private static List<Double> getDegreesOfBelonging(Program program, int lastCategoryId) {
+        List<Double> degreesOfBelonging = new ArrayList<>();
+        for (int i = 0; i <= lastCategoryId; i++) {
+            degreesOfBelonging.add(0.0);
+        }
+        var categories = programDAO.getCategories(program.getId());
+
+        for (var category : categories) {
+            degreesOfBelonging.add(
+                    category.getId(),
+                    (double) category.getDegreeOfBelonging()
+            );
+        }
+        return degreesOfBelonging;
     }
 }

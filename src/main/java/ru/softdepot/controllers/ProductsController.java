@@ -28,7 +28,7 @@ public class ProductsController {
     private final ReviewDAO reviewDAO;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findProgram(@PathVariable("id") int id) throws Exception {
+    public ResponseEntity<?> findProgram(@PathVariable("id") Integer id) throws Exception {
         if (!programDAO.exists(id))
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
@@ -43,20 +43,9 @@ public class ProductsController {
         var user = UsersController.getCurrentUser(userDAO);
         if (user != null) {
             if (user.getUserType() == User.Type.Customer) {
-                //Проверка корзины
                 var program = programDAO.getById(id);
-                program.setIsInCart(programDAO.isInCart(program, (Customer) user));
-                program.setIsPurchased(programDAO.isPurchased(program, (Customer) user));
+                checkProgram((Customer) user, program);
 
-                //Проверка отзыва
-                try {
-                    var review = customerDAO.getReview((Customer) user, program);
-                    program.setHasReview(review != null);
-                } catch (Exception e) {
-                }
-
-                //Проверка приобретения программы
-                program.setIsPurchased(customerDAO.hasPurchasedProgram((Customer) user, program));
                 return ResponseEntity.ok().body(program);
             }
         }
@@ -65,7 +54,7 @@ public class ProductsController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateProgram(@RequestBody Program program,
-                                           @PathVariable("id") int id,
+                                           @PathVariable("id") Integer id,
                                            BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
@@ -115,7 +104,7 @@ public class ProductsController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProgram(@PathVariable("id") int id) {
+    public ResponseEntity<?> deleteProgram(@PathVariable("id") Integer id) {
         if (!programDAO.exists(id))
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
@@ -220,8 +209,9 @@ public class ProductsController {
             if (user.getUserType() == User.Type.Customer) {
                 for (int i = 0; i < allPrograms.size(); i++) {
                     var program = allPrograms.get(i);
-                    program.setIsInCart(programDAO.isInCart(program, (Customer) user));
-                    program.setIsPurchased(programDAO.isPurchased(program, (Customer) user));
+//                    program.setIsInCart(programDAO.isInCart(program, (Customer) user));
+//                    program.setIsPurchased(programDAO.isPurchased(program, (Customer) user));
+                    checkProgram((Customer) user, program);
                     allPrograms.set(i, program);
                 }
 
@@ -229,5 +219,63 @@ public class ProductsController {
             }
         }
         return ResponseEntity.ok().body(programDAO.getAll());
+    }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<?> getRecommendations(
+            @RequestParam("customerId") Integer customerId,
+            @RequestParam(value = "minEstimation", required = false) Double minEstimation,
+            @RequestParam(value = "maxPrice", required = false) Double maxPrice) {
+        Customer customer;
+        try {
+            customer = customerDAO.getById(customerId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    ru.softdepot.messages.Message.build(
+                            Message.Entity.CUSTOMER,
+                            Message.Identifier.ID,
+                            customerId,
+                            Message.Status.NOT_FOUND
+                    )
+            );
+        }
+
+        if (minEstimation == null) minEstimation = 0.0;
+        if (maxPrice == null) maxPrice = Double.MAX_VALUE;
+
+        List<Program> recommendations;
+
+        try {
+            recommendations = programDAO.getRecommendations(customer, minEstimation, maxPrice);
+            for (int i = 0; i < recommendations.size(); i++) {
+                var program = recommendations.get(i);
+                recommendations.set(i, checkProgram(customer, program));
+            }
+
+            return ResponseEntity.ok().body(recommendations);
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    e.getMessage()
+            );
+        }
+    }
+
+    private Program checkProgram(Customer customer, Program program) {
+        //Проверка корзины
+        program.setIsInCart(programDAO.isInCart(program, customer));
+        program.setIsPurchased(programDAO.isPurchased(program, customer));
+
+        //Проверка отзыва
+        try {
+            var review = customerDAO.getReview(customer, program);
+            program.setHasReview(review != null);
+        } catch (Exception e) {
+        }
+
+        //Проверка приобретения программы
+        program.setIsPurchased(customerDAO.hasPurchasedProgram(customer, program));
+        return program;
     }
 }

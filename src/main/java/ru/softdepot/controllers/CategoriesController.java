@@ -20,9 +20,6 @@ public class CategoriesController {
     @GetMapping
     public ResponseEntity<?> getAllCategories(@RequestParam(required = false, name = "sortBy") String sortBy) {
         if (sortBy != null) {
-            var a = sortBy == "name";
-            var b = sortBy.equals("name");
-
             if (sortBy.equals("name")) {
                 return ResponseEntity.ok().body(categoryDAO.getAll(CategoryDAO.Sort.NAME));
             }
@@ -56,7 +53,7 @@ public class CategoriesController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> editCategory(@RequestBody Category category,
-                                          @PathVariable("id") int id,
+                                          @PathVariable("id") Integer id,
                                           BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             if (bindingResult instanceof BindException exception) throw exception;
@@ -80,7 +77,7 @@ public class CategoriesController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable("id") int id) {
+    public ResponseEntity<?> deleteCategory(@PathVariable("id") Integer id) {
         if (categoryDAO.exists(id)) {
             categoryDAO.delete(id);
             return ResponseEntity.ok().build();
@@ -98,7 +95,7 @@ public class CategoriesController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCategory(@PathVariable("id") int id) {
+    public ResponseEntity<?> getCategory(@PathVariable("id") Integer id) {
         if (categoryDAO.exists(id)) {
             var category = categoryDAO.getById(id);
             return ResponseEntity.ok().body(category);
