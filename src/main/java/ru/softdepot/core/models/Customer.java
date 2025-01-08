@@ -1,6 +1,7 @@
 package ru.softdepot.core.models;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class Customer extends User {
     private int id;
@@ -87,5 +88,26 @@ public class Customer extends User {
 
     public Type getType() {
         return type;
+    }
+
+    public String toString(List<Program> purchasedPrograms) {
+        StringBuilder purchasedProgramsSb = new StringBuilder();
+        boolean isFirst = true;
+
+        if (purchasedPrograms != null) {
+            if (!purchasedPrograms.isEmpty()) {
+                for (var p : purchasedPrograms) {
+                    if (isFirst) {
+                        purchasedProgramsSb.append(p.toString());
+                    } else {
+                        purchasedProgramsSb.append(", ").append(p.toString());
+                    }
+                    isFirst = false;
+                }
+                return "Customer [id=" + id + ", name=" + name + ", purchasedPrograms = ["+purchasedPrograms+"]]";
+            }
+        }
+
+        return "Customer [id=" + id + ", name=" + name + "]";
     }
 }

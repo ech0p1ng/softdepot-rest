@@ -56,4 +56,9 @@ public class Category {
     public void setProgramId(int programId) {
         this.programId = programId;
     }
+
+    @Override
+    public String toString() {
+        return "Category [id=" + id + ", name=" + name + ", degreeOfBelonging=" + degreeOfBelonging +"]";
+    }
 }

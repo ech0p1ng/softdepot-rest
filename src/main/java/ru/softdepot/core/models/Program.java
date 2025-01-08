@@ -45,7 +45,6 @@ public class Program {
 //    }
 
 
-
     public Program(int id, String name, BigDecimal price, String fullDescription,
                    int developerId, String shortDescription, List<Category> categories) {
         this.id = id;
@@ -86,7 +85,8 @@ public class Program {
         this.id = id;
     }
 
-    public Program() {}
+    public Program() {
+    }
 
     public Program(String name, String shortDescription, String fullDescription,
                    BigDecimal price, MultipartFile logo, MultipartFile winInstaller,
@@ -111,11 +111,7 @@ public class Program {
     }
 
     public void setPageUrl() {
-        this.pageUrl = "/programs/"+this.id;
-    }
-
-    public void setFilesPath(int id) {
-        this.filesPath = "program/content/" + id;
+        this.pageUrl = "/programs/" + this.id;
     }
 
     public int getId() {
@@ -135,19 +131,18 @@ public class Program {
         return price;
     }
 
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
     public String getPriceAsString() {
-        if (getPrice().compareTo(BigDecimal.ZERO) > 0){
+        if (getPrice().compareTo(BigDecimal.ZERO) > 0) {
             String priceStr = getPrice().toString() + " руб.";
             priceStr = priceStr.replace(".00", "");
             return priceStr;
-        }
-        else {
+        } else {
             return "Бесплатно";
         }
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
     }
 
     public String getFullDescription() {
@@ -205,7 +200,6 @@ public class Program {
         return nameForPath;
     }
 
-
     public String getLogoUrl() {
         return getFilesPath() + "/logo.png";
     }
@@ -245,6 +239,10 @@ public class Program {
 
     public String getFilesPath() {
         return this.filesPath;
+    }
+
+    public void setFilesPath(int id) {
+        this.filesPath = "program/content/" + id;
     }
 
     public List<String> getScreenshotsUrl() {
@@ -340,5 +338,21 @@ public class Program {
 
     public void setHasReview(boolean hasReview) {
         this.hasReview = hasReview;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder categoriesString = new StringBuilder();
+        boolean isFirst = true;
+        for (var category : this.categories) {
+            if (isFirst) {
+                categoriesString.append(category.toString());
+            } else {
+                categoriesString.append(", ").append(category.toString());
+            }
+            isFirst = false;
+        }
+
+        return "Program [id=" + this.id + ", name=" + this.name + ", pageUrl=" + this.pageUrl + ", categories=[" + categoriesString + "]]";
     }
 }

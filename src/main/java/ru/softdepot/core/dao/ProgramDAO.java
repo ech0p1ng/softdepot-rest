@@ -1,12 +1,20 @@
 package ru.softdepot.core.dao;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.softdepot.core.models.*;
 
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileAttribute;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
 
 @Component
 @Repository
@@ -35,6 +43,32 @@ public class ProgramDAO implements DAO<Program> {
         }
     }
 
+    private static Double getEuclideanDistance(List<Double> a, List<Double> b) {
+        Double sum = 0.0;
+
+        for (var i = 0; i < a.size(); i++) {
+            sum += Math.pow(a.get(i) - b.get(i), 2);
+        }
+
+        return Math.sqrt(sum);
+    }
+
+    private static List<Double> getDegreesOfBelonging(Program program, int lastCategoryId) {
+        List<Double> degreesOfBelonging = new ArrayList<>();
+        for (int i = 0; i <= lastCategoryId; i++) {
+            degreesOfBelonging.add(0.0);
+        }
+        var categories = programDAO.getCategories(program.getId());
+
+        for (var category : categories) {
+            degreesOfBelonging.add(
+                    category.getId(),
+                    (double) category.getDegreeOfBelonging()
+            );
+        }
+        return degreesOfBelonging;
+    }
+
     @Override
     public int add(Program program) {
         if (!exists(program.getName(), program.getDeveloperId())) {
@@ -58,8 +92,7 @@ public class ProgramDAO implements DAO<Program> {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             String msg = String.format("Program [name=%s, developer_id=%d] already exists",
                     program.getName(), program.getDeveloperId());
         }
@@ -98,7 +131,6 @@ public class ProgramDAO implements DAO<Program> {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public Program getById(int id) throws Exception {
@@ -264,7 +296,7 @@ public class ProgramDAO implements DAO<Program> {
                 Array tempSqlArray = resultSet.getArray("screenshots_url");
                 List<String> screenshotsUrlList = new ArrayList<>();
                 if (tempSqlArray != null) {
-                    String[] screenshotsUrlStrArr = (String[])tempSqlArray.getArray();
+                    String[] screenshotsUrlStrArr = (String[]) tempSqlArray.getArray();
                     screenshotsUrlList = Arrays.stream(screenshotsUrlStrArr).toList();
                 }
 
@@ -286,7 +318,6 @@ public class ProgramDAO implements DAO<Program> {
         }
         return programs;
     }
-
 
     public int addTag(int programId, int tagId, int degreeOfBelongingValue) throws Exception {
         if (!hasTag(programId, tagId)) {
@@ -344,7 +375,7 @@ public class ProgramDAO implements DAO<Program> {
         return false;
     }
 
-    public List<Category> getCategories(int programId)  {
+    public List<Category> getCategories(int programId) {
         List<DegreeOfBelonging> degreeOfBelongingList = degreeOfBelongingDAO.getAllForProgram(programId);
         List<Category> categoryList = new ArrayList<>();
 
@@ -357,7 +388,6 @@ public class ProgramDAO implements DAO<Program> {
 
         return categoryList;
     }
-
 
     public boolean exists(String programName, int developerId) {
         try {
@@ -399,7 +429,7 @@ public class ProgramDAO implements DAO<Program> {
     public float getAverageEstimation(Program program) {
         try {
             PreparedStatement statement = connection.prepareStatement(
-                "SELECT AVG(estimation) FROM review WHERE program_id=?"
+                    "SELECT AVG(estimation) FROM review WHERE program_id=?"
             );
             statement.setInt(1, program.getId());
             ResultSet resultSet = statement.executeQuery();
@@ -411,8 +441,6 @@ public class ProgramDAO implements DAO<Program> {
         }
         return 0;
     }
-
-
 
     public boolean isInCart(Program program, Customer customer) {
         return cartDAO.containsProgram(customer.getId(), program.getId());
@@ -436,6 +464,7 @@ public class ProgramDAO implements DAO<Program> {
 
     public List<Program> getRecommendations(Customer customer, double minEstimation, double maxPrice) throws Exception {
         var allPrograms = programDAO.getAll();
+
         List<Program> purchasedPrograms = null;
         try {
             purchasedPrograms = customerDAO.getPurchasedPrograms(customer);
@@ -468,7 +497,7 @@ public class ProgramDAO implements DAO<Program> {
         }
 
         //Составление списка рекомендаций
-        List<Recomendation> recommendations = new ArrayList<>();
+        List<Recommendation> recommendations = new ArrayList<>();
 
         for (var program : allPrograms) {
             var degreesOfBelonging = getDegreesOfBelonging(program, lastId);
@@ -481,7 +510,7 @@ public class ProgramDAO implements DAO<Program> {
             boolean estimationIsGood = program.getAverageEstimation() >= minEstimation;
 
             if (estimationIsGood && priceIsGood) {
-                recommendations.add(new Recomendation(
+                recommendations.add(new Recommendation(
                         program,
                         distance
                 ));
@@ -492,34 +521,35 @@ public class ProgramDAO implements DAO<Program> {
         if (recommendations.size() > 100)
             recommendations = recommendations.subList(0, 100);
         List<Program> result = new ArrayList<>();
-        for (var recommendation : recommendations)
+        for (var recommendation : recommendations) {
             result.add(recommendation.program());
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);  // Для 24-часового формата
+        int minute = calendar.get(Calendar.MINUTE);
+        int second = calendar.get(Calendar.SECOND);
+        String dateTime = String.format("%d-%02d-%02d %02d-%02d-%02d",
+                year, month, dayOfMonth, hour, minute, second);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String resultJson = objectMapper
+                .writerWithDefaultPrettyPrinter()
+                .writeValueAsString(
+                        new RecommendationResult(
+                                customer,
+                                allPrograms,
+                                recommendations,
+                                dateTime
+                        )
+                );
+
+        var filePath = Files.createFile(Path.of("logs/" + dateTime+ ".log").toAbsolutePath());
+        Files.writeString(filePath, resultJson);
+
         return result;
-    }
-
-    private static Double getEuclideanDistance(List<Double> a, List<Double> b) {
-        Double sum = 0.0;
-
-        for (var i = 0; i < a.size(); i++) {
-            sum += Math.pow(a.get(i) - b.get(i), 2);
-        }
-
-        return Math.sqrt(sum);
-    }
-
-    private static List<Double> getDegreesOfBelonging(Program program, int lastCategoryId) {
-        List<Double> degreesOfBelonging = new ArrayList<>();
-        for (int i = 0; i <= lastCategoryId; i++) {
-            degreesOfBelonging.add(0.0);
-        }
-        var categories = programDAO.getCategories(program.getId());
-
-        for (var category : categories) {
-            degreesOfBelonging.add(
-                    category.getId(),
-                    (double) category.getDegreeOfBelonging()
-            );
-        }
-        return degreesOfBelonging;
     }
 }
