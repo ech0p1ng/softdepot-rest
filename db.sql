@@ -9,11 +9,11 @@ CREATE TABLE administrator
 --покупатель
 CREATE TABLE customer
 (
-    id              SERIAL PRIMARY KEY,
-    customer_name   varchar(50) NOT NULL,
-    password        varchar(60) NOT NULL,
-    profile_img_url varchar(200),
-    balance         numeric(10, 2) CHECK (balance >= 0)
+    id                     SERIAL PRIMARY KEY,
+    customer_name          varchar(50) NOT NULL,
+    password               varchar(60) NOT NULL,
+    profile_img_url        varchar(200),
+	registration_date_time timestamp NOT NULL
 );
 
 --разработчик
@@ -22,7 +22,8 @@ CREATE TABLE developer
     id              SERIAL PRIMARY KEY,
     developer_name  varchar(50) NOT NULL,
     password        varchar(60) NOT NULL,
-    profile_img_url varchar(200)
+    profile_img_url varchar(200),
+	registration_date_time timestamp NOT NULL
 );
 
 --ключевое слово
@@ -45,7 +46,9 @@ CREATE TABLE program
     installer_windows_url varchar(100),
     installer_linux_url   varchar(100),
     installer_macos_url   varchar(100),
-    screenshots_url       varchar(100)[]
+    screenshots_url       varchar(100)[],
+	upload_date_time timestamp NOT NULL,
+	update_date_time timestamp
 );
 
 --степень принадлежности к ключевому слову
@@ -87,6 +90,7 @@ CREATE TABLE review
     program_id  int       NOT NULL REFERENCES program (id) ON DELETE CASCADE ON UPDATE CASCADE,
     estimation  int       NOT NULL CHECK (estimation >= 0 AND estimation <= 5),
     date_time   timestamp NOT NULL,
+	update_date_time   timestamp NOT NULL,
     review_text TEXT      NOT NULL
 );
 
@@ -148,13 +152,13 @@ INSERT INTO developer
 VALUES (1, NULL, 'SoftDepotDEV', '$2a$10$cyKOCmbGqlTWh6xxuyJEhuzM6sNZ0aJq5hqPpzVov0jyVA60uDA9u', NULL);
 
 INSERT INTO customer
-VALUES (1, 'customer1', NULL, '$2a$10$YMs3QL44GMSvyQX6F5ZE8ek2PH0dLKLb2nQUSxB8YPNf38MaNIoau', NULL, 0.00),
-       (3, 'customer2', NULL, '$2a$10$qGhYdZ27VcRagzSXH.36y.wYNnzea7azEJj5auBTJngyH2bOBJW2K', NULL, 0.00),
-       (4, 'customer3', NULL, '$2a$10$0TXfQ2XBFLXKhw2Mqt0b4ekS/0KU74svpwnCtahL/tJAYtXeAbulC', NULL, 0.00);
+VALUES (1, 'customer1', '$2a$10$YMs3QL44GMSvyQX6F5ZE8ek2PH0dLKLb2nQUSxB8YPNf38MaNIoau', NULL, '2024-12-01 14:30'),
+       (2, 'customer2', '$2a$10$qGhYdZ27VcRagzSXH.36y.wYNnzea7azEJj5auBTJngyH2bOBJW2K', NULL, '2024-12-01 14:31'),
+       (3, 'customer3', '$2a$10$0TXfQ2XBFLXKhw2Mqt0b4ekS/0KU74svpwnCtahL/tJAYtXeAbulC', NULL, '2024-12-01 14:32');
 
 INSERT INTO program
-VALUES (1, 1, 'BeamNG.drive', 880.00, 'Основанный на физике мягких объектов автомобильный симулятор, способный практически на всё.', 'BeamNG.drive - невероятно реалистичный автосимулятор с практически безграничными возможностями. В основе игры лежит система физики мягких объектов, способная правдоподобно моделировать компоненты автомобиля в реальном времени. Благодаря годам кропотливой разработки, исследований и испытаний, BeamNG.drive способен передать весь восторг вождения в реальном мире.', null, null, null, null, null),
-       (2, 1, 'Insurgency', 360.00, 'В этой многопользовательской и кооперавтивной игре Вы сражаетесь в кровавых боях на улицах, лицом к лицу с врагом, где выживание Вашей команды зависит от контроля важных точек и уничтожения вражеских боеприпасов, все оперирующее на движке Source.', 'В этой многопользовательской и кооперавтивной игре Вы сражаетесь в кровавых боях на улицах, лицом к лицу с врагом, где выживание Вашей команды зависит от контроля важных точек и уничтожения вражеских боеприпасов, все оперирующее на движке Source.', null, null, null, null, null);
+VALUES (1, 1, 'BeamNG.drive', 880.00, 'Основанный на физике мягких объектов автомобильный симулятор, способный практически на всё.', 'BeamNG.drive - невероятно реалистичный автосимулятор с практически безграничными возможностями. В основе игры лежит система физики мягких объектов, способная правдоподобно моделировать компоненты автомобиля в реальном времени. Благодаря годам кропотливой разработки, исследований и испытаний, BeamNG.drive способен передать весь восторг вождения в реальном мире.', null, null, null, null, null,'2024-12-01 14:33','2024-12-01 14:34'),
+       (2, 1, 'Insurgency', 360.00, 'В этой многопользовательской и кооперавтивной игре Вы сражаетесь в кровавых боях на улицах, лицом к лицу с врагом, где выживание Вашей команды зависит от контроля важных точек и уничтожения вражеских боеприпасов, все оперирующее на движке Source.', 'В этой многопользовательской и кооперавтивной игре Вы сражаетесь в кровавых боях на улицах, лицом к лицу с врагом, где выживание Вашей команды зависит от контроля важных точек и уничтожения вражеских боеприпасов, все оперирующее на движке Source.', null, null, null, null, null, '2024-12-01 14:35', null);
 
 INSERT INTO degree_of_belonging
 VALUES (1, 1, 2, 2),
@@ -166,5 +170,5 @@ VALUES (1, 1, 2, 2),
 INSERT INTO purchase VALUES (3, '2024-11-05 13:00:07.000000'),
                             (4, '2024-11-05 13:00:07.000000');
 
-INSERT INTO review VALUES (1, 1, 1, 5, '2024-11-08 10:10:16.000000', 'Отличная физика мягких тел, лучшая физика управления автомобилями!'),
-                          (2, 2, 1, 4, '2024-11-08 10:10:16.000000', 'Не ну мед');
+INSERT INTO review VALUES (1, 1, 1, 5, '2024-11-08 10:10:16.000000', '2024-11-08 12:52:04.000000', 'Отличная физика мягких тел, лучшая физика управления автомобилями!'),
+                          (2, 2, 1, 4, '2024-11-08 10:10:16.000000', null, 'Не ну мед');
