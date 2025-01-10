@@ -48,7 +48,8 @@ CREATE TABLE program
     installer_macos_url   varchar(100),
     screenshots_url       varchar(100)[],
 	upload_date_time timestamp NOT NULL,
-	update_date_time timestamp
+	update_date_time timestamp,
+	currency              int       NOT NULL REFERENCES measure_unit (id) ON UPDATE CASCADE
 );
 
 --степень принадлежности к ключевому слову
@@ -66,7 +67,8 @@ CREATE TABLE purchase
     id                 SERIAL PRIMARY KEY,
     purchase_date_time timestamp NOT NULL,
     customer_id        int       NOT NULL REFERENCES customer (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    program_id         int       NOT NULL REFERENCES program (id) ON UPDATE CASCADE
+    program_id         int       NOT NULL REFERENCES program (id) ON UPDATE CASCADE,
+	currency           int       NOT NULL REFERENCES measure_unit (id) ON UPDATE CASCADE
 );
 
 --ежедневная статистика
@@ -79,7 +81,7 @@ CREATE TABLE daily_stats
     earnings         numeric(10, 2) CHECK (earnings >= 0),
     purchases_amount int       NOT NULL,
     reviews_amount   int       NOT NULL
-
+	currency         int       NOT NULL REFERENCES measure_unit (id) ON UPDATE CASCADE
 );
 
 --отзыв
@@ -102,6 +104,13 @@ CREATE TABLE cart
     program_id  int NOT NULL REFERENCES program (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+--единица измерения
+CREATE TABLE measure_unit
+{
+	id          SERIAL PRIMARY KEY,
+	name        varchar(50) NOT NULL UNIQUE
+};
+
 --роли
 CREATE ROLE administrator_role WITH LOGIN PASSWORD '9QrlLHkwMJah3hNoMRlW' SUPERUSER;
 CREATE ROLE customer_role WITH LOGIN PASSWORD 'at7DcsAixTk4Eqs7zdp3' NOCREATEDB NOCREATEROLE NOBYPASSRLS;
@@ -114,6 +123,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE customer TO customer_role;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE review TO customer_role;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE cart TO customer_role;
 GRANT SELECT ON TABLE administrator TO customer_role;
+GRANT SELECT ON TABLE measure_unit TO customer_role;
 GRANT SELECT ON TABLE developer TO customer_role;
 GRANT SELECT ON TABLE program TO customer_role;
 GRANT USAGE, SELECT ON SEQUENCE customer_id_seq TO customer_role;
@@ -123,6 +133,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE degree_of_belonging TO developer_r
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE developer TO developer_role;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE program TO developer_role;
 GRANT SELECT ON TABLE administrator TO developer_role;
+GRANT SELECT ON TABLE measure_unit TO developer_role;
 GRANT SELECT ON TABLE daily_stats TO developer_role;
 GRANT SELECT ON TABLE customer TO developer_role;
 GRANT SELECT ON TABLE review TO developer_role;
@@ -134,6 +145,7 @@ GRANT SELECT ON TABLE customer TO unregistered_role;
 GRANT SELECT ON TABLE review TO unregistered_role;
 GRANT SELECT ON TABLE developer TO unregistered_role;
 GRANT SELECT ON TABLE program TO unregistered_role;
+GRANT SELECT ON TABLE measure_unit TO unregistered_role;
 
 INSERT INTO tag
 VALUES (1, 'Гонки'),
