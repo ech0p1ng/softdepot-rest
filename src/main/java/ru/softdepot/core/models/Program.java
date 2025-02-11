@@ -177,7 +177,7 @@ public class Program {
         this.shortDescription = shortDescription;
     }
 
-    public List<Category> getTags() {
+    public List<Category> getCategories() {
         return categories;
     }
 

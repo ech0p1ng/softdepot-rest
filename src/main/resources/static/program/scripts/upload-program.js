@@ -5,7 +5,7 @@ const ImageType = {
     LOGO: 'LOGO'
 }
 
-class UploadProgram {
+class ProgramUploader {
     static categories = [];
 
     static show() {
@@ -15,9 +15,9 @@ class UploadProgram {
             dataType: 'json',
             success: (response) => {
                 response.forEach((elem) => {
-                    UploadProgram.categories.push(new Tag(elem));
+                    ProgramUploader.categories.push(new Tag(elem));
                 });
-                UploadProgram.addSelectRow();
+                ProgramUploader.addSelectRow();
             },
             error: (xhr, status, error) => {
                 alert('Не удалось загрузить список категорий программ. Перезагрузите страницу или повторите позже.');
@@ -25,19 +25,16 @@ class UploadProgram {
         });
     }
 
-
     static close() { }
-
-
 
     static addSelectRow() {
         let selectRow = $(/*html*/
             `<div class="category-select-row" id="category-select-row-${selectsForCategoriesCount}">
-                <select class="select pop-up-select-input" name="category-select-${selectsForCategoriesCount}">
+                <select class="select pop-up-select-input" name="category-select">
                     <option value="" class="select-option" disabled selected>Выберите категорию...</option>
                 </select>
-                <input id="category-degree-of-belonging-${selectsForCategoriesCount}" class="input pop-up-one-line-input" type="number" placeholder="Степень принадлежности" title="Степень принадлежности программы к категории" min="0" max="10" step="1">
-                <button class="button exit-button close-button remove-button" id="remove-category-button-${selectsForCategoriesCount}" title="Удалить категорию" row-id="${selectsForCategoriesCount}" onclick="UploadProgram.deleteSelectRow(${selectsForCategoriesCount})"></button>
+                <input id="category-degree-of-belonging-${selectsForCategoriesCount}" class="input pop-up-one-line-input" type="number" placeholder="Степень принадлежности" title="Степень принадлежности программы к категории" min="0" max="10" step="1" name="category-degree-of-belonging">
+                <button class="button exit-button close-button remove-button" id="remove-category-button-${selectsForCategoriesCount}" title="Удалить категорию" row-id="${selectsForCategoriesCount}" onclick="ProgramUploader.deleteSelectRow(${selectsForCategoriesCount})"></button>
             </div>`
         );
 
@@ -48,7 +45,7 @@ class UploadProgram {
 
         selectsForCategoriesCount++;
 
-        UploadProgram.categories.forEach(category => {
+        ProgramUploader.categories.forEach(category => {
 
             let option = $(/*html*/
                 `<option value="${category.id}" class="select-option">${category.name}</option>`
@@ -136,16 +133,35 @@ class UploadProgram {
             }
         }
     }
+
+    static collectInfo() {
+        let kitem = $("#programName");
+        let programName = $("#programName").val();
+        let shortDescription = $("#shortDescription").val();
+        let fullDescription = $("#fullDescription").val();
+        let price = $("#price").val();
+
+        let categoriesRows = $(".categories-selects").find('.category-select-row');
+
+        categoriesRows.each(function () {
+            let categoryId = $(this).find('[name="category-select"]').val();
+            let categoryName = $(this).find('[name="category-select"]').text();
+            let degreeOfBelonfing = $(this).find('[name="category-degree-of-belonging"]').val();
+            alert(categoryName);
+            // let category = new Tag();
+        })
+
+    }
 }
 
 $(window).on('load', () => {
-    UploadProgram.show();
-    $("#add-category-button").on('click', () => UploadProgram.addSelectRow());
+    ProgramUploader.show();
+    $("#add-category-button").on('click', () => ProgramUploader.addSelectRow());
 
 
     $("#add-logo-button").on('change', () => {
         $("#add-logo-button").empty();
-        UploadProgram.addImage(
+        ProgramUploader.addImage(
             $('#logo-preview-container'),
             $('#add-logo-button'),
             function () {
@@ -162,7 +178,7 @@ $(window).on('load', () => {
     });
 
     $("#add-screenshots-button").on("change", () => {
-        UploadProgram.addImage(
+        ProgramUploader.addImage(
             $('#screenshots-preview-container'),
             $('#add-screenshots-button'),
             function () {

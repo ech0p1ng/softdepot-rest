@@ -13,6 +13,7 @@ import ru.softdepot.core.models.Customer;
 import ru.softdepot.core.models.Program;
 import ru.softdepot.core.models.User;
 import ru.softdepot.messages.Message;
+import ru.softdepot.requestBodies.ProgramRequestBody;
 
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class ProductsController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateProgram(@RequestBody Program program,
+    public ResponseEntity<?> updateProgram(@RequestBody ProgramRequestBody programRequestBody,
                                            @PathVariable("id") Integer id,
                                            BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
@@ -71,18 +72,18 @@ public class ProductsController {
                         )
                 );
 
-            if (!developerDAO.exists(program.getDeveloperId()))
+            if (!developerDAO.exists(programRequestBody.getDeveloperId()))
                 throw new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         Message.build(
                                 Message.Entity.DEVELOPER,
                                 Message.Identifier.ID,
-                                program.getDeveloperId(),
+                                programRequestBody.getDeveloperId(),
                                 Message.Status.NOT_FOUND
                         )
                 );
 
-            var categories = program.getTags();
+            var categories = programRequestBody.getCategories();
 
             for (var category : categories) {
                 if (!categoryDAO.exists(category.getId()))
@@ -98,7 +99,7 @@ public class ProductsController {
 
             }
 
-            programDAO.update(program);
+            programDAO.update(programRequestBody.convertToProgram());
             return ResponseEntity.ok().build();
         }
     }
@@ -122,7 +123,7 @@ public class ProductsController {
 
 
     @PostMapping("/new")
-    public ResponseEntity<?> addNewProgram(@RequestBody Program program,
+    public ResponseEntity<?> addNewProgram(@RequestBody ProgramRequestBody programRequestBody,
                                            BindingResult bindingResult,
                                            UriComponentsBuilder uriComponentsBuilder) throws Exception {
         if (bindingResult.hasErrors()) {
@@ -130,29 +131,29 @@ public class ProductsController {
             else throw new BindException(bindingResult);
         } else {
 
-            if (!programDAO.exists(program.getId()))
-                throw new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        Message.build(
-                                Message.Entity.PRODUCT,
-                                Message.Identifier.ID,
-                                program.getId(),
-                                Message.Status.NOT_FOUND
-                        )
-                );
+//            if (!programDAO.exists(program.getId()))
+//                throw new ResponseStatusException(
+//                        HttpStatus.NOT_FOUND,
+//                        Message.build(
+//                                Message.Entity.PRODUCT,
+//                                Message.Identifier.ID,
+//                                program.getId(),
+//                                Message.Status.NOT_FOUND
+//                        )
+//                );
 
-            if (!developerDAO.exists(program.getDeveloperId()))
+            if (!developerDAO.exists(programRequestBody.getDeveloperId()))
                 throw new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         Message.build(
                                 Message.Entity.DEVELOPER,
                                 Message.Identifier.ID,
-                                program.getDeveloperId(),
+                                programRequestBody.getDeveloperId(),
                                 Message.Status.NOT_FOUND
                         )
                 );
 
-            var categories = program.getTags();
+            var categories = programRequestBody.getCategories();
 
             for (var category : categories) {
                 if (!categoryDAO.exists(category.getId()))
@@ -167,21 +168,21 @@ public class ProductsController {
                     );
             }
 
-            if (programDAO.exists(program.getName(), program.getDeveloperId()))
+            if (programDAO.exists(programRequestBody.getName(), programRequestBody.getDeveloperId()))
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT,
                         Message.build(
                                 Message.Entity.PRODUCT,
-                                Message.Identifier.ID,
+                                Message.Identifier.NAME,
                                 String.format(
                                         "%s от разработчика с id %s",
-                                        program.getId(),
-                                        program.getDeveloperId()),
+                                        programRequestBody.getName(),
+                                        programRequestBody.getDeveloperId()),
                                 Message.Status.ALREADY_EXISTS
                         )
                 );
 
-            programDAO.add(program);
+            programDAO.add(programRequestBody.convertToProgram());
             return ResponseEntity.ok().build();
         }
     }
