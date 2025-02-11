@@ -30,15 +30,15 @@ public class DegreeOfBelongingDAO implements DAO<DegreeOfBelonging> {
     }
 
     @Override
-    public int add(DegreeOfBelonging deegreeOfBelonging) {
+    public int add(DegreeOfBelonging degreeOfBelonging) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO degree_of_belonging (program_id, tag_id, degree_value) " +
                             "VALUES (?, ?, ?) RETURNING id"
             );
-            preparedStatement.setInt(1, deegreeOfBelonging.getProgramId());
-            preparedStatement.setInt(2, deegreeOfBelonging.getTagId());
-            preparedStatement.setDouble(3, deegreeOfBelonging.getDegreeOfBelongingValue());
+            preparedStatement.setInt(1, degreeOfBelonging.getProgramId());
+            preparedStatement.setInt(2, degreeOfBelonging.getTagId());
+            preparedStatement.setDouble(3, degreeOfBelonging.getDegreeOfBelongingValue());
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getInt("id");

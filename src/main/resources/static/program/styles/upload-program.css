@@ -58,6 +58,7 @@
 }
 
 .pop-up-main > *:not(:first-child) {
+    /* margin: 0; */
     margin-top: 10px !important;
 }
 
@@ -221,4 +222,12 @@ input[type="number"] {
 #logo-preview-container {
     margin-left: auto;
     margin-right: auto;
+}
+
+.msg-under-input {
+    font-size: 0pt;
+    padding-left: 10px;
+    /* height: 0; */
+    margin-top: 0;
+    display: block;
 }

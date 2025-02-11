@@ -13,6 +13,12 @@ public class DegreeOfBelonging {
         this.setDegreeOfBelongingValue(degreeOfBelongingValue);
     }
 
+    public DegreeOfBelonging(int programId, int tagId, int degreeOfBelongingValue) {
+        this.id = id;
+        this.programId = programId;
+        this.tagId = tagId;
+        this.setDegreeOfBelongingValue(degreeOfBelongingValue);
+    }
 //    public DegreeOfBelonging(int programId, int tagId, float degreeOfBelongingValue) {
 //        this.programId = programId;
 //        this.tagId = tagId;

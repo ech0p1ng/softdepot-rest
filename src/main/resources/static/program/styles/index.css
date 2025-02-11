@@ -9,11 +9,13 @@ body {
 }
 
 body::-webkit-scrollbar {
-    background: var(--foreground-color); /* ширина всей полосы прокрутки */
+    background: var(--foreground-color);
+    /* ширина всей полосы прокрутки */
 }
 
 body::-webkit-scrollbar-track {
-    background: var(--bg-main-opacity); /* цвет зоны отслеживания */
+    background: var(--bg-main-opacity);
+    /* цвет зоны отслеживания */
 }
 
 .game-highlights {
@@ -65,6 +67,7 @@ body::-webkit-scrollbar-track {
 .screenshots-tape *:not(:first-child) {
     margin-left: 10px;
 }
+
 .screenshot-on-tape {
     margin: 1px 2px;
 }
@@ -145,9 +148,9 @@ body::-webkit-scrollbar-track {
     border-radius: 10px;
 }
 
-#price {
+/* #price {
     margin-right: 5px;
-}
+} */
 
 .game-name-big {
     margin-top: 0px;

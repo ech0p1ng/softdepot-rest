@@ -23,10 +23,22 @@
             </div>
 
             <div class="pop-up-main">
-                <input type="text" class="input pop-up-one-line-input" name="programName" id="programName" placeholder="Название">
-                <textarea type="text" class="input pop-up-multi-line-input" name="shortDescription" id="shortDescription" placeholder="Краткое описание"></textarea>
-                <textarea type="text" class="input pop-up-multi-line-input" name="fullDescription" id="fullDescription" placeholder="Полное описание"></textarea>
-                <input type="number" class="input pop-up-one-line-input" name="programName" id="price" placeholder="Стоимость (руб.)" min="0">
+                <div>
+                    <input type="text" class="input pop-up-one-line-input" name="programName" id="programName" placeholder="Название" title="Название">
+                    <span type="text" class="msg-under-input" id="programNameHint"></span>
+                </div>
+                <div>
+                    <textarea type="text" class="input pop-up-multi-line-input" name="shortDescription" id="shortDescription" placeholder="Краткое описание" title="Краткое описание"></textarea>
+                    <span type="text" class="msg-under-input" id="shortDescriptionHint"></span>
+                </div>
+                <div>
+                    <textarea type="text" class="input pop-up-multi-line-input" name="fullDescription" id="fullDescription" placeholder="Полное описание" title="Полное описание"></textarea>
+                    <span type="text" class="msg-under-input" id="fullDescriptionHint"></span>
+                </div>
+                <div>
+                    <input type="text" number-type="float" class="input pop-up-one-line-input" name="programPrice" id="price" placeholder="Стоимость (руб.)" title="Стоимость (руб.)">
+                    <span type="text" class="msg-under-input" id="priceHint"></span>
+                </div>
                 <div class="categories-selects"></div>
                 <button class="button pop-up-button full-width-button" id="add-category-button"><span>Добавить категорию</span></button>
 
@@ -57,7 +69,7 @@
                 <div style="height: 0px;"></div>
                 <div class="pop-up-footer-buttons">
                     <button class="button pop-up-button cancel-button">Отмена</button>
-                    <button class="button pop-up-button ok-button" onclick="ProgramUploader.collectInfo()">OK</button>
+                    <button class="button pop-up-button ok-button" onclick="ProgramUploader.uploadProgram()">OK</button>
                 </div>
             </div>
         </div>
@@ -66,6 +78,7 @@
     <script src="/scripts/jquery-3.7.1.min.js"></script>
     <script src="/scripts/main.js"></script>
     <script src="/scripts/program.js"></script>
+    <script src="/scripts/user.js"></script>
     <script src="/scripts/tag.js"></script>
     <script src="/program/scripts/upload-program.js"></script>
 </body>

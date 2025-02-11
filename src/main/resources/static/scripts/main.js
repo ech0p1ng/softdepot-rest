@@ -32,3 +32,44 @@ function addHeader(addSearchForm, addProfileButton) {
     }
     $("body").prepend(header);
 }
+
+function convertToNumber(str, { onError, onErrorResolved }, minValue = -Infinity,
+    maxValue = Infinity) {
+    let result = "";
+    if (str === "") str = "0";
+
+    //удаление всех символов помимо цифр
+    for (let i = 0; i < str.length; i++) {
+        let item = str[i];
+        let parseable = !isNaN(parseFloat(item));
+        if (parseable) {
+            if (parseInt(item) >= 0 && parseInt(item) < 10) {
+                result += item
+            }
+        }
+    }
+    //удаление нулей в начале и укорачивание до двух символов
+    result = parseInt(result).toString();
+
+    if (minValue != -Infinity && maxValue != Infinity) {
+        let maxLength = maxValue.toString().length;
+
+        if (result >= minValue && result <= maxValue) {
+            if (onErrorResolved) onErrorResolved();
+        }
+        else {
+            result = result.substring(0, result.length - 1);
+            if (onError) onError();
+        }
+    }
+    return result;
+
+}
+
+// $(document).on('input', 'input[type="number"][number-type="float"]', function () {
+//     this.value = convertToNumber(this.value.toString());
+// });
+
+// $(document).on('input', 'input[type="number"][number-type="int"]', function () {
+//     this.value = convertToNumber(this.value.toString());
+// });

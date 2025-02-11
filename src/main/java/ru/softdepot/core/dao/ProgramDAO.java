@@ -8,8 +8,6 @@ import ru.softdepot.core.models.*;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileAttribute;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,7 +61,7 @@ public class ProgramDAO implements DAO<Program> {
         for (var category : categories) {
             degreesOfBelonging.add(
                     category.getId(),
-                    (double) category.getDegreeOfBelonging()
+                    (double) category.getDegreeOfBelongingValue()
             );
         }
         return degreesOfBelonging;
@@ -84,10 +82,18 @@ public class ProgramDAO implements DAO<Program> {
                 statement.setInt(4, program.getDeveloperId());
                 statement.setString(5, program.getShortDescription());
 
-
                 ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
-                    return resultSet.getInt("id");
+                    program.setId(resultSet.getInt("id"));
+                    var categories = program.getCategories();
+                    for (var category : categories) {
+                        degreeOfBelongingDAO.add(new DegreeOfBelonging(
+                                program.getId(),
+                                category.getId(),
+                                category.getDegreeOfBelongingValue()
+                        ));
+                    }
+                    return program.getId();
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -381,7 +387,7 @@ public class ProgramDAO implements DAO<Program> {
 
         for (DegreeOfBelonging degreeOfBelonging : degreeOfBelongingList) {
             Category category = categoryDAO.getById(degreeOfBelonging.getTagId());
-            category.setDegreeOfBelonging(degreeOfBelonging.getDegreeOfBelongingValue());
+            category.setDegreeOfBelongingValue(degreeOfBelonging.getDegreeOfBelongingValue());
             category.setProgramId(degreeOfBelonging.getProgramId());
             categoryList.add(category);
         }

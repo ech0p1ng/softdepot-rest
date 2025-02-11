@@ -168,7 +168,7 @@ public class ProductsController {
                     );
             }
 
-            if (programDAO.exists(programRequestBody.getName(), programRequestBody.getDeveloperId()))
+            if (!programDAO.exists(programRequestBody.getName(), programRequestBody.getDeveloperId()))
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT,
                         Message.build(
