@@ -51,6 +51,10 @@ function convertToNumber(str, { onError, onErrorResolved }, minValue = -Infinity
     //удаление нулей в начале и укорачивание до двух символов
     result = parseInt(result).toString();
 
+    if (isNaN(result)) {
+        return 0;
+    }
+
     if (minValue != -Infinity && maxValue != Infinity) {
         let maxLength = maxValue.toString().length;
 

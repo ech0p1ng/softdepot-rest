@@ -131,7 +131,7 @@ input[type="number"] {
     justify-content: space-between;
 }
 
-.categories-selects *:not(:last-child) {
+.categories-selects > *:not(:last-child) {
     margin-bottom: 10px;
 }
 
