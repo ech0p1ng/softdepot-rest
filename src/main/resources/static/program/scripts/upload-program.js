@@ -46,7 +46,7 @@ class ProgramUploader {
 
     static show() {
         $("#price").on('input', function () {
-            console.log(this.value);
+            // console.log(this.value);
             let result = convertToNumber(
                 this.value,
                 {
@@ -118,7 +118,7 @@ class ProgramUploader {
                     <input id="category-degree-of-belonging-${selectsForCategoriesCount}" class="input pop-up-one-line-input only-int-input" type="number" placeholder="Степень принадлежности (от ${MIN_DEGREE_OF_BELONGING} до ${MAX_DEGREE_OF_BELONGING})" title="Степень принадлежности программы к категории (число от ${MIN_DEGREE_OF_BELONGING} до ${MAX_DEGREE_OF_BELONGING})" min="${MIN_DEGREE_OF_BELONGING}" max="${MAX_DEGREE_OF_BELONGING}" step="1" name="category-degree-of-belonging">
                     <button class="button exit-button close-button remove-button" id="remove-category-button-${selectsForCategoriesCount}" title="Удалить категорию" row-id="${selectsForCategoriesCount}" onclick="ProgramUploader.deleteSelectRow(${selectsForCategoriesCount})"></button>
                 </div>
-                <span type="text" class="msg-under-input" id="category-select-row-${selectsForCategoriesCount}-hint"></span>
+                <span type="text" class="msg-under-input category-select-row-hint" id="category-select-row-${selectsForCategoriesCount}-hint"></span>
             </div>`
         );
 
@@ -164,53 +164,95 @@ class ProgramUploader {
         $(`#category-selector-${rowId}`).remove();
     }
 
-    static addImage(previewContainer, addImageButton, defaultImageTextFunc, changeImageTextFunc, loadingImageTextFunc, imageType) {
-        const filesList = addImageButton.prop('files');
-        // let previewContainer = $('#logo-preview-container');
-        // previewContainer.empty();
+    static removeImage(id, previewContainer, addImageButton) {
+        let files = addImageButton.prop('files');
+        let newFiles = Array.from(files).splice(id, 1);
+        const dataTransfer = new DataTransfer();
+        newFiles.forEach(file => dataTransfer.items.add(file));
+        addImageButton.files = dataTransfer.files;
+        previewContainer.remove();
 
+    }
+
+    static addImage(previewContainer, addImageButton, imageType) {// defaultImageTextFunc, changeImageTextFunc, loadingImageTextFunc, imageType) {
+        const filesList = addImageButton.prop('files');
+        let id = 0;
 
         for (let file of filesList) {
             if (file.type.startsWith('image/')) {
                 let reader = new FileReader();
 
                 reader.onload = function (event) {
-                    // let imgPreviewContainer = $(/*html*/
-                    //     `<img src="${event.target.result}" class="image-preview">
-                    //     <br/>`
-                    // );
-
-                    let imgPreviewContainer = $(/*html*/
-                        `
-                        <div class="image-preview-container">
-                            <img src="${event.target.result}" class="image-preview">
-                            <div class="buttons-block">
-                                <button class="button edit-button edit" title="Заменить изображение"></button>
-                                <button class="button exit-button close-button" title="Удалить изображение"></button>
-                            </div>
-                        </div>
-                        `
-                    )
+                    let imgPreviewContainer;
 
                     if (imageType === ImageType.LOGO) {
-                        let img = new Image();
+                        imgPreviewContainer = $(/*html*/`
+                            <div class="image-preview-container" id="logo-preview-container-${id}">
+                                <img src="${event.target.result}" class="image-preview">
+                                <div class="buttons-block">
+                                    <button class="button edit-button edit"
+                                            parent-id="logo-preview-container-${id}"
+                                            title="Заменить изображение"
+                                            id="change-logo-${id}-button"
+                                            >
+                                    </button>
+                                    <button class="button exit-button close-button"
+                                            parent-id="logo-preview-container-${id}"
+                                            title="Удалить изображение"
+                                            id="remove-logo-${id}-button"
+                                            >
+                                    </button>
+                                </div>
+                            </div>
+                        `);
 
+                        imgPreviewContainer
+                            .find(`#change-logo-${id}-button`)
+                            .on('click', function () {
+                                ProgramUploader.removeImage(id, previewContainer, addImageButton);
+                            });
+
+                        imgPreviewContainer
+                            .find(`#remove-logo-${id}-button`)
+                            .on('click', function () {
+                                ProgramUploader.removeImage(id, previewContainer, addImageButton);
+                            });
+
+                        let img = new Image();
+                        previewContainer.empty();
                         img.onload = function () {
                             if (img.width !== img.height) {
-                                defaultImageTextFunc();
+                                // defaultImageTextFunc();
                                 alert("Ширина и высота изображения для логотипа должны быть равны");
+                                addImageButton.val(''); //очистка добавленных изображений
                             }
                             else {
-                                changeImageTextFunc();
+                                // changeImageTextFunc();
+                                previewContainer.append(imgPreviewContainer);
                             }
                         }
 
                         img.src = event.target.result;
                     }
                     else if (imageType === ImageType.SCREENSHOTS) {
-                        changeImageTextFunc();
+                        imgPreviewContainer = $(/*html*/`
+                            <div class="image-preview-container" id="screenshot-preview-container-${id}">
+                                <img src="${event.target.result}" class="image-preview">
+                                <div class="buttons-block">
+                                    <button class="button edit-button edit"
+                                            parent-id="screenshot-preview-container-${id}"
+                                            title="Заменить изображение">
+                                    </button>
+                                    <button class="button exit-button close-button"
+                                            parent-id="screenshot-preview-container-${id}"
+                                            title="Удалить изображение">
+                                    </button>
+                                </div>
+                            </div>
+                        `);
+                        // changeImageTextFunc();
+                        previewContainer.append(imgPreviewContainer);
                     }
-                    previewContainer.append(imgPreviewContainer);
 
                 }
 
@@ -220,7 +262,7 @@ class ProgramUploader {
 
                 reader.onprogress = function (event) {
                     // $("#add-logo-container span").html('Загрузка...');
-                    loadingImageTextFunc();
+                    // loadingImageTextFunc();
                     if (event.lengthComputable) {
                         const percentLoaded = Math.round((event.loaded / event.total) * 100);
                         console.log(percentLoaded);
@@ -234,54 +276,13 @@ class ProgramUploader {
     }
 
     static uploadProgram() {
-        let programName = $("#programName").val();
-        let shortDescription = $("#shortDescription").val();
-        let fullDescription = $("#fullDescription").val();
-        let price =
-            convertToNumber(
-                $("#price").val(),
-                {
-                    "onError": () => highlightInputOnError($("#price"), $("#priceHint"), PRICE_MSG),
-                    "onErrorResolved": () => removeInputHighlight($("#price"), $("#priceHint"))
-                },
-                MIN_PROGRAM_PRICE,
-                MAX_PROGRAM_PRICE,
-            );
-        $("#price").val(price);
-
-        // let categoriesRows = $(".categories-selects").find('.category-select-row');
 
         let choosenCategories = getSelectedCategories()[0];
         let notChoosenCategories = getSelectedCategories()[1];
-        // categoriesRows.each(function () {
-        //     let categoryId = $(this).find('[name="category-select"]').val();
-        //     let categoryName = $(this).find('[name="category-select"]').find('option:selected').text();
-        //     let degreeOfBelonging = $(this).find('[name="category-degree-of-belonging"]').val();
-        //     if (degreeOfBelonging > 10) degreeOfBelonging = 10;
-        //     else if (degreeOfBelonging < 0) degreeOfBelonging = 0;
 
-        //     if (categoryId === null || degreeOfBelonging === "") {
-        //         notChoosenCategories.push($(this).attr('id'));
-        //     }
-        //     let category = new Tag({
-        //         "id": categoryId,
-        //         "name": categoryName,
-        //         "degreeOfBelonging": degreeOfBelonging,
-        //         "programId": null
-        //     });
-        //     if (!choosenCategories.includes(category)) {
-        //         choosenCategories.push(category);
-        //     }
-        //     else {
-        //         alert("Удалите дубликаты категорий");
-        //         return;
-        //     }
-        // });
 
-        programName = programName.trim();
-        shortDescription = shortDescription.trim()
-        fullDescription = fullDescription.trim();
-
+        //название программы
+        let programName = $("#programName").val().trim();
         let nameIsGood = programName.length > 2;
         removeInputHighlight(
             $("#programName"),
@@ -295,6 +296,8 @@ class ProgramUploader {
             );
         }
 
+        //краткое описание
+        let shortDescription = $("#shortDescription").val().trim();
         let shortDescriptionIsGood =
             shortDescription.length > MIN_SHORT_DESCRIPTION_LENGTH &&
             shortDescription.length <= MAX_SHORT_DESCRIPTION_LENGTH;
@@ -310,6 +313,8 @@ class ProgramUploader {
             );
         }
 
+        //полное описание
+        let fullDescription = $("#fullDescription").val().trim();
         let fullDescriptionIsGood =
             fullDescription.length > MIN_FULL_DESCRIPTION_LENGTH &&
             fullDescription.length <= MAX_FULL_DESCRIPTION_LENGTH;
@@ -325,9 +330,10 @@ class ProgramUploader {
             );
         }
 
+        //категории
         removeInputHighlight(
-            $(".categories-selects"),
-            $("#categoriesSelectsHint")
+            $(".category-select-row"),
+            $(".category-select-row-hint")
         )
         let categoriesIsGood = choosenCategories.length >= MIN_CATEGORIES_AMOUNT
             && notChoosenCategories.length === 0;
@@ -354,6 +360,21 @@ class ProgramUploader {
             })
         }
 
+        //стоимость
+        let price =
+            convertToNumber(
+                $("#price").val(),
+                {
+                    "onError": () => highlightInputOnError($("#price"), $("#priceHint"), PRICE_MSG),
+                    "onErrorResolved": () => removeInputHighlight($("#price"), $("#priceHint"))
+                },
+                MIN_PROGRAM_PRICE,
+                MAX_PROGRAM_PRICE,
+            );
+        $("#price").val(price);
+
+        //логотип
+        let logo = $('#add-logo-button').prop('files')[0];
         // console.log(notChoosenCategories);
 
         // if (USER == null) {
@@ -369,15 +390,25 @@ class ProgramUploader {
             "fullDescription": fullDescription,
             "price": price,
             "categories": choosenCategories,
-            "logo": null,
+            "logo": logo,
             "screenshots": null
         }
 
-        let response = JSON.stringify(program);
-        console.log(response);
+        console.log(program)
+
+        // var formData = new FormData();
+        // for (let key in program) {
+        //     if (program.hasOwnProperty(key)) {
+        //         formData.append(key, program[key]);
+        //     }
+        // }
+        // formData.append('logo', logo)
+
+        // let response = JSON.stringify(program);
+        // console.log(response);
         // }
         // else {
-        //     alert(`Недопустимое действие. Ваша роль ${USER.type}, а должна быть "Developer"`);
+        //     alert(`Недопустимое действие. Ваша роль - "${USER.type}", а должна быть "Developer"`);
         // }
         // }
 
@@ -455,15 +486,15 @@ $(window).on('load', () => {
         ProgramUploader.addImage(
             $('#logo-preview-container'),
             $('#add-logo-button'),
-            function () {
-                $("#add-logo-container span").html('Добавить логотип')
-            },
-            function () {
-                $("#add-logo-container span").html('Заменить логотип')
-            },
-            function () {
-                $("#add-logo-container span").html('Загрузка...')
-            },
+            // function () {
+            //     $("#add-logo-container span").html('Добавить логотип')
+            // },
+            // function () {
+            //     $("#add-logo-container span").html('Заменить логотип')
+            // },
+            // function () {
+            //     $("#add-logo-container span").html('Загрузка...')
+            // },
             ImageType.LOGO
         );
     });
@@ -472,15 +503,15 @@ $(window).on('load', () => {
         ProgramUploader.addImage(
             $('#screenshots-preview-container'),
             $('#add-screenshots-button'),
-            function () {
-                $("#add-screenshots-container span").html('Добавить скриншоты')
-            },
-            function () {
-                $("#add-screenshots-container span").html('Заменить скриншоты')
-            },
-            function () {
-                $("#add-screenshots-container span").html('Загрузка...')
-            },
+            // function () {
+            //     $("#add-screenshots-container span").html('Добавить скриншоты')
+            // },
+            // function () {
+            //     $("#add-screenshots-container span").html('Заменить скриншоты')
+            // },
+            // function () {
+            //     $("#add-screenshots-container span").html('Загрузка...')
+            // },
             ImageType.SCREENSHOTS
         )
     });
