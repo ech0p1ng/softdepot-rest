@@ -178,6 +178,7 @@ class ProgramUploader {
 
     }
 
+
     static addImage(previewContainer, addImageButton, imageType) {// defaultImageTextFunc, changeImageTextFunc, loadingImageTextFunc, imageType) {
         const filesList = addImageButton.prop('files');
         let id = 0;
@@ -200,7 +201,7 @@ class ProgramUploader {
                             else {
                                 // changeImageTextFunc();
                                 imgPreview = $(/*html*/`
-                                    <div class="image-preview-container" id="logo-preview-container-${id}">
+                                    <div class="image-preview-container" id="logo-preview-container-${id}" logo-id="${id}">
                                         <img src="${event.target.result}" class="image-preview">
                                         <div class="buttons-block">
                                             <button class="button edit-button edit"
@@ -223,7 +224,6 @@ class ProgramUploader {
                                     .find(`#change-logo-${id}-button`)
                                     .on('click', function () {
                                         ProgramUploader.logo = null;
-                                        addImageButton.val('');
                                         addImageButton.click();
                                         ProgramUploader.removeImage(id, previewContainer, addImageButton);
                                     });
@@ -232,11 +232,11 @@ class ProgramUploader {
                                     .find(`#remove-logo-${id}-button`)
                                     .on('click', function () {
                                         ProgramUploader.logo = null;
-                                        addImageButton.val('');
                                         ProgramUploader.removeImage(id, previewContainer, addImageButton);
                                     });
                                 previewContainer.empty();
                                 previewContainer.append(imgPreview);
+                                addImageButton.val('');
                                 ProgramUploader.logo = file;
                             }
                         }
@@ -244,23 +244,45 @@ class ProgramUploader {
                         img.src = event.target.result;
                     }
                     else if (imageType === ImageType.SCREENSHOTS) {
-                        imgPreview = $(/*html*/`
-                            <div class="image-preview-container" id="screenshot-preview-container-${id}">
-                                <img src="${event.target.result}" class="image-preview">
-                                <div class="buttons-block">
-                                    <button class="button edit-button edit"
-                                            parent-id="screenshot-preview-container-${id}"
-                                            title="Заменить изображение">
-                                    </button>
-                                    <button class="button exit-button close-button"
-                                            parent-id="screenshot-preview-container-${id}"
-                                            title="Удалить изображение">
-                                    </button>
+                        let img = new Image();
+                        img.onload = function () {
+                            imgPreview = $(/*html*/`
+                                <div class="image-preview-container" id="screenshot-preview-container-${id}" screenshot-id="${id}">
+                                    <img src="${event.target.result}" class="image-preview" id="screenshot-preview-${id}">
+                                    <div class="buttons-block">
+                                        <button class="button edit-button edit"
+                                                parent-id="screenshot-preview-container-${id}"
+                                                id="change-screenshot-${id}-button"
+                                                title="Заменить изображение">
+                                        </button>
+                                        <button class="button exit-button close-button"
+                                                parent-id="screenshot-preview-container-${id}"
+                                                id="remove-screenshot-${id}-button"
+                                                title="Удалить изображение">
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        `);
-                        // changeImageTextFunc();
-                        previewContainer.append(imgPreview);
+                            `);
+                            // changeImageTextFunc();
+                            imgPreview
+                                .find(`#change-screenshot-${id}-button`)
+                                .on('click', function () {
+                                    addImageButton.click();
+                                    ProgramUploader.removeImage(id, previewContainer, addImageButton);
+                                });
+
+                            imgPreview
+                                .find(`#remove-screenshot-${id}-button`)
+                                .on('click', function () {
+                                    ProgramUploader.removeImage(id, previewContainer, addImageButton);
+                                });
+                            previewContainer.empty();
+                            previewContainer.append(imgPreview);
+                            addImageButton.val('');
+                            ProgramUploader.logo = file;
+                        }
+
+                        img.src = event.target.result;
                     }
 
                 }
