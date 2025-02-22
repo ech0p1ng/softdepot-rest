@@ -42,6 +42,10 @@ const ImageType = {
 const PRICE_MSG = `Цена должна быть от ${MIN_PROGRAM_PRICE} до ${MAX_PROGRAM_PRICE} руб.`
 
 class ProgramUploader {
+    static logo = null;
+
+    static screenshots = [];
+
     static categories = [];
 
     static show() {
@@ -170,7 +174,7 @@ class ProgramUploader {
         const dataTransfer = new DataTransfer();
         newFiles.forEach(file => dataTransfer.items.add(file));
         addImageButton.files = dataTransfer.files;
-        previewContainer.remove();
+        previewContainer.empty();
 
     }
 
@@ -183,43 +187,10 @@ class ProgramUploader {
                 let reader = new FileReader();
 
                 reader.onload = function (event) {
-                    let imgPreviewContainer;
+                    let imgPreview;
 
                     if (imageType === ImageType.LOGO) {
-                        imgPreviewContainer = $(/*html*/`
-                            <div class="image-preview-container" id="logo-preview-container-${id}">
-                                <img src="${event.target.result}" class="image-preview">
-                                <div class="buttons-block">
-                                    <button class="button edit-button edit"
-                                            parent-id="logo-preview-container-${id}"
-                                            title="Заменить изображение"
-                                            id="change-logo-${id}-button"
-                                            >
-                                    </button>
-                                    <button class="button exit-button close-button"
-                                            parent-id="logo-preview-container-${id}"
-                                            title="Удалить изображение"
-                                            id="remove-logo-${id}-button"
-                                            >
-                                    </button>
-                                </div>
-                            </div>
-                        `);
-
-                        imgPreviewContainer
-                            .find(`#change-logo-${id}-button`)
-                            .on('click', function () {
-                                ProgramUploader.removeImage(id, previewContainer, addImageButton);
-                            });
-
-                        imgPreviewContainer
-                            .find(`#remove-logo-${id}-button`)
-                            .on('click', function () {
-                                ProgramUploader.removeImage(id, previewContainer, addImageButton);
-                            });
-
                         let img = new Image();
-                        previewContainer.empty();
                         img.onload = function () {
                             if (img.width !== img.height) {
                                 // defaultImageTextFunc();
@@ -228,14 +199,52 @@ class ProgramUploader {
                             }
                             else {
                                 // changeImageTextFunc();
-                                previewContainer.append(imgPreviewContainer);
+                                imgPreview = $(/*html*/`
+                                    <div class="image-preview-container" id="logo-preview-container-${id}">
+                                        <img src="${event.target.result}" class="image-preview">
+                                        <div class="buttons-block">
+                                            <button class="button edit-button edit"
+                                                    parent-id="logo-preview-container-${id}"
+                                                    title="Заменить изображение"
+                                                    id="change-logo-${id}-button"
+                                                    >
+                                            </button>
+                                            <button class="button exit-button close-button"
+                                                    parent-id="logo-preview-container-${id}"
+                                                    title="Удалить изображение"
+                                                    id="remove-logo-${id}-button"
+                                                    >
+                                            </button>
+                                        </div>
+                                    </div>
+                                `);
+
+                                imgPreview
+                                    .find(`#change-logo-${id}-button`)
+                                    .on('click', function () {
+                                        ProgramUploader.logo = null;
+                                        addImageButton.val('');
+                                        addImageButton.click();
+                                        ProgramUploader.removeImage(id, previewContainer, addImageButton);
+                                    });
+
+                                imgPreview
+                                    .find(`#remove-logo-${id}-button`)
+                                    .on('click', function () {
+                                        ProgramUploader.logo = null;
+                                        addImageButton.val('');
+                                        ProgramUploader.removeImage(id, previewContainer, addImageButton);
+                                    });
+                                previewContainer.empty();
+                                previewContainer.append(imgPreview);
+                                ProgramUploader.logo = file;
                             }
                         }
 
                         img.src = event.target.result;
                     }
                     else if (imageType === ImageType.SCREENSHOTS) {
-                        imgPreviewContainer = $(/*html*/`
+                        imgPreview = $(/*html*/`
                             <div class="image-preview-container" id="screenshot-preview-container-${id}">
                                 <img src="${event.target.result}" class="image-preview">
                                 <div class="buttons-block">
@@ -251,7 +260,7 @@ class ProgramUploader {
                             </div>
                         `);
                         // changeImageTextFunc();
-                        previewContainer.append(imgPreviewContainer);
+                        previewContainer.append(imgPreview);
                     }
 
                 }
@@ -374,7 +383,7 @@ class ProgramUploader {
         $("#price").val(price);
 
         //логотип
-        let logo = $('#add-logo-button').prop('files')[0];
+        let logo = ProgramUploader.logo;
         // console.log(notChoosenCategories);
 
         // if (USER == null) {
@@ -481,6 +490,7 @@ $(window).on('load', () => {
     $("#add-category-button").on('click', () => ProgramUploader.addSelectRow());
 
 
+    // $("#add-logo-button").on('change', () => {
     $("#add-logo-button").on('change', () => {
         $("#add-logo-button").empty();
         ProgramUploader.addImage(
