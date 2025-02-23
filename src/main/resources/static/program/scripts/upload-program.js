@@ -53,7 +53,6 @@ class ProgramUploader {
 
     static show() {
         $("#price").on('input', function () {
-            // console.log(this.value);
             let result = convertToNumber(
                 this.value,
                 {
@@ -129,10 +128,6 @@ class ProgramUploader {
             </div>`
         );
 
-        // selectRow
-        //     .find(`.category-select-row.remove-button`)
-        //     .on('click', this.deleteSelectRow.bind(this));
-
         selectRow
             .find('input')
             .on("input", function () {
@@ -172,21 +167,9 @@ class ProgramUploader {
     }
 
     static removeImage(id, previewContainer, addImageButton, imageType) {
-        // let files = addImageButton.prop('files');
-        // let newFiles = Array.from(files).splice(id, 1);
-
-        // const dataTransfer = new DataTransfer();
-        // newFiles.forEach(file => dataTransfer.items.add(file));
-        // addImageButton.files = dataTransfer.files;
-
-
-
-        // previewContainer.empty();
         previewContainer.empty();
         if (imageType === ImageType.LOGO) {
             ProgramUploader.logo = null;
-            // previewContainer.find(`[logo-id="${id}"]`).remove();
-
         }
         else if (imageType === ImageType.SCREENSHOTS) {
             ProgramUploader.screenshots.splice(id, 1);
@@ -196,11 +179,7 @@ class ProgramUploader {
                 addImageButton,
                 imageType
             )
-            // previewContainer.find(`[screenshot-id="${id}"]`).remove();
         }
-        // ProgramUploader.screenshots = dataTransfer.files;
-        // ProgramUploader.addImagesFromArray(dataTransfer.files, previewContainer, addImageButton, imageType)
-
     }
 
     static addImagesFromArray(filesList, previewContainer, addImageButton, imageType) {
@@ -214,13 +193,10 @@ class ProgramUploader {
                     let img = new Image();
                     img.onload = function () {
                         if (img.width !== img.height) {
-                            // defaultImageTextFunc();
                             alert("Ширина и высота изображения для логотипа должны быть равны");
-                            // addImageButton.val(''); //очистка добавленных изображений
                         }
                         else {
                             id = ProgramUploader.logoLastId;
-                            // changeImageTextFunc();
                             let imgPreview = $(/*html*/`
                                     <div class="image-preview-container" id="logo-preview-container-${id}" logo-id="${id}">
                                         <img src="${event.target.result}" class="image-preview">
@@ -257,9 +233,7 @@ class ProgramUploader {
                                 });
                             previewContainer.empty();
                             previewContainer.append(imgPreview);
-                            // addImageButton.val('');
                             ProgramUploader.logo = file;
-                            // ProgramUploader.logoLastId += 1;
                         }
                     }
 
@@ -294,12 +268,9 @@ class ProgramUploader {
                 let file = ProgramUploader.screenshots[id];
                 let reader = new FileReader();
 
-                // previewContainer.empty();
-
                 reader.onload = function (event) {
                     let img = new Image();
                     img.onload = function () {
-                        // id = ProgramUploader.screenshots.length;
                         let imgPreview = $(/*html*/`
                             <div class="image-preview-container" id="screenshot-preview-container-${id}" screenshot-id="${id}">
                                 <img src="${event.target.result}" class="image-preview" id="screenshot-preview-${id}">
@@ -317,7 +288,7 @@ class ProgramUploader {
                                 </div>
                             </div>
                         `);
-                        // changeImageTextFunc();
+
                         imgPreview
                             .find(`#change-screenshot-${id}-button`)
                             .on('click', function () {
@@ -326,15 +297,14 @@ class ProgramUploader {
                                 ProgramUploader.removeImage(screenshotId, previewContainer, addImageButton, ImageType.SCREENSHOTS);
                             });
 
+
                         imgPreview
                             .find(`#remove-screenshot-${id}-button`)
                             .on('click', function () {
                                 var screenshotId = $(this).closest('.image-preview-container').attr('screenshot-id');
-                                // console.log(screenshotId);
                                 ProgramUploader.removeImage(screenshotId, previewContainer, addImageButton, ImageType.SCREENSHOTS);
                             });
 
-                        // previewContainer.empty();
                         addImageButton.val('');
                         previewContainer.append(imgPreview);
                     }
@@ -357,7 +327,7 @@ class ProgramUploader {
     }
 
 
-    static addImage(previewContainer, addImageButton, imageType) {// defaultImageTextFunc, changeImageTextFunc, loadingImageTextFunc, imageType) {
+    static addImage(previewContainer, addImageButton, imageType) {
         const filesList = addImageButton.prop('files');
         ProgramUploader.addImagesFromArray(filesList, previewContainer, addImageButton, imageType);
         addImageButton.val('');
