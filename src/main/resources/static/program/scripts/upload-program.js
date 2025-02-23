@@ -42,6 +42,9 @@ const ImageType = {
 const PRICE_MSG = `Цена должна быть от ${MIN_PROGRAM_PRICE} до ${MAX_PROGRAM_PRICE} руб.`
 
 class ProgramUploader {
+    static logoLastId = 0;
+    static screenshotLastId = 0;
+
     static logo = null;
 
     static screenshots = [];
@@ -168,39 +171,57 @@ class ProgramUploader {
         $(`#category-selector-${rowId}`).remove();
     }
 
-    static removeImage(id, previewContainer, addImageButton) {
-        let files = addImageButton.prop('files');
-        let newFiles = Array.from(files).splice(id, 1);
-        const dataTransfer = new DataTransfer();
-        newFiles.forEach(file => dataTransfer.items.add(file));
-        addImageButton.files = dataTransfer.files;
+    static removeImage(id, previewContainer, addImageButton, imageType) {
+        // let files = addImageButton.prop('files');
+        // let newFiles = Array.from(files).splice(id, 1);
+
+        // const dataTransfer = new DataTransfer();
+        // newFiles.forEach(file => dataTransfer.items.add(file));
+        // addImageButton.files = dataTransfer.files;
+
+
+
+        // previewContainer.empty();
         previewContainer.empty();
+        if (imageType === ImageType.LOGO) {
+            ProgramUploader.logo = null;
+            // previewContainer.find(`[logo-id="${id}"]`).remove();
+
+        }
+        else if (imageType === ImageType.SCREENSHOTS) {
+            ProgramUploader.screenshots.splice(id, 1);
+            ProgramUploader.addImagesFromArray(
+                ProgramUploader.screenshots,
+                previewContainer,
+                addImageButton,
+                imageType
+            )
+            // previewContainer.find(`[screenshot-id="${id}"]`).remove();
+        }
+        // ProgramUploader.screenshots = dataTransfer.files;
+        // ProgramUploader.addImagesFromArray(dataTransfer.files, previewContainer, addImageButton, imageType)
 
     }
 
-
-    static addImage(previewContainer, addImageButton, imageType) {// defaultImageTextFunc, changeImageTextFunc, loadingImageTextFunc, imageType) {
-        const filesList = addImageButton.prop('files');
-        let id = 0;
-
-        for (let file of filesList) {
+    static addImagesFromArray(filesList, previewContainer, addImageButton, imageType) {
+        if (imageType === ImageType.LOGO) {
+            let id = 0;
+            let file = filesList[id];
             if (file.type.startsWith('image/')) {
                 let reader = new FileReader();
 
                 reader.onload = function (event) {
-                    let imgPreview;
-
-                    if (imageType === ImageType.LOGO) {
-                        let img = new Image();
-                        img.onload = function () {
-                            if (img.width !== img.height) {
-                                // defaultImageTextFunc();
-                                alert("Ширина и высота изображения для логотипа должны быть равны");
-                                addImageButton.val(''); //очистка добавленных изображений
-                            }
-                            else {
-                                // changeImageTextFunc();
-                                imgPreview = $(/*html*/`
+                    let img = new Image();
+                    img.onload = function () {
+                        if (img.width !== img.height) {
+                            // defaultImageTextFunc();
+                            alert("Ширина и высота изображения для логотипа должны быть равны");
+                            // addImageButton.val(''); //очистка добавленных изображений
+                        }
+                        else {
+                            id = ProgramUploader.logoLastId;
+                            // changeImageTextFunc();
+                            let imgPreview = $(/*html*/`
                                     <div class="image-preview-container" id="logo-preview-container-${id}" logo-id="${id}">
                                         <img src="${event.target.result}" class="image-preview">
                                         <div class="buttons-block">
@@ -220,71 +241,29 @@ class ProgramUploader {
                                     </div>
                                 `);
 
-                                imgPreview
-                                    .find(`#change-logo-${id}-button`)
-                                    .on('click', function () {
-                                        ProgramUploader.logo = null;
-                                        addImageButton.click();
-                                        ProgramUploader.removeImage(id, previewContainer, addImageButton);
-                                    });
-
-                                imgPreview
-                                    .find(`#remove-logo-${id}-button`)
-                                    .on('click', function () {
-                                        ProgramUploader.logo = null;
-                                        ProgramUploader.removeImage(id, previewContainer, addImageButton);
-                                    });
-                                previewContainer.empty();
-                                previewContainer.append(imgPreview);
-                                addImageButton.val('');
-                                ProgramUploader.logo = file;
-                            }
-                        }
-
-                        img.src = event.target.result;
-                    }
-                    else if (imageType === ImageType.SCREENSHOTS) {
-                        let img = new Image();
-                        img.onload = function () {
-                            imgPreview = $(/*html*/`
-                                <div class="image-preview-container" id="screenshot-preview-container-${id}" screenshot-id="${id}">
-                                    <img src="${event.target.result}" class="image-preview" id="screenshot-preview-${id}">
-                                    <div class="buttons-block">
-                                        <button class="button edit-button edit"
-                                                parent-id="screenshot-preview-container-${id}"
-                                                id="change-screenshot-${id}-button"
-                                                title="Заменить изображение">
-                                        </button>
-                                        <button class="button exit-button close-button"
-                                                parent-id="screenshot-preview-container-${id}"
-                                                id="remove-screenshot-${id}-button"
-                                                title="Удалить изображение">
-                                        </button>
-                                    </div>
-                                </div>
-                            `);
-                            // changeImageTextFunc();
                             imgPreview
-                                .find(`#change-screenshot-${id}-button`)
+                                .find(`#change-logo-${id}-button`)
                                 .on('click', function () {
+                                    ProgramUploader.logo = null;
                                     addImageButton.click();
-                                    ProgramUploader.removeImage(id, previewContainer, addImageButton);
+                                    ProgramUploader.removeImage(id, previewContainer, addImageButton, ImageType.LOGO);
                                 });
 
                             imgPreview
-                                .find(`#remove-screenshot-${id}-button`)
+                                .find(`#remove-logo-${id}-button`)
                                 .on('click', function () {
-                                    ProgramUploader.removeImage(id, previewContainer, addImageButton);
+                                    ProgramUploader.logo = null;
+                                    ProgramUploader.removeImage(id, previewContainer, addImageButton, ImageType.LOGO);
                                 });
                             previewContainer.empty();
                             previewContainer.append(imgPreview);
-                            addImageButton.val('');
+                            // addImageButton.val('');
                             ProgramUploader.logo = file;
+                            // ProgramUploader.logoLastId += 1;
                         }
-
-                        img.src = event.target.result;
                     }
 
+                    img.src = event.target.result;
                 }
 
                 reader.onerror = function (event) {
@@ -292,8 +271,6 @@ class ProgramUploader {
                 }
 
                 reader.onprogress = function (event) {
-                    // $("#add-logo-container span").html('Загрузка...');
-                    // loadingImageTextFunc();
                     if (event.lengthComputable) {
                         const percentLoaded = Math.round((event.loaded / event.total) * 100);
                         console.log(percentLoaded);
@@ -301,9 +278,221 @@ class ProgramUploader {
                 }
 
                 reader.readAsDataURL(file);
-
             }
         }
+        else if (imageType === ImageType.SCREENSHOTS) {
+            previewContainer.empty();
+            if (filesList !== ProgramUploader.screenshots) {
+                for (let file of filesList) {
+                    if (file.type.startsWith('image/')) {
+                        ProgramUploader.screenshots.push(file);
+                    }
+                }
+            }
+
+            for (let id = 0; id < ProgramUploader.screenshots.length; id++) {
+                let file = ProgramUploader.screenshots[id];
+                let reader = new FileReader();
+
+                // previewContainer.empty();
+
+                reader.onload = function (event) {
+                    let img = new Image();
+                    img.onload = function () {
+                        // id = ProgramUploader.screenshots.length;
+                        let imgPreview = $(/*html*/`
+                            <div class="image-preview-container" id="screenshot-preview-container-${id}" screenshot-id="${id}">
+                                <img src="${event.target.result}" class="image-preview" id="screenshot-preview-${id}">
+                                <div class="buttons-block">
+                                    <button class="button edit-button edit"
+                                            parent-id="screenshot-preview-container-${id}"
+                                            id="change-screenshot-${id}-button"
+                                            title="Заменить изображение">
+                                    </button>
+                                    <button class="button exit-button close-button"
+                                            parent-id="screenshot-preview-container-${id}"
+                                            id="remove-screenshot-${id}-button"
+                                            title="Удалить изображение">
+                                    </button>
+                                </div>
+                            </div>
+                        `);
+                        // changeImageTextFunc();
+                        imgPreview
+                            .find(`#change-screenshot-${id}-button`)
+                            .on('click', function () {
+                                addImageButton.click();
+                                var screenshotId = $(this).closest('.image-preview-container').attr('screenshot-id');
+                                ProgramUploader.removeImage(screenshotId, previewContainer, addImageButton, ImageType.SCREENSHOTS);
+                            });
+
+                        imgPreview
+                            .find(`#remove-screenshot-${id}-button`)
+                            .on('click', function () {
+                                var screenshotId = $(this).closest('.image-preview-container').attr('screenshot-id');
+                                // console.log(screenshotId);
+                                ProgramUploader.removeImage(screenshotId, previewContainer, addImageButton, ImageType.SCREENSHOTS);
+                            });
+
+                        // previewContainer.empty();
+                        addImageButton.val('');
+                        previewContainer.append(imgPreview);
+                    }
+
+                    img.src = event.target.result;
+                }
+                reader.onerror = function (event) {
+                    alert(event.target.error);
+                }
+                reader.onprogress = function (event) {
+                    if (event.lengthComputable) {
+                        const percentLoaded = Math.round((event.loaded / event.total) * 100);
+                        console.log(percentLoaded);
+                    }
+                }
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+
+        // for (let file of filesList) {
+        //     if (file.type.startsWith('image/')) {
+        //         let reader = new FileReader();
+
+        //         reader.onload = function (event) {
+        //             let imgPreview;
+
+        //             if (imageType === ImageType.LOGO) {
+        //                 let img = new Image();
+        //                 img.onload = function () {
+        //                     if (img.width !== img.height) {
+        //                         // defaultImageTextFunc();
+        //                         alert("Ширина и высота изображения для логотипа должны быть равны");
+        //                         addImageButton.val(''); //очистка добавленных изображений
+        //                     }
+        //                     else {
+        //                         id = ProgramUploader.logoLastId;
+        //                         // changeImageTextFunc();
+        //                         imgPreview = $(/*html*/`
+        //                             <div class="image-preview-container" id="logo-preview-container-${id}" logo-id="${id}">
+        //                                 <img src="${event.target.result}" class="image-preview">
+        //                                 <div class="buttons-block">
+        //                                     <button class="button edit-button edit"
+        //                                             parent-id="logo-preview-container-${id}"
+        //                                             title="Заменить изображение"
+        //                                             id="change-logo-${id}-button"
+        //                                             >
+        //                                     </button>
+        //                                     <button class="button exit-button close-button"
+        //                                             parent-id="logo-preview-container-${id}"
+        //                                             title="Удалить изображение"
+        //                                             id="remove-logo-${id}-button"
+        //                                             >
+        //                                     </button>
+        //                                 </div>
+        //                             </div>
+        //                         `);
+
+        //                         imgPreview
+        //                             .find(`#change-logo-${id}-button`)
+        //                             .on('click', function () {
+        //                                 ProgramUploader.logo = null;
+        //                                 addImageButton.click();
+        //                                 ProgramUploader.removeImage(id, previewContainer, addImageButton, ImageType.LOGO);
+        //                             });
+
+        //                         imgPreview
+        //                             .find(`#remove-logo-${id}-button`)
+        //                             .on('click', function () {
+        //                                 ProgramUploader.logo = null;
+        //                                 ProgramUploader.removeImage(id, previewContainer, addImageButton, ImageType.LOGO);
+        //                             });
+        //                         previewContainer.empty();
+        //                         previewContainer.append(imgPreview);
+        //                         addImageButton.val('');
+        //                         ProgramUploader.logo = file;
+        //                         ProgramUploader.logoLastId += 1;
+        //                     }
+        //                 }
+
+        //                 img.src = event.target.result;
+        //             }
+        //             else if (imageType === ImageType.SCREENSHOTS) {
+
+        //                 let img = new Image();
+        //                 img.onload = function () {
+        //                     id = ProgramUploader.screenshotLastId;
+        //                     imgPreview = $(/*html*/`
+        //                         <div class="image-preview-container" id="screenshot-preview-container-${id}" screenshot-id="${id}">
+        //                             <img src="${event.target.result}" class="image-preview" id="screenshot-preview-${id}">
+        //                             <div class="buttons-block">
+        //                                 <!--<button class="button edit-button edit"
+        //                                         parent-id="screenshot-preview-container-${id}"
+        //                                         id="change-screenshot-${id}-button"
+        //                                         title="Заменить изображение">
+        //                                 </button> -->
+        //                                 <button class="button exit-button close-button"
+        //                                         parent-id="screenshot-preview-container-${id}"
+        //                                         id="remove-screenshot-${id}-button"
+        //                                         title="Удалить изображение">
+        //                                 </button>
+        //                             </div>
+        //                         </div>
+        //                     `);
+        //                     // changeImageTextFunc();
+        //                     // imgPreview
+        //                     //     .find(`#change-screenshot-${id}-button`)
+        //                     //     .on('click', function () {
+        //                     //         addImageButton.click();
+        //                     //         ProgramUploader.removeImage(id, previewContainer, addImageButton, ImageType.SCREENSHOTS);
+        //                     //     });
+
+        //                     imgPreview
+        //                         .find(`#remove-screenshot-${id}-button`)
+        //                         .on('click', function () {
+        //                             var screenshotId = $(this).closest('.image-preview-container').attr('screenshot-id');
+        //                             console.log(screenshotId);
+        //                             ProgramUploader.removeImage(screenshotId, previewContainer, addImageButton, ImageType.SCREENSHOTS);
+        //                         });
+
+        //                     // previewContainer.empty();
+        //                     addImageButton.val('');
+        //                     previewContainer.append(imgPreview);
+        //                     ProgramUploader.logo = file;
+        //                     ProgramUploader.screenshotLastId += 1;
+        //                     ProgramUploader.screenshots.push(file);
+        //                 }
+
+        //                 img.src = event.target.result;
+        //             }
+
+        //         }
+
+        //         reader.onerror = function (event) {
+        //             alert(event.target.error);
+        //         }
+
+        //         reader.onprogress = function (event) {
+        //             // $("#add-logo-container span").html('Загрузка...');
+        //             // loadingImageTextFunc();
+        //             if (event.lengthComputable) {
+        //                 const percentLoaded = Math.round((event.loaded / event.total) * 100);
+        //                 console.log(percentLoaded);
+        //             }
+        //         }
+
+        //         reader.readAsDataURL(file);
+
+        //     }
+        // }
+    }
+
+
+    static addImage(previewContainer, addImageButton, imageType) {// defaultImageTextFunc, changeImageTextFunc, loadingImageTextFunc, imageType) {
+        const filesList = addImageButton.prop('files');
+        ProgramUploader.addImagesFromArray(filesList, previewContainer, addImageButton, imageType);
+        addImageButton.val('');
     }
 
     static uploadProgram() {
@@ -406,6 +595,7 @@ class ProgramUploader {
 
         //логотип
         let logo = ProgramUploader.logo;
+        let screenshots = ProgramUploader.screenshots;
         // console.log(notChoosenCategories);
 
         // if (USER == null) {
@@ -422,7 +612,7 @@ class ProgramUploader {
             "price": price,
             "categories": choosenCategories,
             "logo": logo,
-            "screenshots": null
+            "screenshots": screenshots
         }
 
         console.log(program)
