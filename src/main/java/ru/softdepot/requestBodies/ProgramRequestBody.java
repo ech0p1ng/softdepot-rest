@@ -1,5 +1,8 @@
 package ru.softdepot.requestBodies;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.multipart.MultipartFile;
 import ru.softdepot.core.models.Category;
 import ru.softdepot.core.models.Program;
@@ -12,31 +15,42 @@ public class ProgramRequestBody {
     private String name;
     private String shortDescription;
     private String fullDescription;
-    private BigDecimal price;
-    private List<Category> categories;
+    private double price;
+    private String categoriesJson;
     private MultipartFile logo;
     private List<MultipartFile> screenshots;
 
+    private ObjectMapper objectMapper = new ObjectMapper();
+    private List<Category> categories;
+
     public ProgramRequestBody(int developerId, String name, String shortDescription,
-                              String fullDescription, BigDecimal price, List<Category> categories,
+                              String fullDescription, Double price, String categoriesJson,
                               MultipartFile logo, List<MultipartFile> screenshots) {
+
         this.developerId = developerId;
         this.name = name;
         this.shortDescription = shortDescription;
         this.fullDescription = fullDescription;
         this.price = price;
-        this.categories = categories;
+        try {
+            categories = objectMapper.readValue(categoriesJson, new TypeReference<List<Category>>() {});
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         this.logo = logo;
         this.screenshots = screenshots;
     }
 
     public Program convertToProgram() {
         Program program = new Program();
-        program.setDeveloperId(developerId);
+        program.setCategories(categories);
+        program.setDeveloperId(Math.toIntExact(developerId));
         program.setName(name);
         program.setShortDescription(shortDescription);
         program.setFullDescription(fullDescription);
-        program.setPrice(price);
+        program.setPrice(BigDecimal.valueOf(price));
+        program.setLogo(logo);
+        program.setScreenshots(screenshots);
         return program;
     }
 
@@ -56,7 +70,7 @@ public class ProgramRequestBody {
         return fullDescription;
     }
 
-    public BigDecimal getPrice() {
+    public Double getPrice() {
         return price;
     }
 
@@ -88,7 +102,7 @@ public class ProgramRequestBody {
         this.fullDescription = fullDescription;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

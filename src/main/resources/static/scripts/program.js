@@ -28,7 +28,7 @@ class Program {
         this.installerMacosUrl = data.installerMacosUrl;
         this.installerWindowsUrl = data.installerWindowsUrl;
         this.tagsAsString = data.tagsAsString;
-        this.screenshotsUrl = data.screenshotsUrl;
+        this.screenshotsUrls = data.screenshotsUrls;
         this.priceAsString = data.priceAsString;
         this.pageUrl = data.pageUrl;
         this.isInCart = data.isInCart;
@@ -68,7 +68,7 @@ class Program {
             '        <span class="price">' +
             '			<span>' + this.priceAsString + '</span>' +
             '		</span>' +
-            '       <button class="add-to-cart" style="z-index: 2">' + addToCartHtml +'</button>'+
+            '       <button class="add-to-cart" style="z-index: 2">' + addToCartHtml + '</button>' +
             '    </div>' +
             '</div>'
         );
@@ -302,7 +302,7 @@ class Program {
         this.setProgramPageAddToCartButton();
 
         let first = true;
-        this.screenshotsUrl.forEach((img) => {
+        this.screenshotsUrls.forEach((img) => {
             let screenshot = $('<img className="screenshot-on-tape" src="' + img + '" onClick="change_current_screenshot.apply(this)"/>');
             if (first) {
                 $(".screenshots-viewer").append('<img id="current-screenshot" src="' + img + '" />');

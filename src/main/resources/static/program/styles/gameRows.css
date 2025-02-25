@@ -14,12 +14,13 @@
 
 .game-row:hover {
     cursor: pointer;
-/*    background-color: var(--bg-no-opacity);*/
+    /*    background-color: var(--bg-no-opacity);*/
 }
 
 .game-row .preview {
     min-width: 170px;
-    object-fit: cover;
+    /* object-fit: cover; */
+    object-fit: contain;
     border-radius: 10px 0 0 10px;
 }
 

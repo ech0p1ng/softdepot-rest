@@ -13,17 +13,17 @@ CREATE TABLE customer
     customer_name          varchar(50) NOT NULL,
     password               varchar(60) NOT NULL,
     profile_img_url        varchar(200),
-	registration_date_time timestamp NOT NULL
+    registration_date_time timestamp   NOT NULL
 );
 
 --разработчик
 CREATE TABLE developer
 (
-    id              SERIAL PRIMARY KEY,
-    developer_name  varchar(50) NOT NULL,
-    password        varchar(60) NOT NULL,
-    profile_img_url varchar(200),
-	registration_date_time timestamp NOT NULL
+    id                     SERIAL PRIMARY KEY,
+    developer_name         varchar(50) NOT NULL,
+    password               varchar(60) NOT NULL,
+    profile_img_url        varchar(200),
+    registration_date_time timestamp   NOT NULL
 );
 
 --ключевое слово
@@ -47,9 +47,9 @@ CREATE TABLE program
     installer_linux_url   varchar(100),
     installer_macos_url   varchar(100),
     screenshots_url       varchar(100)[],
-	upload_date_time timestamp NOT NULL,
-	update_date_time timestamp,
-	currency              int       NOT NULL REFERENCES measure_unit (id) ON UPDATE CASCADE
+    upload_date_time      timestamp   NOT NULL,
+    update_date_time      timestamp,
+    currency              int         NOT NULL REFERENCES measure_unit (id) ON UPDATE CASCADE
 );
 
 --степень принадлежности к ключевому слову
@@ -68,7 +68,7 @@ CREATE TABLE purchase
     purchase_date_time timestamp NOT NULL,
     customer_id        int       NOT NULL REFERENCES customer (id) ON DELETE CASCADE ON UPDATE CASCADE,
     program_id         int       NOT NULL REFERENCES program (id) ON UPDATE CASCADE,
-	currency           int       NOT NULL REFERENCES measure_unit (id) ON UPDATE CASCADE
+    currency           int       NOT NULL REFERENCES measure_unit (id) ON UPDATE CASCADE
 );
 
 --ежедневная статистика
@@ -80,20 +80,20 @@ CREATE TABLE daily_stats
     avg_estimation   FLOAT     NOT NULL CHECK (avg_estimation >= 0 AND avg_estimation <= 5),
     earnings         numeric(10, 2) CHECK (earnings >= 0),
     purchases_amount int       NOT NULL,
-    reviews_amount   int       NOT NULL
-	currency         int       NOT NULL REFERENCES measure_unit (id) ON UPDATE CASCADE
+    reviews_amount   int       NOT NULL,
+    currency         int       NOT NULL REFERENCES measure_unit (id) ON UPDATE CASCADE
 );
 
 --отзыв
 CREATE TABLE review
 (
-    id          SERIAL PRIMARY KEY,
-    customer_id int       NOT NULL REFERENCES customer (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    program_id  int       NOT NULL REFERENCES program (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    estimation  int       NOT NULL CHECK (estimation >= 0 AND estimation <= 5),
-    date_time   timestamp NOT NULL,
-	update_date_time   timestamp NOT NULL,
-    review_text TEXT      NOT NULL
+    id               SERIAL PRIMARY KEY,
+    customer_id      int       NOT NULL REFERENCES customer (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    program_id       int       NOT NULL REFERENCES program (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    estimation       int       NOT NULL CHECK (estimation >= 0 AND estimation <= 5),
+    date_time        timestamp NOT NULL,
+    update_date_time timestamp NOT NULL,
+    review_text      TEXT      NOT NULL
 );
 
 --корзина
@@ -106,10 +106,10 @@ CREATE TABLE cart
 
 --единица измерения
 CREATE TABLE measure_unit
-{
-	id          SERIAL PRIMARY KEY,
-	name        varchar(50) NOT NULL UNIQUE
-};
+(
+    id   SERIAL PRIMARY KEY,
+    name varchar(50) NOT NULL UNIQUE
+);
 
 --роли
 CREATE ROLE administrator_role WITH LOGIN PASSWORD '9QrlLHkwMJah3hNoMRlW' SUPERUSER;
@@ -169,8 +169,14 @@ VALUES (1, 'customer1', '$2a$10$YMs3QL44GMSvyQX6F5ZE8ek2PH0dLKLb2nQUSxB8YPNf38Ma
        (3, 'customer3', '$2a$10$0TXfQ2XBFLXKhw2Mqt0b4ekS/0KU74svpwnCtahL/tJAYtXeAbulC', NULL, '2024-12-01 14:32');
 
 INSERT INTO program
-VALUES (1, 1, 'BeamNG.drive', 880.00, 'Основанный на физике мягких объектов автомобильный симулятор, способный практически на всё.', 'BeamNG.drive - невероятно реалистичный автосимулятор с практически безграничными возможностями. В основе игры лежит система физики мягких объектов, способная правдоподобно моделировать компоненты автомобиля в реальном времени. Благодаря годам кропотливой разработки, исследований и испытаний, BeamNG.drive способен передать весь восторг вождения в реальном мире.', null, null, null, null, null,'2024-12-01 14:33','2024-12-01 14:34'),
-       (2, 1, 'Insurgency', 360.00, 'В этой многопользовательской и кооперавтивной игре Вы сражаетесь в кровавых боях на улицах, лицом к лицу с врагом, где выживание Вашей команды зависит от контроля важных точек и уничтожения вражеских боеприпасов, все оперирующее на движке Source.', 'В этой многопользовательской и кооперавтивной игре Вы сражаетесь в кровавых боях на улицах, лицом к лицу с врагом, где выживание Вашей команды зависит от контроля важных точек и уничтожения вражеских боеприпасов, все оперирующее на движке Source.', null, null, null, null, null, '2024-12-01 14:35', null);
+VALUES (1, 1, 'BeamNG.drive', 880.00,
+        'Основанный на физике мягких объектов автомобильный симулятор, способный практически на всё.',
+        'BeamNG.drive - невероятно реалистичный автосимулятор с практически безграничными возможностями. В основе игры лежит система физики мягких объектов, способная правдоподобно моделировать компоненты автомобиля в реальном времени. Благодаря годам кропотливой разработки, исследований и испытаний, BeamNG.drive способен передать весь восторг вождения в реальном мире.',
+        null, null, null, null, null, '2024-12-01 14:33', '2024-12-01 14:34'),
+       (2, 1, 'Insurgency', 360.00,
+        'В этой многопользовательской и кооперавтивной игре Вы сражаетесь в кровавых боях на улицах, лицом к лицу с врагом, где выживание Вашей команды зависит от контроля важных точек и уничтожения вражеских боеприпасов, все оперирующее на движке Source.',
+        'В этой многопользовательской и кооперавтивной игре Вы сражаетесь в кровавых боях на улицах, лицом к лицу с врагом, где выживание Вашей команды зависит от контроля важных точек и уничтожения вражеских боеприпасов, все оперирующее на движке Source.',
+        null, null, null, null, null, '2024-12-01 14:35', null);
 
 INSERT INTO degree_of_belonging
 VALUES (1, 1, 2, 2),
@@ -179,8 +185,32 @@ VALUES (1, 1, 2, 2),
        (4, 2, 4, 9),
        (5, 1, 10, 8);
 
-INSERT INTO purchase VALUES (3, '2024-11-05 13:00:07.000000'),
-                            (4, '2024-11-05 13:00:07.000000');
+INSERT INTO purchase
+VALUES (3, '2024-11-05 13:00:07.000000'),
+       (4, '2024-11-05 13:00:07.000000');
 
-INSERT INTO review VALUES (1, 1, 1, 5, '2024-11-08 10:10:16.000000', '2024-11-08 12:52:04.000000', 'Отличная физика мягких тел, лучшая физика управления автомобилями!'),
-                          (2, 2, 1, 4, '2024-11-08 10:10:16.000000', null, 'Не ну мед');
+INSERT INTO review
+VALUES (1, 1, 1, 5, '2024-11-08 10:10:16.000000', '2024-11-08 12:52:04.000000',
+        'Отличная физика мягких тел, лучшая физика управления автомобилями!'),
+       (2, 2, 1, 4, '2024-11-08 10:10:16.000000', null, 'Не ну мед');
+
+SELECT setval(pg_get_serial_sequence('administrator', 'id'), coalesce(max(id), 1))
+FROM administrator;
+SELECT setval(pg_get_serial_sequence('cart', 'id'), coalesce(max(id), 1))
+FROM cart;
+SELECT setval(pg_get_serial_sequence('customer', 'id'), coalesce(max(id), 1))
+FROM customer;
+SELECT setval(pg_get_serial_sequence('daily_stats', 'id'), coalesce(max(id), 1))
+FROM daily_stats;
+SELECT setval(pg_get_serial_sequence('degree_of_belonging', 'id'), coalesce(max(id), 1))
+FROM degree_of_belonging;
+SELECT setval(pg_get_serial_sequence('developer', 'id'), coalesce(max(id), 1))
+FROM developer;
+SELECT setval(pg_get_serial_sequence('program', 'id'), coalesce(max(id), 1))
+FROM program;
+SELECT setval(pg_get_serial_sequence('purchase', 'id'), coalesce(max(id), 1))
+FROM purchase;
+SELECT setval(pg_get_serial_sequence('review', 'id'), coalesce(max(id), 1))
+FROM review;
+SELECT setval(pg_get_serial_sequence('tag', 'id'), coalesce(max(id), 1))
+FROM tag;

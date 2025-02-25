@@ -357,7 +357,7 @@ class ProgramUploader {
         //краткое описание
         let shortDescription = $("#shortDescription").val().trim();
         let shortDescriptionIsGood =
-            shortDescription.length > MIN_SHORT_DESCRIPTION_LENGTH &&
+            shortDescription.length >= MIN_SHORT_DESCRIPTION_LENGTH &&
             shortDescription.length <= MAX_SHORT_DESCRIPTION_LENGTH;
         removeInputHighlight(
             $("#shortDescription"),
@@ -374,7 +374,7 @@ class ProgramUploader {
         //полное описание
         let fullDescription = $("#fullDescription").val().trim();
         let fullDescriptionIsGood =
-            fullDescription.length > MIN_FULL_DESCRIPTION_LENGTH &&
+            fullDescription.length >= MIN_FULL_DESCRIPTION_LENGTH &&
             fullDescription.length <= MAX_FULL_DESCRIPTION_LENGTH;
         removeInputHighlight(
             $("#fullDescription"),
@@ -433,7 +433,17 @@ class ProgramUploader {
 
         //логотип
         let logo = ProgramUploader.logo;
+
+        let logoIsGood = logo !== null;
+
         let screenshots = ProgramUploader.screenshots;
+
+        let screenshotsIsGood = !screenshots.empty;
+
+        if (nameIsGood && shortDescriptionIsGood && fullDescriptionIsGood &&
+            categoriesIsGood && logoIsGood && screenshotsIsGood) {
+
+        }
         // console.log(notChoosenCategories);
 
         // if (USER == null) {
@@ -450,8 +460,37 @@ class ProgramUploader {
             "price": price,
             "categories": choosenCategories,
             "logo": logo,
-            "screenshots": screenshots
+            "screenshots": screenshots,
         }
+
+        const formData = new FormData();
+        formData.append("developerId", 1);
+        formData.append("name", programName);
+        formData.append("shortDescription", shortDescription);
+        formData.append("fullDescription", fullDescription);
+        formData.append("price", price);
+        formData.append("categories", JSON.stringify(choosenCategories));
+        formData.append("logo", logo);
+
+        for (let i = 0; i < screenshots.length; i++) {
+            formData.append("screenshots", screenshots[i]);
+        }
+
+
+
+        $.ajax({
+            method: "POST",
+            url: BACKEND_URL + "softdepot-api/products/new",
+            processData: false, // Не обрабатывать данные
+            contentType: false, // Не устанавливать Content-Type
+            data: formData,
+            success: (response) => {
+            },
+            error: (xhr, status, message) => {
+                console.error(xhr.responseJSON.message);
+                alert("Не удалось добавить программу в корзину.\n" + xhr.responseJSON.message);
+            }
+        });
 
         console.log(program)
 

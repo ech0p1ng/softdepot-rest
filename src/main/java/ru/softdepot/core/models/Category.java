@@ -41,11 +41,11 @@ public class Category {
         this.name = name;
     }
 
-    public int getDegreeOfBelongingValue() {
+    public int getDegreeOfBelonging() {
         return degreeOfBelonging;
     }
 
-    public void setDegreeOfBelongingValue(int degreeOfBelonging) {
+    public void setDegreeOfBelonging(int degreeOfBelonging) {
         this.degreeOfBelonging = degreeOfBelonging;
     }
 

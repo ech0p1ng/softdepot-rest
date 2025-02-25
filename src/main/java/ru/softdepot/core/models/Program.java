@@ -1,16 +1,22 @@
 package ru.softdepot.core.models;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import ru.softdepot.FileStorageService;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Component
 public class Program {
+    @Autowired
+    FileStorageService fileStorageService;
     private int id;
     private String name;
     private BigDecimal price;
@@ -18,11 +24,9 @@ public class Program {
     private int developerId;
     private String shortDescription;
     private List<Category> categories;
-
     private float averageEstimation;
     private String filesPath;
     private String nameForPath;
-
     private MultipartFile winInstaller;
     private MultipartFile linuxInstaller;
     private MultipartFile macosInstaller;
@@ -30,30 +34,23 @@ public class Program {
     private List<MultipartFile> screenshots;
     private MultipartFile logo;
     private String headerUrl;
-
     private boolean isInCart = false;
     private boolean hasReview = false;
     private boolean isPurchased = false;
-
     private String pageUrl;
-
-//    private AppConfig appConfig;
-//
-//    @Autowired
-//    public Program(AppConfig appConfig) {
-//        this.appConfig = appConfig;
-//    }
-
+    private String logoUrl;
+    private List<String> screenshotsUrls;
 
     public Program(int id, String name, BigDecimal price, String fullDescription,
-                   int developerId, String shortDescription, List<Category> categories) {
+                   int developerId, String shortDescription, List<Category> categories, String logoUrl, String[] screenshotsUrls) {
         this.id = id;
         this.price = price;
         this.fullDescription = fullDescription;
         this.developerId = developerId;
         this.shortDescription = shortDescription;
         this.categories = categories;
-        setFilesPath(id);
+        this.logoUrl = logoUrl;
+        this.screenshotsUrls = Arrays.asList(screenshotsUrls);
         setName(name);
         setPageUrl();
     }
@@ -65,7 +62,6 @@ public class Program {
         this.developerId = developerId;
         this.shortDescription = shortDescription;
         this.categories = categories;
-        setFilesPath(id);
         setName(name);
         setPageUrl();
     }
@@ -76,7 +72,6 @@ public class Program {
         this.fullDescription = description;
         this.developerId = developerId;
         this.shortDescription = shortDescription;
-        setFilesPath(id);
         setName(name);
         setPageUrl();
     }
@@ -118,7 +113,9 @@ public class Program {
         return id;
     }
 
-    public void setId(int id) {this.id = id;}
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -183,6 +180,10 @@ public class Program {
         return categories;
     }
 
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+
     public void setTags(List<Category> categories) {
         this.categories = categories;
     }
@@ -202,12 +203,8 @@ public class Program {
         return nameForPath;
     }
 
-    public String getLogoUrl() {
-        return getFilesPath() + "/logo.png";
-    }
-
-    public String getInstallerWindowsUrl() {
-        String path = getFilesPath() + "/installers/win";
+    public String getInstallerWindowsUrl(String mediaUploadDir) {
+        String path = getFilesPath(mediaUploadDir) + "/installers/win";
 
         File dir = new File(path);
         if (dir.isDirectory()) {
@@ -217,8 +214,8 @@ public class Program {
         return null;
     }
 
-    public String getInstallerLinuxUrl() {
-        String path = getFilesPath() + "/installers/linux";
+    public String getInstallerLinuxUrl(String mediaUploadDir) {
+        String path = getFilesPath(mediaUploadDir) + "/installers/linux";
 
         File dir = new File(path);
         if (dir.isDirectory()) {
@@ -228,8 +225,8 @@ public class Program {
         return null;
     }
 
-    public String getInstallerMacosUrl() {
-        String path = getFilesPath() + "/installers/macos";
+    public String getInstallerMacosUrl(String mediaUploadDir) {
+        String path = getFilesPath(mediaUploadDir) + "/installers/macos";
 
         File dir = new File(path);
         if (dir.isDirectory()) {
@@ -239,27 +236,28 @@ public class Program {
         return null;
     }
 
-    public String getFilesPath() {
-        return this.filesPath;
-    }
+//    public List<String> getScreenshotsUrl() {
+//        return new ArrayList<String>(Arrays.asList(
+//                String.format("/program/content/%d/screenshots/sh01.jpg", getId()),
+//                String.format("/program/content/%d/screenshots/sh02.jpg", getId()),
+//                String.format("/program/content/%d/screenshots/sh03.jpg", getId()),
+//                String.format("/program/content/%d/screenshots/sh04.jpg", getId()),
+//                String.format("/program/content/%d/screenshots/sh05.jpg", getId()),
+//                String.format("/program/content/%d/screenshots/sh06.jpg", getId()),
+//                String.format("/program/content/%d/screenshots/sh07.jpg", getId()),
+//                String.format("/program/content/%d/screenshots/sh08.jpg", getId()),
+//                String.format("/program/content/%d/screenshots/sh09.jpg", getId()),
+//                String.format("/program/content/%d/screenshots/sh10.jpg", getId())
+//        ));
+//        return this.screenshotsUrls;
+//    }
 
-    public void setFilesPath(int id) {
-        this.filesPath = "program/content/" + id;
-    }
-
-    public List<String> getScreenshotsUrl() {
-        return new ArrayList<String>(Arrays.asList(
-                String.format("/program/content/%d/screenshots/sh01.jpg", getId()),
-                String.format("/program/content/%d/screenshots/sh02.jpg", getId()),
-                String.format("/program/content/%d/screenshots/sh03.jpg", getId()),
-                String.format("/program/content/%d/screenshots/sh04.jpg", getId()),
-                String.format("/program/content/%d/screenshots/sh05.jpg", getId()),
-                String.format("/program/content/%d/screenshots/sh06.jpg", getId()),
-                String.format("/program/content/%d/screenshots/sh07.jpg", getId()),
-                String.format("/program/content/%d/screenshots/sh08.jpg", getId()),
-                String.format("/program/content/%d/screenshots/sh09.jpg", getId()),
-                String.format("/program/content/%d/screenshots/sh10.jpg", getId())
-        ));
+    public Path getFilesPath(String mediaUploadDir) {
+        return Paths.get(
+                mediaUploadDir,
+                "program",
+                String.valueOf(getId())
+        );
     }
 
     public MultipartFile getWinInstaller() {
@@ -315,7 +313,8 @@ public class Program {
     }
 
     public String getHeaderUrl() {
-        return headerUrl;
+//        return headerUrl;
+        return getLogoUrl();
     }
 
     public boolean getIsInCart() {
@@ -340,6 +339,22 @@ public class Program {
 
     public void setHasReview(boolean hasReview) {
         this.hasReview = hasReview;
+    }
+
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
+
+    public List<String> getScreenshotsUrls() {
+        return screenshotsUrls;
+    }
+
+    public void setScreenshotsUrls(List<String> screenshotsUrls) {
+        this.screenshotsUrls = screenshotsUrls;
     }
 
     @Override

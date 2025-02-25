@@ -3,8 +3,11 @@ package ru.softdepot.core.dao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
+import ru.softdepot.FileStorageService;
 import ru.softdepot.core.models.*;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -61,10 +64,47 @@ public class ProgramDAO implements DAO<Program> {
         for (var category : categories) {
             degreesOfBelonging.add(
                     category.getId(),
-                    (double) category.getDegreeOfBelongingValue()
+                    (double) category.getDegreeOfBelonging()
             );
         }
         return degreesOfBelonging;
+    }
+
+    public void addMedia(FileStorageService fileStorageService, int programId, Program program, MultipartFile logo, List<MultipartFile> screenshots) throws IOException {
+        program.setId(programId);
+        var logoPath = fileStorageService.saveFile(
+                logo,
+                program.getFilesPath(fileStorageService.getMediaUploadDir())
+        );
+        program.setLogoUrl(fileStorageService.convertToPublicFilePath(logoPath));
+
+        List<String> screenshotsUrls = new ArrayList<>();
+        for (var screenshot : screenshots) {
+            var screenshotPath = fileStorageService.saveFile(
+                    screenshot,
+                    program.getFilesPath(fileStorageService.getMediaUploadDir())
+            );
+            screenshotsUrls.add(fileStorageService.convertToPublicFilePath(screenshotPath));
+        }
+        program.setScreenshotsUrls(screenshotsUrls);
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "UPDATE program SET logo_url = ?, screenshots_url=? WHERE id = ?"
+            );
+            var screenshotsSqlArray = connection.createArrayOf(
+                    "VARCHAR",
+                    screenshotsUrls.toArray()
+            );
+            statement.setString(1, program.getLogoUrl());
+            statement.setArray(2, screenshotsSqlArray);
+            statement.setInt(3, programId);
+            statement.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -90,7 +130,7 @@ public class ProgramDAO implements DAO<Program> {
                         degreeOfBelongingDAO.add(new DegreeOfBelonging(
                                 program.getId(),
                                 category.getId(),
-                                category.getDegreeOfBelongingValue()
+                                category.getDegreeOfBelonging()
                         ));
                     }
                     return program.getId();
@@ -155,7 +195,9 @@ public class ProgramDAO implements DAO<Program> {
                         resultSet.getString("description"),
                         resultSet.getInt("developer_id"),
                         resultSet.getString("short_description"),
-                        getCategories(resultSet.getInt("id"))
+                        getCategories(resultSet.getInt("id")),
+                        resultSet.getString("logo_url"),
+                        (String[]) resultSet.getArray("screenshots_url").getArray()
                 );
 
                 program.setHeaderUrl();
@@ -200,7 +242,9 @@ public class ProgramDAO implements DAO<Program> {
                         resultSet.getString("description"),
                         resultSet.getInt("developer_id"),
                         resultSet.getString("short_description"),
-                        getCategories(resultSet.getInt("id"))
+                        getCategories(resultSet.getInt("id")),
+                        resultSet.getString("logo_url"),
+                        (String[]) resultSet.getArray("screenshots_url").getArray()
                 );
                 program.setHeaderUrl();
                 program.setAverageEstimation(getAverageEstimation(program));
@@ -238,7 +282,9 @@ public class ProgramDAO implements DAO<Program> {
                         resultSet.getString("description"),
                         resultSet.getInt("developer_id"),
                         resultSet.getString("short_description"),
-                        getCategories(resultSet.getInt("id"))
+                        getCategories(resultSet.getInt("id")),
+                        resultSet.getString("logo_url"),
+                        (String[]) resultSet.getArray("screenshots_url").getArray()
                 );
                 program.setHeaderUrl();
                 program.setAverageEstimation(getAverageEstimation(program));
@@ -277,7 +323,9 @@ public class ProgramDAO implements DAO<Program> {
                         resultSet.getString("description"),
                         resultSet.getInt("developer_id"),
                         resultSet.getString("short_description"),
-                        getCategories(resultSet.getInt("id"))
+                        getCategories(resultSet.getInt("id")),
+                        resultSet.getString("logo_url"),
+                        (String[]) resultSet.getArray("screenshots_url").getArray()
                 );
                 program.setHeaderUrl();
                 program.setAverageEstimation(getAverageEstimation(program));
@@ -313,7 +361,9 @@ public class ProgramDAO implements DAO<Program> {
                         resultSet.getString("description"),
                         resultSet.getInt("developer_id"),
                         resultSet.getString("short_description"),
-                        getCategories(resultSet.getInt("id"))
+                        getCategories(resultSet.getInt("id")),
+                        resultSet.getString("logo_url"),
+                        (String[]) resultSet.getArray("screenshots_url").getArray()
                 );
                 program.setHeaderUrl();
                 program.setAverageEstimation(getAverageEstimation(program));
@@ -387,7 +437,7 @@ public class ProgramDAO implements DAO<Program> {
 
         for (DegreeOfBelonging degreeOfBelonging : degreeOfBelongingList) {
             Category category = categoryDAO.getById(degreeOfBelonging.getTagId());
-            category.setDegreeOfBelongingValue(degreeOfBelonging.getDegreeOfBelongingValue());
+            category.setDegreeOfBelonging(degreeOfBelonging.getDegreeOfBelongingValue());
             category.setProgramId(degreeOfBelonging.getProgramId());
             categoryList.add(category);
         }
