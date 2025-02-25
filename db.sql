@@ -107,8 +107,9 @@ CREATE TABLE cart
 --единица измерения
 CREATE TABLE measure_unit
 (
-    id   SERIAL PRIMARY KEY,
-    name varchar(50) NOT NULL UNIQUE
+    id         SERIAL PRIMARY KEY,
+    name       varchar(50) NOT NULL UNIQUE,
+    short_name varchar(50) NOT NULL UNIQUE
 );
 
 --роли
@@ -147,6 +148,9 @@ GRANT SELECT ON TABLE developer TO unregistered_role;
 GRANT SELECT ON TABLE program TO unregistered_role;
 GRANT SELECT ON TABLE measure_unit TO unregistered_role;
 
+INSERT INTO measure_unit
+VALUES (1, 'Рубль', 'руб.');
+
 INSERT INTO tag
 VALUES (1, 'Гонки'),
        (2, 'От третьего лица'),
@@ -172,11 +176,15 @@ INSERT INTO program
 VALUES (1, 1, 'BeamNG.drive', 880.00,
         'Основанный на физике мягких объектов автомобильный симулятор, способный практически на всё.',
         'BeamNG.drive - невероятно реалистичный автосимулятор с практически безграничными возможностями. В основе игры лежит система физики мягких объектов, способная правдоподобно моделировать компоненты автомобиля в реальном времени. Благодаря годам кропотливой разработки, исследований и испытаний, BeamNG.drive способен передать весь восторг вождения в реальном мире.',
-        null, null, null, null, null, '2024-12-01 14:33', '2024-12-01 14:34'),
+        '/uploads/program/1/logo.png', null, null, null,
+        '{/uploads/program/1/sh01.jpg,/uploads/program/1/sh02.jpg,/uploads/program/1/sh03.jpg,/uploads/program/1/sh04.jpg,/uploads/program/1/sh05.jpg,/uploads/program/1/sh06.jpg,/uploads/program/1/sh07.jpg,/uploads/program/1/sh08.jpg,/uploads/program/1/sh09.jpg,/uploads/program/1/sh10.jpg}',
+        '2024-12-01 14:33', '2024-12-01 14:34', 1),
        (2, 1, 'Insurgency', 360.00,
         'В этой многопользовательской и кооперавтивной игре Вы сражаетесь в кровавых боях на улицах, лицом к лицу с врагом, где выживание Вашей команды зависит от контроля важных точек и уничтожения вражеских боеприпасов, все оперирующее на движке Source.',
         'В этой многопользовательской и кооперавтивной игре Вы сражаетесь в кровавых боях на улицах, лицом к лицу с врагом, где выживание Вашей команды зависит от контроля важных точек и уничтожения вражеских боеприпасов, все оперирующее на движке Source.',
-        null, null, null, null, null, '2024-12-01 14:35', null);
+        '/uploads/program/2/logo.png', null, null, null,
+        '{/uploads/program/2/sh01.jpg,/uploads/program/2/sh02.jpg,/uploads/program/2/sh03.jpg,/uploads/program/2/sh04.jpg,/uploads/program/2/sh05.jpg,/uploads/program/2/sh06.jpg,/uploads/program/2/sh07.jpg,/uploads/program/2/sh08.jpg,/uploads/program/2/sh09.jpg,/uploads/program/2/sh10.jpg}',
+        '2024-12-01 14:35', null, 1);
 
 INSERT INTO degree_of_belonging
 VALUES (1, 1, 2, 2),
