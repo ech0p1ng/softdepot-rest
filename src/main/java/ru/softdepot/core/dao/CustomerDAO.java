@@ -237,10 +237,12 @@ public class CustomerDAO implements DAO<Customer> {
 
     public List<Program> getPurchasedPrograms(Customer customer) throws Exception {
         List<Purchase> purchases = purchaseDAO.getPurchasesOfCustomer(customer);
-        if (purchases.isEmpty())
-            throw new Exception("No purchases found for customer [id=" + customer.getId() +"]");
-
         List<Program> programs = new ArrayList<>();
+
+//        if (purchases.isEmpty()) {
+//            throw new Exception("No purchases found for customer [id=" + customer.getId() +"]");
+//        }
+
 
         for (Purchase purchase : purchases) {
             Program program = programDAO.getById(purchase.getProgramId());

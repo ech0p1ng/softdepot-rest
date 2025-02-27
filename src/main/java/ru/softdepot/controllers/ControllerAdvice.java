@@ -1,5 +1,6 @@
 package ru.softdepot.controllers;
 
+import jakarta.annotation.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
