@@ -16,6 +16,7 @@ const MIN_DEGREE_OF_BELONGING = 0;
 const MAX_DEGREE_OF_BELONGING = 10;
 
 const MIN_CATEGORIES_AMOUNT = 3;
+const MIN_SCREENSHOTS_AMOUNT = 3;
 
 const ERROR_MESSAGE_STYLE_VISIBLE = {
     "font-size": "8pt",
@@ -52,6 +53,96 @@ class ProgramUploader {
     static categories = [];
 
     static show() {
+        let uploaderForm = $(/*html*/`
+            <div id="pop-up-bg">
+                <div id="pop-up-opened">
+                    <div id="pop-up-header">
+                        <span id="pop-up-title">Добавление программы</span>
+                        <button id="pop-up-exit-button" class="exit-button button close-button" onclick="ProgramUploader.close()"></button>
+                    </div>
+
+                    <div class="pop-up-main">
+                        <div>
+                            <input type="text" class="input pop-up-one-line-input" name="programName" id="programName" placeholder="Название" title="Название">
+                            <span type="text" class="msg-under-input" id="programNameHint"></span>
+                        </div>
+                        <div>
+                            <textarea type="text" class="input pop-up-multi-line-input" name="shortDescription" id="shortDescription" placeholder="Краткое описание" title="Краткое описание"></textarea>
+                            <span type="text" class="msg-under-input" id="shortDescriptionHint"></span>
+                        </div>
+                        <div>
+                            <textarea type="text" class="input pop-up-multi-line-input" name="fullDescription" id="fullDescription" placeholder="Полное описание" title="Полное описание"></textarea>
+                            <span type="text" class="msg-under-input" id="fullDescriptionHint"></span>
+                        </div>
+                        <div>
+                            <input type="text" number-type="float" class="input pop-up-one-line-input" name="programPrice" id="price" placeholder="Стоимость (руб.)" title="Стоимость (руб.)">
+                            <span type="text" class="msg-under-input" id="priceHint"></span>
+                        </div>
+                        <div>
+                            <div id="categories-selects-box">
+                                <div class="categories-selects"></div>
+                                <button class="button pop-up-button full-width-button" id="add-category-button" style="margin-top: 10px;"><span>Добавить категорию</span></button>
+                            </div>
+                            <span type="text" class="msg-under-input" id="categoriesSelectsHint"></span>
+                        </div>
+
+                        <div>
+                            <div>
+                                <div class="preview-container" id="logo-preview-container" style="max-width: 33%;"></div>
+
+                                <div class="file-input button pop-up-button full-width-button" id="add-logo-container">
+                                    <input type="file" accept=".png,.jpg,.jpeg" id="add-logo-button" class="file-upload-button"></input>
+                                    <span>Добавить логотип</span>
+                                </div>
+                            </div>
+                            <span type="text" class="msg-under-input" id="logoHint"></span>
+                        </div>
+
+                        <div>
+                            <div>
+                                <div class="preview-container" id="screenshots-preview-container"></div>
+
+                                <div class="file-input button pop-up-button full-width-button" id="add-screenshots-container">
+                                    <input type="file" accept=".png,.jpg,.jpeg" id="add-screenshots-button" class="file-upload-button" multiple></input>
+                                    <span>Добавить скриншоты</span>
+                                </div>
+                            </div>
+                            <span type="text" class="msg-under-input" id="screenshotsHint"></span>
+                        </div>
+                    </div>
+
+                    <div id="pop-up-footer">
+                        <div style="height: 0px;"></div>
+                        <div class="pop-up-footer-buttons">
+                            <button class="button pop-up-button cancel-button">Отмена</button>
+                            <button class="button pop-up-button ok-button" onclick="ProgramUploader.uploadProgram()">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        $('body').append(uploaderForm);
+
+        $("#add-category-button").on('click', () => ProgramUploader.addSelectRow());
+
+        $("#add-logo-button").on('change', () => {
+            $("#add-logo-button").empty();
+            ProgramUploader.addImage(
+                $('#logo-preview-container'),
+                $('#add-logo-button'),
+                ImageType.LOGO
+            );
+        });
+
+        $("#add-screenshots-button").on("change", () => {
+            ProgramUploader.addImage(
+                $('#screenshots-preview-container'),
+                $('#add-screenshots-button'),
+                ImageType.SCREENSHOTS
+            )
+        });
+
         $("#price").on('input', function () {
             let result = convertToNumber(
                 this.value,
@@ -112,11 +203,11 @@ class ProgramUploader {
         });
     }
 
-    static close() { }
+    static close() { $("#pop-up-bg").remove(); }
 
     static addSelectRow(scroll = true) {
-        let selectRow = $(/*html*/
-            `<div id="category-selector-${selectsForCategoriesCount}">
+        let selectRow = $(/*html*/`
+            <div id="category-selector-${selectsForCategoriesCount}">
                 <div class="category-select-row" id="category-select-row-${selectsForCategoriesCount}">
                     <select class="select pop-up-select-input" name="category-select" title="Выберите категорию">
                         <option value="" class="select-option" disabled selected>Выберите категорию...</option>
@@ -125,8 +216,8 @@ class ProgramUploader {
                     <button class="button exit-button close-button remove-button" id="remove-category-button-${selectsForCategoriesCount}" title="Удалить категорию" row-id="${selectsForCategoriesCount}" onclick="ProgramUploader.deleteSelectRow(${selectsForCategoriesCount})"></button>
                 </div>
                 <span type="text" class="msg-under-input category-select-row-hint" id="category-select-row-${selectsForCategoriesCount}-hint"></span>
-            </div>`
-        );
+            </div>
+        `);
 
         selectRow
             .find('input')
@@ -151,7 +242,6 @@ class ProgramUploader {
             );
 
             selectRow.find('select').append(option);
-            // console.log(category.name);
         });
 
         $(".categories-selects").append(selectRow);
@@ -400,7 +490,7 @@ class ProgramUploader {
                 $("#categories-selects-box"),
                 $("#categoriesSelectsHint"),
                 `Выберите минимум ${MIN_CATEGORIES_AMOUNT} категорий`
-            )
+            );
             $("#add-category-button").on('click', function () {
                 removeInputHighlight(
                     $("#categories-selects-box"),
@@ -436,80 +526,67 @@ class ProgramUploader {
 
         let logoIsGood = logo !== null;
 
+        if (!logoIsGood) {
+            highlightInputOnError(
+                $("#add-logo-container"),
+                $("#logoHint"),
+                `Выберите логотип`
+            );
+        }
+
         let screenshots = ProgramUploader.screenshots;
 
-        let screenshotsIsGood = !screenshots.empty;
-
-        if (nameIsGood && shortDescriptionIsGood && fullDescriptionIsGood &&
-            categoriesIsGood && logoIsGood && screenshotsIsGood) {
-
-        }
-        // console.log(notChoosenCategories);
-
-        // if (USER == null) {
-        //     alert("Авторизируйтесь!")
-        // }
-        // else {
-        //     if (USER.type === "Developer") {
-        let program = {
-            // "developerId": USER.id,
-            "developerId": 1,
-            "name": programName,
-            "shortDescription": shortDescription,
-            "fullDescription": fullDescription,
-            "price": price,
-            "categories": choosenCategories,
-            "logo": logo,
-            "screenshots": screenshots,
-        }
-
-        const formData = new FormData();
-        formData.append("developerId", 1);
-        formData.append("name", programName);
-        formData.append("shortDescription", shortDescription);
-        formData.append("fullDescription", fullDescription);
-        formData.append("price", price);
-        formData.append("categories", JSON.stringify(choosenCategories));
-        formData.append("logo", logo);
-
-        for (let i = 0; i < screenshots.length; i++) {
-            formData.append("screenshots", screenshots[i]);
+        let screenshotsIsGood = !screenshots.empty && screenshots.length >= MIN_SCREENSHOTS_AMOUNT;
+        if (!screenshotsIsGood) {
+            highlightInputOnError(
+                $("#add-screenshots-container"),
+                $("#screenshotsHint"),
+                `Выберите минимум ${MIN_SCREENSHOTS_AMOUNT} скриншотов`
+            );
         }
 
 
 
-        $.ajax({
-            method: "POST",
-            url: BACKEND_URL + "softdepot-api/products/new",
-            processData: false, // Не обрабатывать данные
-            contentType: false, // Не устанавливать Content-Type
-            data: formData,
-            success: (response) => {
-            },
-            error: (xhr, status, message) => {
-                console.error(xhr.responseJSON.message);
-                alert("Не удалось добавить программу в корзину.\n" + xhr.responseJSON.message);
+        if (USER == null) {
+            alert("Авторизируйтесь!")
+        }
+        else {
+            if (USER.userType === "Developer") {
+                if (nameIsGood && shortDescriptionIsGood && fullDescriptionIsGood &&
+                    categoriesIsGood && logoIsGood && screenshotsIsGood) {
+                    const formData = new FormData();
+                    formData.append("developerId", USER.id);
+                    formData.append("name", programName);
+                    formData.append("shortDescription", shortDescription);
+                    formData.append("fullDescription", fullDescription);
+                    formData.append("price", price);
+                    formData.append("categories", JSON.stringify(choosenCategories));
+                    formData.append("logo", logo);
+
+                    for (let i = 0; i < screenshots.length; i++) {
+                        formData.append("screenshots", screenshots[i]);
+                    }
+
+                    $.ajax({
+                        method: "POST",
+                        url: BACKEND_URL + "softdepot-api/products/new",
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        success: (response) => {
+                            location.reload();
+                        },
+                        error: (xhr, status, message) => {
+                            console.error(xhr.responseJSON.message);
+                            alert("Не удалось добавить программу в каталог.\n" + xhr.responseJSON.message);
+                        }
+                    });
+                }
             }
-        });
-
-        console.log(program)
-
-        // var formData = new FormData();
-        // for (let key in program) {
-        //     if (program.hasOwnProperty(key)) {
-        //         formData.append(key, program[key]);
-        //     }
-        // }
-        // formData.append('logo', logo)
-
-        // let response = JSON.stringify(program);
-        // console.log(response);
-        // }
-        // else {
-        //     alert(`Недопустимое действие. Ваша роль - "${USER.type}", а должна быть "Developer"`);
-        // }
-        // }
-
+            else {
+                alert("Вы должны быть авторизованы как разработчик");
+            }
+        }
     }
 }
 
@@ -573,47 +650,3 @@ function limitTextInput(inputJquertItem, value, maxLength, hintJqueryItem) {
     }
     return value;
 }
-
-$(window).on('load', () => {
-    ProgramUploader.show();
-    $("#add-category-button").on('click', () => ProgramUploader.addSelectRow());
-
-
-    // $("#add-logo-button").on('change', () => {
-    $("#add-logo-button").on('change', () => {
-        $("#add-logo-button").empty();
-        ProgramUploader.addImage(
-            $('#logo-preview-container'),
-            $('#add-logo-button'),
-            // function () {
-            //     $("#add-logo-container span").html('Добавить логотип')
-            // },
-            // function () {
-            //     $("#add-logo-container span").html('Заменить логотип')
-            // },
-            // function () {
-            //     $("#add-logo-container span").html('Загрузка...')
-            // },
-            ImageType.LOGO
-        );
-    });
-
-    $("#add-screenshots-button").on("change", () => {
-        ProgramUploader.addImage(
-            $('#screenshots-preview-container'),
-            $('#add-screenshots-button'),
-            // function () {
-            //     $("#add-screenshots-container span").html('Добавить скриншоты')
-            // },
-            // function () {
-            //     $("#add-screenshots-container span").html('Заменить скриншоты')
-            // },
-            // function () {
-            //     $("#add-screenshots-container span").html('Загрузка...')
-            // },
-            ImageType.SCREENSHOTS
-        )
-    });
-
-});
-

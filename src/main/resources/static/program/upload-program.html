@@ -15,76 +15,7 @@
 </head>
 
 <body>
-    <div id="pop-up-bg">
-        <div id="pop-up-opened">
-            <div id="pop-up-header">
-                <span id="pop-up-title">Добавление программы</span>
-                <button id="pop-up-exit-button" class="exit-button button close-button" onclick="UploadProgram.close()"></button>
-            </div>
 
-            <div class="pop-up-main">
-                <div>
-                    <input type="text" class="input pop-up-one-line-input" name="programName" id="programName" placeholder="Название" title="Название">
-                    <span type="text" class="msg-under-input" id="programNameHint"></span>
-                </div>
-                <div>
-                    <textarea type="text" class="input pop-up-multi-line-input" name="shortDescription" id="shortDescription" placeholder="Краткое описание" title="Краткое описание"></textarea>
-                    <span type="text" class="msg-under-input" id="shortDescriptionHint"></span>
-                </div>
-                <div>
-                    <textarea type="text" class="input pop-up-multi-line-input" name="fullDescription" id="fullDescription" placeholder="Полное описание" title="Полное описание"></textarea>
-                    <span type="text" class="msg-under-input" id="fullDescriptionHint"></span>
-                </div>
-                <div>
-                    <input type="text" number-type="float" class="input pop-up-one-line-input" name="programPrice" id="price" placeholder="Стоимость (руб.)" title="Стоимость (руб.)">
-                    <span type="text" class="msg-under-input" id="priceHint"></span>
-                </div>
-                <div>
-                    <div id="categories-selects-box">
-                        <div class="categories-selects"></div>
-                        <button class="button pop-up-button full-width-button" id="add-category-button" style="margin-top: 10px;"><span>Добавить категорию</span></button>
-                    </div>
-                    <span type="text" class="msg-under-input" id="categoriesSelectsHint"></span>
-                </div>
-
-                <div>
-                    <div class="preview-container" id="logo-preview-container" style="max-width: 33%;"></div>
-
-                    <div class="file-input button pop-up-button full-width-button" id="add-logo-container">
-                        <input type="file" accept=".png,.jpg,.jpeg" id="add-logo-button" class="file-upload-button"></input>
-                        <span>Добавить логотип</span>
-                    </div>
-                </div>
-
-                <!-- <div class="preview-container" id="screenshots-preview-container">
-                    <div class="image-preview-container">
-                        <img src="/program/content/2/screenshots/sh02.jpg" class="image-preview">
-                        <div class="buttons-block">
-                            <button class="button edit-button edit" title="Заменить изображение"></button>
-                            <button class="button exit-button close-button" title="Удалить изображение"></button>
-                        </div>
-                    </div>
-                </div> -->
-
-                <div>
-                    <div class="preview-container" id="screenshots-preview-container"></div>
-
-                    <div class="file-input button pop-up-button full-width-button" id="add-screenshots-container">
-                        <input type="file" accept=".png,.jpg,.jpeg" id="add-screenshots-button" class="file-upload-button" multiple></input>
-                        <span>Добавить скриншоты</span>
-                    </div>
-                </div>
-            </div>
-
-            <div id="pop-up-footer">
-                <div style="height: 0px;"></div>
-                <div class="pop-up-footer-buttons">
-                    <button class="button pop-up-button cancel-button">Отмена</button>
-                    <button class="button pop-up-button ok-button" onclick="ProgramUploader.uploadProgram()">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script src="/scripts/jquery-3.7.1.min.js"></script>
     <script src="/scripts/main.js"></script>

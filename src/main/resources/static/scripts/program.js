@@ -1,7 +1,8 @@
 const addToCartHtml = '<span>Добавить в корзину</span>';
 const removeFromCartHtml = '<span>Удалить из корзины</span>';
 const signInToBuyHtml = '<span>Войдите чтобы купить</span>';
-const onlyCustomerCanBuy = '<span>Только покупатель может купить</span>';
+const onlyCustomerCanBuyHtml = '<span>Только покупатель может купить</span>';
+const removeFromCatalogHtml = '<span>Удалить из каталога</span>';
 
 class Program {
     static catalogue = [];
@@ -154,12 +155,24 @@ class Program {
 
                 }
             }
+            else if (USER.type === "Developer" && this.developerId === USER.id) {
+                this.gameRowCatalogue
+                    .find('.add-to-cart')
+                    .addClass('remove-from-cart')
+                    .removeClass('add-to-cart')
+                    .removeClass('cant-buy')
+                    .html(removeFromCatalogHtml)
+                    .off('click')
+                    .on('click', () => {
+                        this.removeFromCatalog();
+                    });
+            }
             else {
                 this.gameRowCatalogue
                     .find('.add-to-cart')
                     .addClass('cant-buy')
                     .removeClass('add-to-cart')
-                    .html(onlyCustomerCanBuy)
+                    .html(onlyCustomerCanBuyHtml)
                     .off('click')
                     .on('click', () => window.open('/sign-in'));
             }
@@ -205,12 +218,24 @@ class Program {
                         });
                 }
             }
+            else if (USER.type === "Developer" && this.developerId === USER.id) {
+                $("#add-to-cart-from-page")
+                    .addClass('remove-from-cart')
+                    .removeClass('add-to-cart')
+                    .removeClass('cant-buy')
+                    .html(removeFromCatalogHtml)
+                    .off('click')
+                    .on('click', () => {
+                        this.removeFromCatalog();
+                    });
+            }
+
             else {
                 $("#add-to-cart-from-page")
                     .addClass('cant-buy')
                     .removeClass('remove-from-cart')
                     .removeClass('add-to-cart')
-                    .html(onlyCustomerCanBuy)
+                    .html(onlyCustomerCanBuyHtml)
                     .off('click')
                     .on('click', () => {
                         window.open("/sign-in")
@@ -270,6 +295,24 @@ class Program {
         });
     }
 
+    removeFromCatalog() {
+        const confirmed = confirm(`Вы действительно хотите удалить ${this.name} из каталога?`);
+        if (confirmed) {
+            $.ajax({
+                method: "DELETE",
+                url: BACKEND_URL + "softdepot-api/products/" + this.id,
+                dataType: false,
+                success: (response) => {
+                    this.gameRowCatalogue.remove();
+                    const index = Program.catalogue.findIndex(item => item.id === this.id);
+                    Program.catalogue.splice(index, 1);
+                },
+                error: (xhr, status, error) => {
+                    alert(`Не удалось удалить ${this.name} из каталога`);
+                }
+            });
+        }
+    }
     //Создание строки в каталоге
     getGameRowPreview() {
         return this.gameRowCatalogue;
