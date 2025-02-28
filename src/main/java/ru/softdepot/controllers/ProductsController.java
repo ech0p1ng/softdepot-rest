@@ -1,6 +1,7 @@
 package ru.softdepot.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,9 @@ import ru.softdepot.core.models.User;
 import ru.softdepot.messages.Message;
 import ru.softdepot.requestBodies.ProgramRequestBody;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,6 +125,22 @@ public class ProductsController {
                             Message.Status.NOT_FOUND
                     )
             );
+
+        Program program = null;
+        try {
+            program = programDAO.getById(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        var path = program.getFilesPath(fileStorageService.getMediaUploadDir());
+        File folder = new File(path.toString());
+        if (folder.exists()) {
+            try {
+                FileUtils.deleteDirectory(folder);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         programDAO.delete(id);
         return ResponseEntity.ok().build();

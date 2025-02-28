@@ -60,7 +60,7 @@ class User {
                             success: function (response) {
                                 USER = null;
                             },
-                            error: function(xhr,status,error) {
+                            error: function (xhr, status, error) {
                                 console.error("Не удалось выйти");
                             }
                         });
@@ -79,9 +79,23 @@ class User {
                 $(".user-role").html(roleStr);
                 break;
             }
+
             case "Developer": {
                 roleStr = "Разработчик";
                 $(".user-role").html(roleStr);
+
+                if (USER !== null) {
+                    if (this.id === USER.id && this.userType === USER.userType) {
+                        let uploadProgramButton = $(/*html*/`
+                            <button class="button" id="add-program-as-developer">Добавить программу</button>
+                        `);
+                        uploadProgramButton.on('click', ProgramUploader.show);
+                        $('main').append(uploadProgramButton);
+                    }
+                }
+
+
+
 
                 $.ajax({
                     method: "GET",
@@ -93,13 +107,14 @@ class User {
                             '<div id="programs-list"></div>'
                         );
                         Program.catalogue.length = 0;
+
                         response.forEach((element) => {
                             var program = new Program(element);
                             Program.catalogue.push(program);
                             $("#programs-list").append(program.getGameRowPreview());
                         });
                     },
-                    error: function(xhr,status,error) {
+                    error: function (xhr, status, error) {
                         console.error("Не удалось выйти");
                     }
                 });
@@ -129,7 +144,7 @@ class User {
                             $("#programs-list").append(program.getGameRowPreview());
                         });
                     },
-                    error: function(xhr,status,error) {
+                    error: function (xhr, status, error) {
                     }
                 });
 
@@ -146,7 +161,7 @@ class User {
                             $("#reviews-list").append(review.reviewRowAtUserPage);
                         });
                     },
-                    error: function(xhr,status,error) {
+                    error: function (xhr, status, error) {
                         console.error("Не удалось выйти");
                     }
                 });

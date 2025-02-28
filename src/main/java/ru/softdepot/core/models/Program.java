@@ -236,22 +236,6 @@ public class Program {
         return null;
     }
 
-//    public List<String> getScreenshotsUrl() {
-//        return new ArrayList<String>(Arrays.asList(
-//                String.format("/program/content/%d/screenshots/sh01.jpg", getId()),
-//                String.format("/program/content/%d/screenshots/sh02.jpg", getId()),
-//                String.format("/program/content/%d/screenshots/sh03.jpg", getId()),
-//                String.format("/program/content/%d/screenshots/sh04.jpg", getId()),
-//                String.format("/program/content/%d/screenshots/sh05.jpg", getId()),
-//                String.format("/program/content/%d/screenshots/sh06.jpg", getId()),
-//                String.format("/program/content/%d/screenshots/sh07.jpg", getId()),
-//                String.format("/program/content/%d/screenshots/sh08.jpg", getId()),
-//                String.format("/program/content/%d/screenshots/sh09.jpg", getId()),
-//                String.format("/program/content/%d/screenshots/sh10.jpg", getId())
-//        ));
-//        return this.screenshotsUrls;
-//    }
-
     public Path getFilesPath(String mediaUploadDir) {
         return Paths.get(
                 mediaUploadDir,
