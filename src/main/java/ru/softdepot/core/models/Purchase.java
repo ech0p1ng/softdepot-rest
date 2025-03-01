@@ -15,11 +15,24 @@ public class Purchase {
     private String customerName;
     private String customerLink;
 
-    public Purchase(int id, OffsetDateTime purchaseDate, int customer, int program) {
+    public Purchase(int id, OffsetDateTime purchaseDate, int customerId, int programId) {
         this.id = id;
         this.dateTime = purchaseDate;
-        this.customerId = customer;
-        this.programId = program;
+        this.customerId = customerId;
+        this.programId = programId;
+    }
+
+    public Purchase(int id, int customerId, int programId) {
+        this.id = id;
+        this.dateTime = OffsetDateTime.now();
+        this.customerId = customerId;
+        this.programId = programId;
+    }
+
+    public Purchase(int customerId, int programId) {
+        this.dateTime = OffsetDateTime.now();
+        this.customerId = customerId;
+        this.programId = programId;
     }
 
     public Purchase() {

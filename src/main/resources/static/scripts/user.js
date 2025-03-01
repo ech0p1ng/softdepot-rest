@@ -30,7 +30,8 @@ class User {
                 $("#user-profile-button")
                     .removeClass("login")
                     .addClass("profile")
-                    .attr("href", USER.pageUrl);
+                    .attr("href", USER.pageUrl)
+                    .attr("title", "Профиль");
 
                 $(window).trigger('userDataLoaded');
             },

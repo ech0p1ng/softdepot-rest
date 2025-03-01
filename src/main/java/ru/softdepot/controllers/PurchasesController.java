@@ -10,10 +10,11 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.softdepot.core.dao.*;
 import ru.softdepot.core.models.Customer;
 import ru.softdepot.core.models.Program;
+import ru.softdepot.core.models.Purchase;
 import ru.softdepot.core.models.User;
 import ru.softdepot.messages.Message;
-import ru.softdepot.core.models.Purchase;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class PurchasesController {
     private final DeveloperDAO developerDAO;
     private final CategoryDAO categoryDAO;
     private final UserDAO userDAO;
+    private final CartDAO cartDAO;
 
     @GetMapping
     public ResponseEntity<?> getAllPurchases() {
@@ -63,15 +65,13 @@ public class PurchasesController {
                 }
 
                 return ResponseEntity.ok().body(programs);
-            }
-            else {
+            } else {
                 for (Purchase purchase : purchases) {
                     var program = programDAO.getById(purchase.getProgramId());
                     programs.add(program);
                 }
             }
-        }
-        else {
+        } else {
             for (Purchase purchase : purchases) {
                 var program = programDAO.getById(purchase.getProgramId());
                 programs.add(program);
@@ -136,10 +136,26 @@ public class PurchasesController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
+            if (purchaseDAO.exists(purchase.getCustomerId(), purchase.getProgramId()))
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        Message.build(
+                                Message.Entity.PURCHASE,
+                                Message.Identifier.ID,
+                                String.format("%s покупателя и id %s товара",
+                                        purchase.getCustomerId(),
+                                        purchase.getProgramId()),
+                                Message.Status.ALREADY_EXISTS
+                        )
+                );
+
             var errorMessage = check(purchase.getCustomerId(), purchase.getProgramId());
             if (errorMessage != null) throw errorMessage;
 
+            purchase.setDateTime(OffsetDateTime.now());
+
             purchaseDAO.add(purchase);
+            cartDAO.deleteProgram(purchase.getCustomerId(), purchase.getProgramId());
             return ResponseEntity.ok().build();
         }
     }
@@ -158,8 +174,21 @@ public class PurchasesController {
             );
 
         var purchase = purchaseDAO.getById(id);
-
         var errorMessage = check(purchase.getCustomerId(), purchase.getProgramId());
+
+        if (!purchaseDAO.exists(purchase.getCustomerId(), purchase.getProgramId()))
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    Message.build(
+                            Message.Entity.PURCHASE,
+                            Message.Identifier.ID,
+                            String.format("%s покупателя и id %s товара",
+                                    purchase.getCustomerId(),
+                                    purchase.getProgramId()),
+                            Message.Status.NOT_FOUND
+                    )
+            );
+
         if (errorMessage != null) throw errorMessage;
 
         return ResponseEntity.ok().body(purchase);
@@ -185,6 +214,19 @@ public class PurchasesController {
                 );
 
             var errorMessage = check(purchase.getCustomerId(), purchase.getProgramId());
+
+            if (!purchaseDAO.exists(purchase.getCustomerId(), purchase.getProgramId()))
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        Message.build(
+                                Message.Entity.PURCHASE,
+                                Message.Identifier.ID,
+                                String.format("%s покупателя и id %s товара",
+                                        purchase.getCustomerId(),
+                                        purchase.getProgramId()),
+                                Message.Status.NOT_FOUND
+                        )
+                );
             if (errorMessage != null) throw errorMessage;
 
             purchaseDAO.update(purchase);
@@ -228,20 +270,6 @@ public class PurchasesController {
                             Message.Entity.PRODUCT,
                             Message.Identifier.ID,
                             programId,
-                            Message.Status.NOT_FOUND
-                    )
-            );
-
-        if (!purchaseDAO.exists(customerId, programId))
-            return new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    Message.build(
-                            Message.Entity.PURCHASE,
-                            Message.Identifier.ID,
-                            String.format("%s покупателя и id %s товара",
-                                    customerId,
-                                    programId
-                            ),
                             Message.Status.NOT_FOUND
                     )
             );
