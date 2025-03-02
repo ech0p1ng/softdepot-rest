@@ -7,11 +7,11 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import ru.softdepot.messages.Message;
 import ru.softdepot.core.dao.CustomerDAO;
 import ru.softdepot.core.dao.ProgramDAO;
 import ru.softdepot.core.dao.ReviewDAO;
 import ru.softdepot.core.models.Review;
+import ru.softdepot.messages.Message;
 
 @RestController
 @RequestMapping("softdepot-api/reviews")
@@ -110,12 +110,12 @@ public class ReviewsController {
     }
 
     @GetMapping(params = {"programId", "customerId"})
-    public ResponseEntity<?> getCustomersReviewsOfProgram(@RequestParam("programId") int programId,
-                                                          @RequestParam("customerId") int customerId) throws Exception {
+    public ResponseEntity<?> getCustomersReviewOfProgram(@RequestParam("programId") int programId,
+                                                         @RequestParam("customerId") int customerId) throws Exception {
         var errorMessage = check(customerId, programId);
         if (errorMessage != null) throw errorMessage;
-
-        return ResponseEntity.ok().body(reviewDAO.get(customerId, programId));
+        var review = reviewDAO.get(customerId, programId);
+        return ResponseEntity.ok().body(review);
     }
 
     @GetMapping("/{id}")

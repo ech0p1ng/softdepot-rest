@@ -293,3 +293,37 @@ main {
     margin-top: 10px;
     font-size: 14pt;
 }
+
+.multi-line-input {
+    width: calc(100% - 20px);
+    min-width: calc(100% - 20px);
+    max-width: calc(100% - 20px);
+    min-height: 20px;
+    height: 80px;
+    -ms-overflow-style: none;
+    /* IE и Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+#review-input-item {
+    background-color: var(--bg-opacity);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+#review-input-item .input {
+    margin-top: 10px;
+}
+
+.send-review-footer {
+    height: 40px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+#send-review-button {
+    height: 40px;
+    font-size: 11pt;
+    color: var(--text-color);
+}

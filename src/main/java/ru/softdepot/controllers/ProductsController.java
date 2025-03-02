@@ -20,8 +20,6 @@ import ru.softdepot.requestBodies.ProgramRequestBody;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -54,7 +52,7 @@ public class ProductsController {
         if (user != null) {
             if (user.getUserType() == User.Type.Customer) {
                 var program = programDAO.getById(id);
-                checkProgram((Customer) user, program);
+                setAdditionalInfo((Customer) user, program);
 
                 return ResponseEntity.ok().body(program);
             }
@@ -329,7 +327,7 @@ public class ProductsController {
                     var program = allPrograms.get(i);
 //                    program.setIsInCart(programDAO.isInCart(program, (Customer) user));
 //                    program.setIsPurchased(programDAO.isPurchased(program, (Customer) user));
-                    checkProgram((Customer) user, program);
+                    setAdditionalInfo((Customer) user, program);
                     allPrograms.set(i, program);
                 }
 
@@ -368,7 +366,7 @@ public class ProductsController {
             recommendations = programDAO.getRecommendations(customer, minEstimation, maxPrice);
             for (int i = 0; i < recommendations.size(); i++) {
                 var program = recommendations.get(i);
-                recommendations.set(i, checkProgram(customer, program));
+                recommendations.set(i, setAdditionalInfo(customer, program));
             }
 
             return ResponseEntity.ok().body(recommendations);
@@ -380,20 +378,13 @@ public class ProductsController {
         }
     }
 
-    private Program checkProgram(Customer customer, Program program) {
-        //Проверка корзины
+    private Program setAdditionalInfo(Customer customer, Program program) {
         program.setIsInCart(programDAO.isInCart(program, customer));
         program.setIsPurchased(programDAO.isPurchased(program, customer));
+        program.setHasReview(programDAO.hasReview(program, customer));
 
-        //Проверка отзыва
-        try {
-            var review = customerDAO.getReview(customer, program);
-            program.setHasReview(review != null);
-        } catch (Exception e) {
-        }
-
-        //Проверка приобретения программы
-        program.setIsPurchased(customerDAO.hasPurchasedProgram(customer, program));
+//        Проверка приобретения программы
+//        program.setIsPurchased(customerDAO.hasPurchasedProgram(customer, program));
         return program;
     }
 }
