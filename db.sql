@@ -26,6 +26,14 @@ CREATE TABLE developer
     registration_date_time timestamp   NOT NULL
 );
 
+--единица измерения
+CREATE TABLE measure_unit
+(
+    id         SERIAL PRIMARY KEY,
+    name       varchar(50) NOT NULL UNIQUE,
+    short_name varchar(50) NOT NULL UNIQUE
+);
+
 --ключевое слово
 CREATE TABLE tag
 (
@@ -92,7 +100,7 @@ CREATE TABLE review
     program_id       int       NOT NULL REFERENCES program (id) ON DELETE CASCADE ON UPDATE CASCADE,
     estimation       int       NOT NULL CHECK (estimation >= 0 AND estimation <= 5),
     date_time        timestamp NOT NULL,
-    update_date_time timestamp NOT NULL,
+    update_date_time timestamp,
     review_text      TEXT      NOT NULL
 );
 
@@ -102,14 +110,6 @@ CREATE TABLE cart
     id          SERIAL PRIMARY KEY,
     customer_id int NOT NULL REFERENCES customer (id) ON DELETE CASCADE ON UPDATE CASCADE,
     program_id  int NOT NULL REFERENCES program (id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
---единица измерения
-CREATE TABLE measure_unit
-(
-    id         SERIAL PRIMARY KEY,
-    name       varchar(50) NOT NULL UNIQUE,
-    short_name varchar(50) NOT NULL UNIQUE
 );
 
 --роли
@@ -165,7 +165,7 @@ VALUES (1, 'Гонки'),
        (12, 'Экшн');
 
 INSERT INTO developer
-VALUES (1, NULL, 'SoftDepotDEV', '$2a$10$cyKOCmbGqlTWh6xxuyJEhuzM6sNZ0aJq5hqPpzVov0jyVA60uDA9u', NULL);
+VALUES (1, 'SoftDepotDEV', '$2a$10$cyKOCmbGqlTWh6xxuyJEhuzM6sNZ0aJq5hqPpzVov0jyVA60uDA9u', NULL, '2024-12-01 14:29');
 
 INSERT INTO customer
 VALUES (1, 'customer1', '$2a$10$YMs3QL44GMSvyQX6F5ZE8ek2PH0dLKLb2nQUSxB8YPNf38MaNIoau', NULL, '2024-12-01 14:30'),
@@ -194,8 +194,8 @@ VALUES (1, 1, 2, 2),
        (5, 1, 10, 8);
 
 INSERT INTO purchase
-VALUES (3, '2024-11-05 13:00:07.000000'),
-       (4, '2024-11-05 13:00:07.000000');
+VALUES (1, '2024-11-05 13:00:07.000000', 1, 1, 1),
+       (2, '2024-11-05 13:00:07.000000', 2, 1, 1);
 
 INSERT INTO review
 VALUES (1, 1, 1, 5, '2024-11-08 10:10:16.000000', '2024-11-08 12:52:04.000000',
