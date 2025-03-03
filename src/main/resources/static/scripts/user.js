@@ -21,14 +21,17 @@ class User {
                 USER = new User(response);
 
                 if (USER.userType === "Customer") {
-                    let cartButton = $('<button class="shopping-basket button" title="Корзина" onclick="Cart.show()"></button>');
+                    let cartButton = $(/*html*/`
+                        <button class="shopping-basket button" title="Корзина" onclick="Cart.show()"></button>
+                    `);
                     $(".right-buttons-panel").children().eq(0).after(cartButton);
                 }
 
                 $("#user-profile-button")
                     .removeClass("login")
                     .addClass("profile")
-                    .attr("href", USER.pageUrl);
+                    .attr("href", USER.pageUrl)
+                    .attr("title", "Профиль");
 
                 $(window).trigger('userDataLoaded');
             },
@@ -101,11 +104,11 @@ class User {
                     method: "GET",
                     url: BACKEND_URL + "softdepot-api/products?developerId=" + this.id,
                     dataType: "json",
-                    success: function (response) {
-                        $("main").append('' +
-                            '<h1 id="programs-header">Все программы</h1>' +
-                            '<div id="programs-list"></div>'
-                        );
+                    success: (response) => {
+                        $("main").append(/*html*/`
+                            <h1 id="programs-header">Программы от ${this.name}</h1>
+                            <div id="programs-list"></div>
+                        `);
                         Program.catalogue.length = 0;
 
                         response.forEach((element) => {
@@ -125,12 +128,12 @@ class User {
                 roleStr = "Покупатель";
                 $(".user-role").html(roleStr);
 
-                $("main").append('' +
-                    '<h1 id="programs-header">Библиотека</h1>' +
-                    '<div id="programs-list"></div>' +
-                    '<h1 id="programs-header">Отзывы пользователя</h1>' +
-                    '<div id="reviews-list"></div>'
-                );
+                $("main").append(/*html*/`
+                    <h1 id="programs-header">Библиотека</h1>
+                    <div id="programs-list"></div>
+                    <h1 id="programs-header">Отзывы пользователя</h1>
+                    <div id="reviews-list"></div>
+                `);
 
                 $.ajax({
                     method: "GET",

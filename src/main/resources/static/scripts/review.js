@@ -6,13 +6,16 @@ window.addEventListener('load', function () {
         .then(response => response.text())
         .then(data => {
             STAR_FILL = data;
-            console.log(STAR_FILL);
+            for (let i = 0; i < 5; i++) {
+                $("#review-input-item")
+                    .find('.review-estimation')
+                    .append(STAR_FILL);
+            }
         });
     fetch('/styles/svg/star-outline.svg')
         .then(response => response.text())
         .then(data => {
             STAR_OUTLINE = data;
-            console.log(STAR_OUTLINE);
         });
 });
 
@@ -26,31 +29,31 @@ class Review {
         this.dateTime = response.dateTime;
         this.programName = response.programName;
 
-        this.reviewRow = $(
-            '<div class="review">' +
-            '    <a class="review-user" href="' + this.customer.pageUrl + '">' +
-            '        <img class="review-user-profile-img" src="' + this.customer.profileImgUrl + '" />' +
-            '        <span class="review-username">' + this.customer.name + '</span>' +
-            '    </a>' +
-            '    <br />' +
-            '    <div class="review-estimation" style="color: ' + Program.getScoreColor(this.estimation) + '"></div>' +
-            '    <br />' +
-            '    <span class="review-text">' + this.reviewText + '</span>' +
-            '</div>'
-        );
+        this.reviewRow = $(/*html*/`
+            <div class="review">
+                <a class="review-user" href="${this.customer.pageUrl}">
+                    <img class="review-user-profile-img" src="${this.customer.profileImgUrl}" />
+                    <span class="review-username">${this.customer.name}</span>
+                </a>
+                <br />
+                <div class="review-estimation" style="color: ${Program.getScoreColor(this.estimation)}"></div>
+                <br />
+                <span class="review-text">${this.reviewText}</span>
+            </div>
+        `);
 
-        this.reviewRowAtUserPage = $(
-            '<div class="review">' +
-            '    <a href="' + this.program.pageUrl + '" class="review-program" target="_blank" >' +
-            '        <img class="review-program-preview" src="' + this.program.headerUrl + '" title="' + this.program.name + '">' +
-            '        <span class="review-program-name">'+this.program.name+'</span>'+
-            '    </a>' +
-            '    <br />' +
-            '    <div class="review-estimation" style="color: ' + Program.getScoreColor(this.estimation) + '"></div>' +
-            '    <br />' +
-            '    <span class="review-text">' + this.reviewText + '</span>' +
-            '</div>'
-        );
+        this.reviewRowAtUserPage = $(/*html*/`
+            <div class="review">
+                <a href="${this.program.pageUrl}" class="review-program" target="_blank" >
+                    <img class="review-program-preview" src="${this.program.headerUrl}" title="${this.program.name}">
+                    <span class="review-program-name">${this.program.name}</span>
+                </a>
+                <br />
+                <div class="review-estimation" style="color: ${Program.getScoreColor(this.estimation)}"></div>
+                <br />
+                <span class="review-text">${this.reviewText}</span>
+            </div>
+        `);
 
         for (let i = 0; i < this.estimation; i++) {
             this.reviewRow

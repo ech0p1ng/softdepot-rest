@@ -52,27 +52,27 @@ class Program {
         );
 
         //Строка в каталоге
-        this.gameRowCatalogue = $(
-            '<div class="game-row" id="main-page-game-row-' + this.id + '" style="z-index: 1">' +
-            '   <a href="' + this.pageUrl + '" class="preview" target="_blank" class="description">' +
-            '     <img class="preview" src="' + this.headerUrl + '" />' +
-            '   </a>' +
-            '	<a href="' + this.pageUrl + '" target="_blank" class="description">' +
-            '		<div>' +
-            '			<span class="name">' + this.name + '</span>' +
-            '			<br />' +
-            '			<span class="tags">' + this.tagsAsString + '</span>' +
-            '		</div>' +
-            '        <span class="score" title="Оценка пользователей" style="color: ' + Program.getScoreColor(this.averageEstimation) + '">' + this.averageEstimation + '</span>' +
-            '	</a>' +
-            '    <div class="price-and-buy">' +
-            '        <span class="price">' +
-            '			<span>' + this.priceAsString + '</span>' +
-            '		</span>' +
-            '       <button class="add-to-cart" style="z-index: 2">' + addToCartHtml + '</button>' +
-            '    </div>' +
-            '</div>'
-        );
+        this.gameRowCatalogue = $(/*html*/`
+            <div class="game-row" id="main-page-game-row-${this.id}" style="z-index: 1">
+               <a href="${this.pageUrl}" class="preview" target="_blank" class="description">
+                 <img class="preview" src="${this.headerUrl}" />
+               </a>
+            	<a href="${this.pageUrl}" target="_blank" class="description">
+            		<div>
+            			<span class="name">${this.name}</span>
+            			<br />
+            			<span class="tags">${this.tagsAsString}</span>
+            		</div>
+                    <span class="score" title="Оценка пользователей" style="color: ${Program.getScoreColor(this.averageEstimation)}">${this.averageEstimation}</span>
+            	</a>
+                <div class="price-and-buy">
+                    <span class="price">
+            			<span>${this.priceAsString}</span>
+            		</span>
+                   <button class="add-to-cart" style="z-index: 2">${addToCartHtml}</button>
+                </div>
+            </div>
+        `);
 
         this.gameRowCatalogue
             .find('.add-to-cart')
@@ -129,11 +129,15 @@ class Program {
         if (USER != null) {
             if (USER.type === "Customer") {
                 if (this.isPurchased) {
-                    this.gameRowCatalogue.find(".price-and-buy")
+                    this.gameRowCatalogue
+                        .find(".price-and-buy")
                         .removeClass("price-and-buy")
-                        .addClass("price-no-buy")
-                        .find('.add-to-cart').remove()
-                        .find('remove-from-cart').remove();
+                        .addClass("price-no-buy");
+                    this.gameRowCatalogue
+                        .find('.add-to-cart').remove();
+                    this.gameRowCatalogue
+                        .find('.remove-from-cart').remove();
+
                 }
                 else if (this.isInCart) {
                     this.gameRowCatalogue
@@ -155,6 +159,7 @@ class Program {
 
                 }
             }
+
             else if (USER.type === "Developer" && this.developerId === USER.id) {
                 this.gameRowCatalogue
                     .find('.add-to-cart')
@@ -167,6 +172,7 @@ class Program {
                         this.removeFromCatalog();
                     });
             }
+
             else {
                 this.gameRowCatalogue
                     .find('.add-to-cart')

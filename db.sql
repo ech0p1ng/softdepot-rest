@@ -67,7 +67,7 @@ CREATE TABLE purchase
     id                 SERIAL PRIMARY KEY,
     purchase_date_time timestamp NOT NULL,
     customer_id        int       NOT NULL REFERENCES customer (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    program_id         int       NOT NULL REFERENCES program (id) ON UPDATE CASCADE,
+    program_id         int       NOT NULL REFERENCES program (id) ON UPDATE CASCADE ON DELETE CASCADE,
     currency           int       NOT NULL REFERENCES measure_unit (id) ON UPDATE CASCADE
 );
 

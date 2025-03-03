@@ -153,14 +153,14 @@ public class ReviewDAO implements DAO<Review> {
         return review;
     }
 
-    public boolean exists(int cutomerId, int programId) {
+    public boolean exists(int customerId, int programId) {
         boolean exists = false;
 
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "SELECT * FROM review WHERE customer_id=? AND program_id=?"
             );
-            statement.setInt(1, cutomerId);
+            statement.setInt(1, customerId);
             statement.setInt(2, programId);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {

@@ -518,6 +518,19 @@ public class ProgramDAO implements DAO<Program> {
         return false;
     }
 
+    public boolean hasReview(Program program, Customer customer) {
+        boolean result = false;
+        try {
+            var review = reviewDAO.get(customer.getId(), program.getId());
+            if (review != null) {
+                result = true;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
     public List<Program> getRecommendations(Customer customer, double minEstimation, double maxPrice) throws Exception {
         var allPrograms = programDAO.getAll();
 

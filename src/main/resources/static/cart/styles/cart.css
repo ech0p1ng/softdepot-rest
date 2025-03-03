@@ -40,8 +40,10 @@
     margin-right: 10px;
     overflow: auto;
     border-radius: 10px;
-    -ms-overflow-style: none; /* IE и Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE и Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 #cart-games-list::-webkit-scrollbar {
@@ -111,4 +113,15 @@
     flex: 1;
     text-decoration: none;
     color: var(--text-color);
+}
+
+#buy-from-cart {
+    width: 120px;
+    height: 40px;
+    color: var(--text-color);
+    font-size: 14pt;
+}
+
+#buy-from-cart:hover {
+    background-color: var(--green);
 }
