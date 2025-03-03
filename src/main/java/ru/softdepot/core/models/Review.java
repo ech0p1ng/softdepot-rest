@@ -32,6 +32,15 @@ public class Review {
         this.dateTime = dateTime;
     }
 
+    public Review(int customerId, int programId, int estimation, String reviewText) {
+        this.id = -1;
+        this.customer = null;
+        this.program = null;
+        setEstimation(estimation);
+        this.reviewText = reviewText;
+        this.dateTime = OffsetDateTime.now();
+    }
+
     public Review() {
 
     }

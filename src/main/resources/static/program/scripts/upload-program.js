@@ -639,6 +639,11 @@ function limitTextInput(inputJquertItem, value, maxLength, hintJqueryItem) {
     removeInputHighlight(inputJquertItem, hintJqueryItem);
     if (value.length > maxLength) {
         value = value.substring(0, maxLength);
+        highlightInputOnError(
+            inputJquertItem,
+            hintJqueryItem,
+            value.length + "/" + maxLength
+        )
     }
     else if (value.length >= maxLength * 0.7) {
         hintJqueryItem

@@ -360,6 +360,8 @@ class Program {
             $(".screenshots-tape").append(screenshot);
         });
 
+        let reviewsAmount = 0;
+
         $.ajax({
             method: "GET",
             url: BACKEND_URL + "softdepot-api/reviews?programId=" + this.id,
@@ -367,6 +369,7 @@ class Program {
             success: (response) => {
                 response.forEach(elem => {
                     let review = new Review(elem);
+                    reviewsAmount++;
                     $("#reviews-header").css("visibility", "visible");
                     $(".reviews")
                         .css("visibility", "visible")
@@ -376,6 +379,55 @@ class Program {
             error: (xhr, status, error) => {
                 console.log(xhr.responseJSON.message);
 
+            },
+            complete: () => {
+                let hideReviewsBlock = false;
+                if (USER !== null) {
+                    if (USER.userType === "Customer") {
+                        if (this.isPurchased && !this.hasReview) {
+                            $(".reviews").prepend(Review.inputJqueryItem);
+                            let currentProgramId = this.id;
+                            Review.inputJqueryItem.find("#send-review-button").on('click', function () {
+                                if (Review.text.length > 0) {
+                                    let request = {
+                                        "customerId": USER.id,
+                                        "programId": currentProgramId,
+                                        "estimation": Review.estimation,
+                                        "reviewText": Review.text
+                                    }
+                                    console.log(request);
+                                    $.ajax({
+                                        method: "POST",
+                                        url: BACKEND_URL + "softdepot-api/reviews/new",
+                                        contentType: "application/json",
+                                        data: JSON.stringify(request),
+                                        success: function (response) {
+                                            location.reload();
+                                        },
+                                        error: function (xhr, status, error) {
+                                            alert("Не удалось отправить отзыв");
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            hideReviewsBlock = true;
+                        }
+                    } else {
+                        hideReviewsBlock = true;
+                    }
+                }
+                else {
+                    hideReviewsBlock = true;
+                }
+
+                if (hideReviewsBlock) {
+                    if (reviewsAmount == 0) {
+                        $("#reviews-header").remove();
+                        $(".reviews").remove();
+                    }
+                }
             }
         });
     }

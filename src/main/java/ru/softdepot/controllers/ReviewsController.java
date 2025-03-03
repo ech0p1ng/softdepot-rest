@@ -13,6 +13,8 @@ import ru.softdepot.core.dao.ReviewDAO;
 import ru.softdepot.core.models.Review;
 import ru.softdepot.messages.Message;
 
+import java.time.OffsetDateTime;
+
 @RestController
 @RequestMapping("softdepot-api/reviews")
 @AllArgsConstructor
@@ -29,10 +31,10 @@ public class ReviewsController {
             if (bindingResult instanceof BindException exception) throw exception;
             else throw new BindException(bindingResult);
         } else {
-            var errorMessage = check(review.getCustomer().getId(), review.getProgram().getId());
+            var errorMessage = check(review.getCustomerId(), review.getProgramId());
             if (errorMessage != null) throw errorMessage;
 
-            if (reviewDAO.exists(review.getCustomer().getId(), review.getProgram().getId()))
+            if (reviewDAO.exists(review.getCustomerId(), review.getProgramId()))
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT,
                         Message.build(
@@ -44,6 +46,8 @@ public class ReviewsController {
                                 Message.Status.ALREADY_EXISTS
                         )
                 );
+
+            review.setDateTime(OffsetDateTime.now());
 
             reviewDAO.add(review);
             return ResponseEntity.ok().build();

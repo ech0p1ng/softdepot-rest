@@ -327,3 +327,7 @@ main {
     font-size: 11pt;
     color: var(--text-color);
 }
+
+.estimation-button:hover {
+    cursor: pointer;
+}

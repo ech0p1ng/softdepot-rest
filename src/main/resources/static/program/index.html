@@ -1,73 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/styles/base.css" />
-        <link rel="stylesheet" href="/cart/styles/cart.css" />
-        <link rel="stylesheet" href="/program/styles/index.css" />
-        <link id="color-scheme" rel="stylesheet" href="/styles/dark.css" />
-        <title id="page-title">Soft Depot - GAME_NAME</title>
-    </head>
-    <body>
-        <main>
-            <h1 class="game-name-big game-name">GAME_NAME</h1>
-            <div class="game-highlights">
-                <div class="videos-and-screenshots">
-                    <div class="screenshots-viewer">
-                        <!--                        <img id="current-screenshot" src="" />-->
-                    </div>
-                    <div class="screenshots-tape">
-                        <!--                        <img class="screenshot-on-tape" src="" onclick="change_current_screenshot.apply(this)" />-->
-                    </div>
-                </div>
 
-                <div class="header-and-short-description">
-                    <img class="header" />
-                    <div id="short-description">GAME_SHORT_DESCRIPTION</div>
-                    <div class="score-block">
-                        <span>Пользователи оценивают </span>
-                        <span class="game-name">GAME_NAME</span>
-                        <span> на </span>
-                        <span id="score">GAME_ESTIMATION</span>
-                        <span> баллов из 5.</span>
-                    </div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles/base.css" />
+    <link rel="stylesheet" href="/cart/styles/cart.css" />
+    <link rel="stylesheet" href="/program/styles/index.css" />
+    <link id="color-scheme" rel="stylesheet" href="/styles/dark.css" />
+    <title id="page-title">Soft Depot - GAME_NAME</title>
+</head>
+
+<body>
+    <main>
+        <h1 class="game-name-big game-name">GAME_NAME</h1>
+        <div class="game-highlights">
+            <div class="videos-and-screenshots">
+                <div class="screenshots-viewer">
+                    <!--                        <img id="current-screenshot" src="" />-->
+                </div>
+                <div class="screenshots-tape">
+                    <!--                        <img class="screenshot-on-tape" src="" onclick="change_current_screenshot.apply(this)" />-->
                 </div>
             </div>
-            <div id="get-product-block">
-                <span id="buy-invite">
-                    Приобрести
+
+            <div class="header-and-short-description">
+                <img class="header" />
+                <div id="short-description">GAME_SHORT_DESCRIPTION</div>
+                <div class="score-block">
+                    <span>Пользователи оценивают </span>
                     <span class="game-name">GAME_NAME</span>
-                </span>
-                <div id="price-and-buy">
-                    <span id="price"></span>
-                    <button id="add-to-cart-from-page" class="add-to-cart" style="z-index: 2" >
-                        <span>Добавить в корзину</span>
-                    </button>
+                    <span> на </span>
+                    <span id="score">GAME_ESTIMATION</span>
+                    <span> баллов из 5.</span>
                 </div>
             </div>
-            <h1 id="description-header">Об игре</h1>
-            <div id="big-description">
-                <span id="description-text">GAME_DESCRIPTION</span>
+        </div>
+        <div id="get-product-block">
+            <span id="buy-invite">
+                Приобрести
+                <span class="game-name">GAME_NAME</span>
+            </span>
+            <div id="price-and-buy">
+                <span id="price"></span>
+                <button id="add-to-cart-from-page" class="add-to-cart" style="z-index: 2">
+                    <span>Добавить в корзину</span>
+                </button>
             </div>
+        </div>
+        <h1 id="description-header">Об игре</h1>
+        <div id="big-description">
+            <span id="description-text">GAME_DESCRIPTION</span>
+        </div>
 
-            <h1 id="reviews-header" style="visibility: hidden">Отзывы</h1>
-            <div class="reviews" style="visibility: hidden">
+        <h1 id="reviews-header">Отзывы</h1>
+        <div class="reviews">
 
-            </div>
-        </main>
-        <!--        <footer>-->
-        <!--            <span>Курсовая работа студента группы 21ПИнж(б)РПиС Петрова Алексея<br />2024 г.</span>-->
-        <!--        </footer>-->
+        </div>
+    </main>
+    <!--        <footer>-->
+    <!--            <span>Курсовая работа студента группы 21ПИнж(б)РПиС Петрова Алексея<br />2024 г.</span>-->
+    <!--        </footer>-->
 
-        <script src="/scripts/jquery-3.7.1.min.js"></script>
-        <script src="/scripts/main.js"></script>
-        <script src="/scripts/program.js"></script>
-        <script src="/scripts/user.js"></script>
-        <script src="/scripts/theme.js"></script>
-        <script src="/program/scripts/loadcontent.js"></script>
-        <script src="/cart/scripts/cart.js"></script>
-        <script src="/scripts/cookies.js"></script>
-        <script src="/scripts/review.js"></script>
-    </body>
+    <script src="/scripts/jquery-3.7.1.min.js"></script>
+    <script src="/scripts/main.js"></script>
+    <script src="/scripts/program.js"></script>
+    <script src="/scripts/user.js"></script>
+    <script src="/scripts/theme.js"></script>
+    <script src="/program/scripts/loadcontent.js"></script>
+    <script src="/cart/scripts/cart.js"></script>
+    <script src="/scripts/cookies.js"></script>
+    <script src="/scripts/review.js"></script>
+</body>
+
 </html>

@@ -34,15 +34,15 @@ public class ReviewDAO implements DAO<Review> {
 
     @Override
     public int add(Review review) throws Exception {
-        if (!exists(review.getCustomer().getId(), review.getProgram().getId())) {
+        if (!exists(review.getCustomerId(), review.getProgramId())) {
             try {
                 PreparedStatement statement = connection.prepareStatement(
                         "INSERT INTO review (customer_id, program_id, estimation, review_text, date_time) " +
                                 "VALUES (?, ?, ?, ?, ?) RETURNING id"
                 );
 
-                statement.setInt(1, review.getCustomer().getId());
-                statement.setInt(2, review.getProgram().getId());
+                statement.setInt(1, review.getCustomerId());
+                statement.setInt(2, review.getProgramId());
                 statement.setInt(3, review.getEstimation());
                 statement.setString(4, review.getReviewText());
                 statement.setTimestamp(5, DataBase.convertToTimestamp(review.getDateTime()));
@@ -68,8 +68,8 @@ public class ReviewDAO implements DAO<Review> {
             PreparedStatement statement = connection.prepareStatement(
                     "UPDATE review SET customer_id=?, program_id=?,estimation=?, review_text=?,date_time=? WHERE id=?"
             );
-            statement.setInt(1, review.getCustomer().getId());
-            statement.setInt(2, review.getProgram().getId());
+            statement.setInt(1, review.getCustomerId());
+            statement.setInt(2, review.getProgramId());
             statement.setInt(3, review.getEstimation());
             statement.setString(4, review.getReviewText());
             statement.setTimestamp(5, DataBase.convertToTimestamp(review.getDateTime()));
