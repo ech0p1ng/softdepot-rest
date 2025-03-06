@@ -212,6 +212,11 @@ class Review {
         `);
 
 
+
+
+    }
+
+    addStars() {
         for (let i = 0; i < this.estimation; i++) {
             this.reviewRow
                 .find(".review-estimation")
@@ -228,17 +233,18 @@ class Review {
                 .find(".review-estimation")
                 .append(STAR_OUTLINE);
         }
-
     }
 
     getReviewRow() {
         if (starsLoaded) {
+            this.addStars();
             return this.reviewRow;
         }
         else {
             $(document).on('starsLoaded', () => {
-                return this.reviewRow;
+                this.addStars();
             });
+            return this.reviewRow;
         }
     }
 }
