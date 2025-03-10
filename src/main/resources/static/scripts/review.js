@@ -247,4 +247,17 @@ class Review {
             return this.reviewRow;
         }
     }
+
+    getReviewRowAtUserPage() {
+        if (starsLoaded) {
+            this.addStars();
+            return this.reviewRowAtUserPage;
+        }
+        else {
+            $(document).on('starsLoaded', () => {
+                this.addStars();
+            });
+            return this.reviewRowAtUserPage;
+        }
+    }
 }

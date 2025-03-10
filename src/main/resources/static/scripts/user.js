@@ -161,7 +161,7 @@ class User {
 
                         response.forEach((element) => {
                             var review = new Review(element);
-                            $("#reviews-list").append(review.reviewRowAtUserPage);
+                            $("#reviews-list").append(review.getReviewRowAtUserPage());
                         });
                     },
                     error: function (xhr, status, error) {
