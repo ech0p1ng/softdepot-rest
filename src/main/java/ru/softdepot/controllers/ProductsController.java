@@ -14,12 +14,14 @@ import ru.softdepot.FileStorageService;
 import ru.softdepot.core.dao.*;
 import ru.softdepot.core.models.Customer;
 import ru.softdepot.core.models.Program;
+import ru.softdepot.core.models.Purchase;
 import ru.softdepot.core.models.User;
 import ru.softdepot.messages.Message;
 import ru.softdepot.requestBodies.ProgramRequestBody;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -33,6 +35,7 @@ public class ProductsController {
     private final CustomerDAO customerDAO;
     private final ReviewDAO reviewDAO;
     private final FileStorageService fileStorageService;
+    private final PurchaseDAO purchaseDAO;
 
 
     @GetMapping("/{id}")
@@ -361,12 +364,21 @@ public class ProductsController {
         if (maxPrice == null) maxPrice = Double.MAX_VALUE;
 
         List<Program> recommendations;
+        List<Purchase> purchases = purchaseDAO.getPurchasesOfCustomer(customer);
+        List<Integer> purchasedProgramsIds = new ArrayList<>();
+        for (var purchase : purchases) {
+            purchasedProgramsIds.add(purchase.getProgramId());
+        }
 
         try {
             recommendations = programDAO.getRecommendations(customer, minEstimation, maxPrice);
             for (int i = 0; i < recommendations.size(); i++) {
                 var program = recommendations.get(i);
-                recommendations.set(i, setAdditionalInfo(customer, program));
+                if (purchasedProgramsIds.contains(program.getId())) {
+                    recommendations.remove(i);
+                } else {
+                    recommendations.set(i, setAdditionalInfo(customer, program));
+                }
             }
 
             return ResponseEntity.ok().body(recommendations);

@@ -107,4 +107,9 @@ public class HtmlPagesController {
             );
         }
     }
+
+    @GetMapping("/recommendations")
+    public String getRecommendations() {
+        return "/recommendations/index.html";
+    }
 }

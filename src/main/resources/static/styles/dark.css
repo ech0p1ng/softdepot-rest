@@ -65,3 +65,7 @@ body {
     background-repeat: no-repeat;
     background-position: center;
 }
+
+#recommendations-button {
+    background-image: url("svg/recommendation-white.svg");
+}

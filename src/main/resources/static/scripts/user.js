@@ -9,6 +9,7 @@ class User {
         this.balance = response.balance;
         this.type = response.type;
         this.pageUrl = response.pageUrl;
+        this.hasPurchasedPrograms = false;
     }
 
     static loadUserData() {
@@ -25,15 +26,27 @@ class User {
                         <button class="shopping-basket button" title="Корзина" onclick="Cart.show()"></button>
                     `);
                     $(".right-buttons-panel").children().eq(0).after(cartButton);
+
+                    $.ajax({
+                        method: "GET",
+                        url: BACKEND_URL + "softdepot-api/purchases?customerId=" + USER.id,
+                        dataType: "json",
+                        success: function (response) {
+                            USER.hasPurchasedPrograms = response.length > 0;
+                        },
+                        error: function (xhr, status, error) {
+                        },
+                        complete: function () {
+                            $("#user-profile-button")
+                                .removeClass("login")
+                                .addClass("profile")
+                                .attr("href", USER.pageUrl)
+                                .attr("title", "Профиль");
+
+                            $(window).trigger('userDataLoaded');
+                        }
+                    });
                 }
-
-                $("#user-profile-button")
-                    .removeClass("login")
-                    .addClass("profile")
-                    .attr("href", USER.pageUrl)
-                    .attr("title", "Профиль");
-
-                $(window).trigger('userDataLoaded');
             },
             error: function (xhr, status, error) {
                 console.error("Ошибка загрузки данных пользователя: ", xhr.responseJSON.message);

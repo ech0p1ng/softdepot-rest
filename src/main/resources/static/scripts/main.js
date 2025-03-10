@@ -30,6 +30,16 @@ function addHeader(addSearchForm, addProfileButton) {
             .find(".right-buttons-panel")
             .append('<a id="user-profile-button" class="login button" title="Войти" href="/sign-in"></a>');
     }
+
+    $(window).on('userDataLoaded', () => {
+        if (USER.hasPurchasedPrograms) {
+            header
+                .find(".right-buttons-panel")
+                .prepend(/*html*/`
+                    <a href="/recommendations" id="recommendations-button" class="button" title="Рекомендации"></a>
+                `);
+        }
+    });
     $("body").prepend(header);
 }
 
@@ -69,11 +79,3 @@ function convertToNumber(str, { onError, onErrorResolved }, minValue = -Infinity
     return result;
 
 }
-
-// $(document).on('input', 'input[type="number"][number-type="float"]', function () {
-//     this.value = convertToNumber(this.value.toString());
-// });
-
-// $(document).on('input', 'input[type="number"][number-type="int"]', function () {
-//     this.value = convertToNumber(this.value.toString());
-// });
