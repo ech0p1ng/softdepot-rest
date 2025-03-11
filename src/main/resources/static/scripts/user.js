@@ -100,15 +100,25 @@ class User {
 
         switch (this.userType) {
             case "Administrator": {
+
+                function getCategoriesItems({ onSuccess, onError, onComplete }) {
+                    $.ajax({
+                        method: "GET",
+                        url: BACKEND_URL + "softdepot-api/categories",
+                        dataType: "json",
+                        success: (response) => { onSuccess(response) },
+                        error: (xhr, status, error) => onError(xhr, status, error),
+                        complete: () => onComplete()
+                    });
+                }
+
                 roleStr = "Администратор";
                 $(".user-role").html(roleStr);
                 if (USER !== null) {
                     if (this.id === USER.id && this.userType === USER.userType) {
-                        $.ajax({
-                            method: "GET",
-                            url: BACKEND_URL + "softdepot-api/categories?sortBy=name",
-                            dataType: "json",
-                            success: (response) => {
+
+                        getCategoriesItems({
+                            onSuccess: (response) => {
                                 $("main").append(/*html*/`
                                     <h1 id="categories-header">Категории</h1>
                                     <div id="categories-list"></div>
@@ -120,18 +130,25 @@ class User {
                                     $("#categories-list").append(category.editorItem);
                                 });
                             },
-                            error: function (xhr, status, error) {
+                            onError: (xhr, status, error) => {
                                 console.error("Не удалось загрузить категории");
                             },
-                            complete: function () {
+                            onComplete: () => {
                                 let addCategoryButton = $(/*html*/`
                                     <button class="button add-new-category-button">Добавить категорию</button>
                                 `);
 
+                                addCategoryButton.on('click', () => {
+                                    let item = Tag.getEmptyEditorItem((editorItem) => {
+                                        $("#categories-list").append(editorItem);
+                                    });
+                                    $("#categories-list").append(item);
+                                });
 
-                                $("#categories-list").append(addCategoryButton);
+                                $("main").append(addCategoryButton);
                             }
                         });
+
                     }
                 }
 

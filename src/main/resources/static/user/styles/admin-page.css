@@ -7,7 +7,7 @@
 .category-editor-item {
     display: flex;
     flex-direction: column;
-    width: calc(100% - 20px);
+    /* width: calc(100% - 20px); */
 }
 
 .category-editor-item-wrapper {
@@ -25,8 +25,8 @@
 }
 
 .category-editor-item {
-    background-color: var(--bg-opacity);
-    padding: 10px;
+    /* background-color: var(--bg-opacity);
+    padding: 10px; */
     border-radius: 10px;
 }
 
@@ -40,6 +40,7 @@
 }
 
 .add-new-category-button {
+    margin-top: 10px;
     height: 40px;
     width: 100%;
     color: var(--text-color);

@@ -1,40 +1,5 @@
 var selectsForCategoriesCount = 0;
 
-const MIN_PROGRAM_NAME_LENGTH = 3;
-const MAX_RROGRAM_NAME_LENGTH = 100;
-
-const MIN_SHORT_DESCRIPTION_LENGTH = 5;
-const MAX_SHORT_DESCRIPTION_LENGTH = 250;
-
-const MIN_FULL_DESCRIPTION_LENGTH = 200;
-const MAX_FULL_DESCRIPTION_LENGTH = 2500;
-
-const MIN_PROGRAM_PRICE = 0;
-const MAX_PROGRAM_PRICE = 1000000;
-
-const MIN_DEGREE_OF_BELONGING = 0;
-const MAX_DEGREE_OF_BELONGING = 10;
-
-const MIN_CATEGORIES_AMOUNT = 3;
-const MIN_SCREENSHOTS_AMOUNT = 3;
-
-const ERROR_MESSAGE_STYLE_VISIBLE = {
-    "font-size": "8pt",
-    "color": "var(--red)"
-};
-const ERROR_MESSAGE_STYLE_HIDDEN = {
-    "font-size": "0pt",
-    "color": "var(--red)"
-};
-const HINT_MESSAGE_STYLE_VISIBLE = {
-    "font-size": "8pt",
-    "color": "var(--secondary-text-color)",
-};
-const HINT_MESSAGE_STYLE_HIDDEN = {
-    "font-size": "0pt",
-    "color": "var(--secondary-text-color)"
-};
-
 const ImageType = {
     SCREENSHOTS: 'SCREENSHOTS',
     LOGO: 'LOGO'

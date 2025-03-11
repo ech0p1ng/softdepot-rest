@@ -1,20 +1,3 @@
-const ERROR_MESSAGE_STYLE_VISIBLE = {
-    "font-size": "8pt",
-    "color": "var(--red)"
-};
-const ERROR_MESSAGE_STYLE_HIDDEN = {
-    "font-size": "0pt",
-    "color": "var(--red)"
-};
-const HINT_MESSAGE_STYLE_VISIBLE = {
-    "font-size": "8pt",
-    "color": "var(--secondary-text-color)",
-};
-const HINT_MESSAGE_STYLE_HIDDEN = {
-    "font-size": "0pt",
-    "color": "var(--secondary-text-color)"
-};
-
 let STAR_FILL = null;
 let STAR_OUTLINE = null;
 
