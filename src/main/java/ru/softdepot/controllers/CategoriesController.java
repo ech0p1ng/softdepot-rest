@@ -35,8 +35,9 @@ public class CategoriesController {
             else throw new BindException(bindingResult);
         } else {
             if (!categoryDAO.exists(category.getName())) {
-                categoryDAO.add(category);
-                return ResponseEntity.ok().build();
+                int id = categoryDAO.add(category);
+                var result = categoryDAO.getById(id);
+                return ResponseEntity.ok().body(result);
             } else {
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT,

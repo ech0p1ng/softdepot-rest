@@ -66,6 +66,13 @@ body {
     background-position: center;
 }
 
+.save-button {
+    background-image: url("svg/save-white.svg");
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 #recommendations-button {
     background-image: url("svg/recommendation-white.svg");
 }

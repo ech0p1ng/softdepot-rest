@@ -1,4 +1,6 @@
 class User {
+    static dataLoaded = false;
+
     constructor(response) {
         this.id = response.id;
         this.email = response.email;
@@ -21,6 +23,13 @@ class User {
             success: function (response) {
                 USER = new User(response);
 
+                $("#user-profile-button")
+                    .removeClass("login")
+                    .addClass("profile")
+                    .attr("href", USER.pageUrl)
+                    .attr("title", "Профиль");
+
+
                 if (USER.userType === "Customer") {
                     let cartButton = $(/*html*/`
                         <button class="shopping-basket button" title="Корзина" onclick="Cart.show()"></button>
@@ -37,20 +46,20 @@ class User {
                         error: function (xhr, status, error) {
                         },
                         complete: function () {
-                            $("#user-profile-button")
-                                .removeClass("login")
-                                .addClass("profile")
-                                .attr("href", USER.pageUrl)
-                                .attr("title", "Профиль");
-
                             $(window).trigger('userDataLoaded');
+                            User.dataLoaded = true;
                         }
                     });
+                }
+                else {
+                    $(window).trigger('userDataLoaded');
+                    User.dataLoaded = true;
                 }
             },
             error: function (xhr, status, error) {
                 console.error("Ошибка загрузки данных пользователя: ", xhr.responseJSON.message);
                 $(window).trigger('userDataLoaded');
+                User.dataLoaded = true;
             }
         });
     }
@@ -93,6 +102,39 @@ class User {
             case "Administrator": {
                 roleStr = "Администратор";
                 $(".user-role").html(roleStr);
+                if (USER !== null) {
+                    if (this.id === USER.id && this.userType === USER.userType) {
+                        $.ajax({
+                            method: "GET",
+                            url: BACKEND_URL + "softdepot-api/categories?sortBy=name",
+                            dataType: "json",
+                            success: (response) => {
+                                $("main").append(/*html*/`
+                                    <h1 id="categories-header">Категории</h1>
+                                    <div id="categories-list"></div>
+                                `);
+
+                                response.forEach((element) => {
+                                    Tag.emptyCategoryEditor;
+                                    var category = new Tag(element);
+                                    $("#categories-list").append(category.editorItem);
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Не удалось загрузить категории");
+                            },
+                            complete: function () {
+                                let addCategoryButton = $(/*html*/`
+                                    <button class="button add-new-category-button">Добавить категорию</button>
+                                `);
+
+
+                                $("#categories-list").append(addCategoryButton);
+                            }
+                        });
+                    }
+                }
+
                 break;
             }
 
@@ -109,9 +151,6 @@ class User {
                         $('main').append(uploadProgramButton);
                     }
                 }
-
-
-
 
                 $.ajax({
                     method: "GET",
@@ -163,8 +202,6 @@ class User {
                     error: function (xhr, status, error) {
                     }
                 });
-
-
 
                 $.ajax({
                     method: "GET",

@@ -1,7 +1,3 @@
-let userDataLoaded = false;
-
-$(window).on('userDataLoaded', function () { userDataLoaded = true; })
-
 window.addEventListener("load", function () {
     var url = window.location.href;
 
@@ -19,7 +15,7 @@ window.addEventListener("load", function () {
         success: function (response) {
             userOfPage = new User(response);
 
-            if (userDataLoaded) {
+            if (User.dataLoaded) {
                 userOfPage.setPage();
             }
             else {
