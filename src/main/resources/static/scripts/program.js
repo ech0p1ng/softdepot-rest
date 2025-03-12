@@ -38,25 +38,25 @@ class Program {
 
 
         //Строка в корзине
-        this.gameRowCart = $(
-            '<div class="cart-game-row">' +
-            '    <img class="preview" src="' + this.headerUrl + '" />' +
-            '    <a class="cart-game-description" href="' + this.pageUrl + '">' +
-            '        <span class="cart-game-title">' + this.name + '</span>' +
-            '    </a>' +
-            '    <div class="cart-game-price">' +
-            '        <span class="cart-game-price-title">' + this.priceAsString + '</span>' +
-            '        <button class="cart-game-remove button close-button-bright"></button>' +
-            '    </div>' +
-            '</div>'
-        );
+        this.gameRowCart = $(/*html*/`
+            <div class="cart-game-row">
+                <img class="preview" src="${this.headerUrl}" />
+                <a class="cart-game-description" href="${this.pageUrl}">
+                    <span class="cart-game-title">${this.name}</span>
+                </a>
+                <div class="cart-game-price">
+                    <span class="cart-game-price-title">${this.priceAsString}</span>
+                    <button class="cart-game-remove button close-button-bright"></button>
+                </div>
+            </div>
+        `);
 
         //Строка в каталоге
         this.gameRowCatalogue = $(/*html*/`
             <div class="game-row" id="main-page-game-row-${this.id}" style="z-index: 1">
-               <a href="${this.pageUrl}" class="preview" target="_blank" class="description">
-                 <img class="preview" src="${this.headerUrl}" />
-               </a>
+                <a href="${this.pageUrl}" class="preview-container" target="_blank" class="description">
+                    <img class="preview" src="${this.headerUrl}" />
+                </a>
             	<a href="${this.pageUrl}" target="_blank" class="description">
             		<div>
             			<span class="name">${this.name}</span>
@@ -340,12 +340,20 @@ class Program {
     setProgramPage() {
         $("#page-title").html("Soft Depot - " + this.name);
         $(".header").attr("src", this.headerUrl);
-        $("#short-description").html(this.shortDescription);
+        $("#short-description").html(
+            this.shortDescription
+                .replaceAll("\\n", "<br>")
+                .replaceAll("\\t", "    ")
+        );
         $(".game-name").html(this.name);
         $("#score")
             .html(this.averageEstimation)
             .attr("style", "color: " + Program.getScoreColor(this.averageEstimation));
-        $("#description-text").html(this.fullDescription);
+        $("#description-text").html(
+            this.fullDescription
+                .replaceAll("\\n", "<br>")
+                .replaceAll("\\t", "    ")
+        );
         $("#price").html(this.priceAsString);
 
         this.setProgramPageAddToCartButton();

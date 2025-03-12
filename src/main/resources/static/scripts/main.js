@@ -67,12 +67,14 @@ function addHeader(addSearchForm, addProfileButton) {
     }
 
     $(window).on('userDataLoaded', () => {
-        if (USER.hasPurchasedPrograms) {
-            header
-                .find(".right-buttons-panel")
-                .prepend(/*html*/`
+        if (USER !== null) {
+            if (USER.hasPurchasedPrograms) {
+                header
+                    .find(".right-buttons-panel")
+                    .prepend(/*html*/`
                     <a href="/recommendations" id="recommendations-button" class="button" title="Рекомендации"></a>
                 `);
+            }
         }
     });
     $("body").prepend(header);

@@ -17,12 +17,25 @@
     /*    background-color: var(--bg-no-opacity);*/
 }
 
-.game-row .preview {
+.game-row .preview-container {
     min-width: 170px;
-    /* object-fit: cover; */
+    max-width: 170px;
     object-fit: contain;
     border-radius: 10px 0 0 10px;
     border-right: 1px solid var(--bg-opacity);
+    align-self: center;
+    align-content: center;
+    height: 100%;
+}
+
+.game-row .preview {
+    min-width: 100%;
+    object-fit: contain;
+    border-radius: 10px 0 0 10px;
+    align-self: center;
+    align-content: center;
+    vertical-align: middle;
+    height: 60px;
 }
 
 .game-row .description {

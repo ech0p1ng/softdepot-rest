@@ -44,6 +44,27 @@ public class ProgramDAO implements DAO<Program> {
         }
     }
 
+    private Program resultSetToProgram(ResultSet resultSet) throws SQLException {
+        Program program = new Program(
+                resultSet.getInt("id"),
+                resultSet.getString("program_name"),
+                resultSet.getBigDecimal("price"),
+                resultSet.getString("description"),
+                resultSet.getInt("developer_id"),
+                resultSet.getString("short_description"),
+                getCategories(resultSet.getInt("id")),
+                resultSet.getString("logo_url"),
+                null
+        );
+        var screenshots = resultSet.getArray("screenshots_url");
+        if (screenshots != null) {
+            program.setScreenshotsUrls(Arrays.asList((String[]) screenshots.getArray()));
+        }
+        program.setHeaderUrl();
+        program.setAverageEstimation(getAverageEstimation(program));
+        return program;
+    }
+
     private static Double getEuclideanDistance(List<Double> a, List<Double> b) {
         Double sum = 0.0;
 
@@ -100,8 +121,7 @@ public class ProgramDAO implements DAO<Program> {
             statement.setArray(2, screenshotsSqlArray);
             statement.setInt(3, programId);
             statement.executeUpdate();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -188,20 +208,7 @@ public class ProgramDAO implements DAO<Program> {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                program = new Program(
-                        resultSet.getInt("id"),
-                        resultSet.getString("program_name"),
-                        resultSet.getBigDecimal("price"),
-                        resultSet.getString("description"),
-                        resultSet.getInt("developer_id"),
-                        resultSet.getString("short_description"),
-                        getCategories(resultSet.getInt("id")),
-                        resultSet.getString("logo_url"),
-                        (String[]) resultSet.getArray("screenshots_url").getArray()
-                );
-
-                program.setHeaderUrl();
-                program.setAverageEstimation(getAverageEstimation(program));
+                program = resultSetToProgram(resultSet);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -266,28 +273,7 @@ public class ProgramDAO implements DAO<Program> {
             );
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                //Преобразование java.sql.Array в List<URL>
-//                Array tempSqlArray = resultSet.getArray("screenshots_url");
-//                List<String> screenshotsUrlList = new ArrayList<>();
-//                if (tempSqlArray != null) {
-//                    String[] screenshotsUrlStrArr = (String[])tempSqlArray.getArray();
-//                    screenshotsUrlList = Arrays.stream(screenshotsUrlStrArr).toList();
-//                }
-
-
-                Program program = new Program(
-                        resultSet.getInt("id"),
-                        resultSet.getString("program_name"),
-                        resultSet.getBigDecimal("price"),
-                        resultSet.getString("description"),
-                        resultSet.getInt("developer_id"),
-                        resultSet.getString("short_description"),
-                        getCategories(resultSet.getInt("id")),
-                        resultSet.getString("logo_url"),
-                        (String[]) resultSet.getArray("screenshots_url").getArray()
-                );
-                program.setHeaderUrl();
-                program.setAverageEstimation(getAverageEstimation(program));
+                var program = resultSetToProgram(resultSet);
                 programs.add(program);
             }
         } catch (SQLException e) {
@@ -316,19 +302,7 @@ public class ProgramDAO implements DAO<Program> {
 //                }
 
 
-                Program program = new Program(
-                        resultSet.getInt("id"),
-                        resultSet.getString("program_name"),
-                        resultSet.getBigDecimal("price"),
-                        resultSet.getString("description"),
-                        resultSet.getInt("developer_id"),
-                        resultSet.getString("short_description"),
-                        getCategories(resultSet.getInt("id")),
-                        resultSet.getString("logo_url"),
-                        (String[]) resultSet.getArray("screenshots_url").getArray()
-                );
-                program.setHeaderUrl();
-                program.setAverageEstimation(getAverageEstimation(program));
+                Program program = resultSetToProgram(resultSet);
                 programs.add(program);
             }
         } catch (SQLException e) {
@@ -354,19 +328,7 @@ public class ProgramDAO implements DAO<Program> {
                     screenshotsUrlList = Arrays.stream(screenshotsUrlStrArr).toList();
                 }
 
-                Program program = new Program(
-                        resultSet.getInt("id"),
-                        resultSet.getString("program_name"),
-                        resultSet.getBigDecimal("price"),
-                        resultSet.getString("description"),
-                        resultSet.getInt("developer_id"),
-                        resultSet.getString("short_description"),
-                        getCategories(resultSet.getInt("id")),
-                        resultSet.getString("logo_url"),
-                        (String[]) resultSet.getArray("screenshots_url").getArray()
-                );
-                program.setHeaderUrl();
-                program.setAverageEstimation(getAverageEstimation(program));
+                Program program = resultSetToProgram(resultSet);
                 programs.add(program);
             }
         } catch (SQLException e) {
@@ -616,7 +578,7 @@ public class ProgramDAO implements DAO<Program> {
                         )
                 );
 
-        var filePath = Files.createFile(Path.of("logs/" + dateTime+ ".log").toAbsolutePath());
+        var filePath = Files.createFile(Path.of("logs/" + dateTime + ".log").toAbsolutePath());
         Files.writeString(filePath, resultJson);
 
         return result;

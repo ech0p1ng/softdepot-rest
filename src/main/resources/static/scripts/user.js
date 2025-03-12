@@ -174,10 +174,12 @@ class User {
                     url: BACKEND_URL + "softdepot-api/products?developerId=" + this.id,
                     dataType: "json",
                     success: (response) => {
-                        $("main").append(/*html*/`
-                            <h1 id="programs-header">Программы от ${this.name}</h1>
-                            <div id="programs-list"></div>
-                        `);
+                        if (response.length > 0) {
+                            $("main").append(/*html*/`
+                                <h1 id="programs-header">Программы от ${this.name}</h1>
+                                <div id="programs-list"></div>
+                            `);
+                        }
                         Program.catalogue.length = 0;
 
                         response.forEach((element) => {

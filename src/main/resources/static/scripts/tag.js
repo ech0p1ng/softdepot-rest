@@ -1,5 +1,5 @@
 const MIN_CATEGORY_NAME_LENGTH = 3;
-const MAX_CATEGORY_NAME_LENGTH = 25;
+const MAX_CATEGORY_NAME_LENGTH = 50;
 const CATEGORY_NAME_LENGTH_MESSAGE = `Название категории должно быть от ${MIN_CATEGORY_NAME_LENGTH} до ${MAX_CATEGORY_NAME_LENGTH} символов`;
 
 class Tag {

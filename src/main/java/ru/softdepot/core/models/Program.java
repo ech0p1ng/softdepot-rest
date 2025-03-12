@@ -50,7 +50,9 @@ public class Program {
         this.shortDescription = shortDescription;
         this.categories = categories;
         this.logoUrl = logoUrl;
-        this.screenshotsUrls = Arrays.asList(screenshotsUrls);
+        if (screenshotsUrls != null) {
+            this.screenshotsUrls = Arrays.asList(screenshotsUrls);
+        }
         setName(name);
         setPageUrl();
     }

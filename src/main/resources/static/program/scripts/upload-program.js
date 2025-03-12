@@ -87,33 +87,47 @@ class ProgramUploader {
             </div>
         `);
 
-        $('body').append(uploaderForm);
 
-        $("#add-category-button").on('click', () => ProgramUploader.addSelectRow());
+        uploaderForm.find("#add-category-button").on('click', () => ProgramUploader.addSelectRow());
 
-        $("#add-logo-button").on('change', () => {
-            $("#add-logo-button").empty();
+        uploaderForm.find("#add-logo-button").on('change', (event) => {
+            // uploaderForm.find("#add-logo-button").on('change', async (event) => {
+            // const files = await waitForFiles(event.target);
+            // alert("Логотип загружен:", files);
+
+            uploaderForm.find("#add-logo-button").empty();
             ProgramUploader.addImage(
-                $('#logo-preview-container'),
-                $('#add-logo-button'),
+                uploaderForm.find('#logo-preview-container'),
+                uploaderForm.find('#add-logo-button'),
                 ImageType.LOGO
             );
         });
 
-        $("#add-screenshots-button").on("change", () => {
+        uploaderForm.find("#add-screenshots-button").on("change", (event) => {
+            // uploaderForm.find("#add-screenshots-button").on("change", async (event) => {
+            //     const files = await waitForFiles(event.target);
+            //     alert("Скриншоты загружены:", files);
+
             ProgramUploader.addImage(
-                $('#screenshots-preview-container'),
-                $('#add-screenshots-button'),
+                uploaderForm.find('#screenshots-preview-container'),
+                uploaderForm.find('#add-screenshots-button'),
                 ImageType.SCREENSHOTS
             )
         });
 
-        $("#price").on('input', function () {
+        uploaderForm.find("#price").on('input', function () {
             let result = convertToNumber(
                 this.value,
                 {
-                    "onError": () => highlightInputOnError($("#price"), $("#priceHint"), PRICE_MSG),
-                    "onErrorResolved": () => removeInputHighlight($("#price"), $("#priceHint"))
+                    "onError": () => highlightInputOnError(
+                        uploaderForm.find("#price"),
+                        uploaderForm.find("#priceHint"),
+                        PRICE_MSG
+                    ),
+                    "onErrorResolved": () => removeInputHighlight(
+                        uploaderForm.find("#price"),
+                        uploaderForm.find("#priceHint")
+                    )
                 },
                 MIN_PROGRAM_PRICE,
                 MAX_PROGRAM_PRICE,
@@ -121,36 +135,32 @@ class ProgramUploader {
             this.value = result;
         });
 
-
-        $("#programName").on('input', function () {
+        uploaderForm.find("#programName").on('input', function () {
             this.value = limitTextInput(
                 $(this),
                 this.value,
                 MAX_RROGRAM_NAME_LENGTH,
-                $("#programNameHint")
+                uploaderForm.find("#programNameHint")
             );
         });
 
-
-        $("#shortDescription").on('input', function () {
+        uploaderForm.find("#shortDescription").on('input', function () {
             this.value = limitTextInput(
                 $(this),
                 this.value,
                 MAX_SHORT_DESCRIPTION_LENGTH,
-                $("#shortDescriptionHint")
+                uploaderForm.find("#shortDescriptionHint")
             );
         });
 
-
-        $("#fullDescription").on('input', function () {
+        uploaderForm.find("#fullDescription").on('input', function () {
             this.value = limitTextInput(
                 $(this),
                 this.value,
                 MAX_FULL_DESCRIPTION_LENGTH,
-                $("#fullDescriptionHint")
+                uploaderForm.find("#fullDescriptionHint")
             );
         });
-
 
         $.ajax({
             method: 'GET',
@@ -165,6 +175,9 @@ class ProgramUploader {
             error: (xhr, status, error) => {
                 alert('Не удалось загрузить список категорий программ. Перезагрузите страницу или повторите позже.');
             },
+            complete: () => {
+                $('body').append(uploaderForm);
+            }
         });
     }
 
@@ -247,12 +260,8 @@ class ProgramUploader {
                 reader.onload = function (event) {
                     let img = new Image();
                     img.onload = function () {
-                        if (img.width !== img.height) {
-                            alert("Ширина и высота изображения для логотипа должны быть равны");
-                        }
-                        else {
-                            id = ProgramUploader.logoLastId;
-                            let imgPreview = $(/*html*/`
+                        id = ProgramUploader.logoLastId;
+                        let imgPreview = $(/*html*/`
                                     <div class="image-preview-container" id="logo-preview-container-${id}" logo-id="${id}">
                                         <img src="${event.target.result}" class="image-preview">
                                         <div class="buttons-block">
@@ -272,24 +281,23 @@ class ProgramUploader {
                                     </div>
                                 `);
 
-                            imgPreview
-                                .find(`#change-logo-${id}-button`)
-                                .on('click', function () {
-                                    ProgramUploader.logo = null;
-                                    addImageButton.click();
-                                    ProgramUploader.removeImage(id, previewContainer, addImageButton, ImageType.LOGO);
-                                });
+                        imgPreview
+                            .find(`#change-logo-${id}-button`)
+                            .on('click', function () {
+                                ProgramUploader.logo = null;
+                                addImageButton.click();
+                                ProgramUploader.removeImage(id, previewContainer, addImageButton, ImageType.LOGO);
+                            });
 
-                            imgPreview
-                                .find(`#remove-logo-${id}-button`)
-                                .on('click', function () {
-                                    ProgramUploader.logo = null;
-                                    ProgramUploader.removeImage(id, previewContainer, addImageButton, ImageType.LOGO);
-                                });
-                            previewContainer.empty();
-                            previewContainer.append(imgPreview);
-                            ProgramUploader.logo = file;
-                        }
+                        imgPreview
+                            .find(`#remove-logo-${id}-button`)
+                            .on('click', function () {
+                                ProgramUploader.logo = null;
+                                ProgramUploader.removeImage(id, previewContainer, addImageButton, ImageType.LOGO);
+                            });
+                        previewContainer.empty();
+                        previewContainer.append(imgPreview);
+                        ProgramUploader.logo = file;
                     }
 
                     img.src = event.target.result;
@@ -410,7 +418,10 @@ class ProgramUploader {
         }
 
         //краткое описание
-        let shortDescription = $("#shortDescription").val().trim();
+        let shortDescription = $("#shortDescription").val()
+            .trim()
+            .replace("\n", "\\n")
+            .replace("\t", "\\t");
         let shortDescriptionIsGood =
             shortDescription.length >= MIN_SHORT_DESCRIPTION_LENGTH &&
             shortDescription.length <= MAX_SHORT_DESCRIPTION_LENGTH;
@@ -427,7 +438,11 @@ class ProgramUploader {
         }
 
         //полное описание
-        let fullDescription = $("#fullDescription").val().trim();
+        let fullDescription = $("#fullDescription").val()
+            .trim()
+            .replace("\n", "\\n")
+            .replace("\t", "\\t");
+
         let fullDescriptionIsGood =
             fullDescription.length >= MIN_FULL_DESCRIPTION_LENGTH &&
             fullDescription.length <= MAX_FULL_DESCRIPTION_LENGTH;
@@ -569,12 +584,12 @@ function getSelectedCategories() {
         if (categoryId === null || degreeOfBelonging === "") {
             notChoosenCategoriesIds.push($(this).attr('id'));
         }
-        let category = new Tag({
+        let category = {
             "id": categoryId,
             "name": categoryName,
             "degreeOfBelonging": degreeOfBelonging,
             "programId": null
-        });
+        };
         if (!choosenCategories.includes(category)) {
             choosenCategories.push(category);
         }
@@ -619,4 +634,12 @@ function limitTextInput(inputJquertItem, value, maxLength, hintJqueryItem) {
         hintJqueryItem.css(HINT_MESSAGE_STYLE_HIDDEN);
     }
     return value;
+}
+
+function waitForFiles(inputJqueryItem) {
+    return new Promise((resolve) => {
+        inputJqueryItem.on('change', function (event) {
+            resolve(event.target.files);
+        });
+    });
 }
