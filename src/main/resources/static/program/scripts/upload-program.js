@@ -635,11 +635,3 @@ function limitTextInput(inputJquertItem, value, maxLength, hintJqueryItem) {
     }
     return value;
 }
-
-function waitForFiles(inputJqueryItem) {
-    return new Promise((resolve) => {
-        inputJqueryItem.on('change', function (event) {
-            resolve(event.target.files);
-        });
-    });
-}

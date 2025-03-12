@@ -92,12 +92,10 @@ public class ProgramDAO implements DAO<Program> {
     }
 
     public void addMedia(FileStorageService fileStorageService, int programId, Program program, MultipartFile logo, List<MultipartFile> screenshots) throws IOException {
-        program.setId(programId);
         var logoPath = fileStorageService.saveFile(
                 logo,
                 program.getFilesPath(fileStorageService.getMediaUploadDir())
         );
-        program.setLogoUrl(fileStorageService.convertToPublicFilePath(logoPath));
 
         List<String> screenshotsUrls = new ArrayList<>();
         for (var screenshot : screenshots) {
@@ -107,6 +105,9 @@ public class ProgramDAO implements DAO<Program> {
             );
             screenshotsUrls.add(fileStorageService.convertToPublicFilePath(screenshotPath));
         }
+
+        program.setId(programId);
+        program.setLogoUrl(fileStorageService.convertToPublicFilePath(logoPath));
         program.setScreenshotsUrls(screenshotsUrls);
 
         try {
@@ -114,7 +115,7 @@ public class ProgramDAO implements DAO<Program> {
                     "UPDATE program SET logo_url = ?, screenshots_url=? WHERE id = ?"
             );
             var screenshotsSqlArray = connection.createArrayOf(
-                    "VARCHAR",
+                    "TEXT",
                     screenshotsUrls.toArray()
             );
             statement.setString(1, program.getLogoUrl());

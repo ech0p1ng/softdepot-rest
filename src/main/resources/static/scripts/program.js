@@ -74,6 +74,10 @@ class Program {
             </div>
         `);
 
+        if (this.averageEstimation === 0) {
+            this.gameRowCatalogue.find(".score").remove();
+        }
+
         this.gameRowCatalogue
             .find('.add-to-cart')
             .html(addToCartHtml)
@@ -346,13 +350,18 @@ class Program {
                 .replaceAll("\\t", "    ")
         );
         $(".game-name").html(this.name);
-        $("#score")
-            .html(this.averageEstimation)
-            .attr("style", "color: " + Program.getScoreColor(this.averageEstimation));
+        if (this.averageEstimation == 0) {
+            $(".score-block").remove();
+        }
+        else {
+            $("#score")
+                .html(this.averageEstimation)
+                .attr("style", "color: " + Program.getScoreColor(this.averageEstimation));
+        }
         $("#description-text").html(
             this.fullDescription
-                .replaceAll("\\n", "<br>")
-                .replaceAll("\\t", "    ")
+                .replaceAll("\n", "<br>")
+                .replaceAll("\t", "    ")
         );
         $("#price").html(this.priceAsString);
 
@@ -360,7 +369,7 @@ class Program {
 
         let first = true;
         this.screenshotsUrls.forEach((img) => {
-            let screenshot = $('<img className="screenshot-on-tape" src="' + img + '" onClick="change_current_screenshot.apply(this)"/>');
+            let screenshot = $('<img class="screenshot-on-tape" src="' + img + '" onClick="change_current_screenshot.apply(this)"/>');
             if (first) {
                 $(".screenshots-viewer").append('<img id="current-screenshot" src="' + img + '" />');
                 first = false;

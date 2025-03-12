@@ -306,6 +306,23 @@ main {
     /* Firefox */
 }
 
+/*Стили скроллбара для Chromium*/
+::-webkit-scrollbar-track {
+    background: var(--bg-opacity);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-opacity);
+    border-radius: 10px;
+}
+
+/*Стили скроллбара для Firefox*/
+html {
+    scrollbar-color: var(--text-color) var(--bg-opacity);
+}
+
+/*Отзывы*/
 #review-input-item {
     background-color: var(--bg-opacity);
     border-radius: 10px;

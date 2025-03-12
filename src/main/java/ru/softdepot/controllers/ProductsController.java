@@ -212,7 +212,7 @@ public class ProductsController {
             );
         }
 
-        int minCategoriesAmount = 3;
+        int minCategoriesAmount = 2;
         if (categories.size() < minCategoriesAmount) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -395,8 +395,6 @@ public class ProductsController {
         program.setIsPurchased(programDAO.isPurchased(program, customer));
         program.setHasReview(programDAO.hasReview(program, customer));
 
-//        Проверка приобретения программы
-//        program.setIsPurchased(customerDAO.hasPurchasedProgram(customer, program));
         return program;
     }
 }

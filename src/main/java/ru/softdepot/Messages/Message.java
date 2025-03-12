@@ -14,7 +14,9 @@ public class Message {
             case DEGREE_OF_BELONGING:
             case DAILY_STATS:
             case CATEGORY:
-                message.append("а");
+                if (status != Status.ALREADY_EXISTS) {
+                    message.append("а");
+                }
                 break;
         }
         return message.toString();
