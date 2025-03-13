@@ -509,8 +509,13 @@ public class ProgramDAO implements DAO<Program> {
 
         //dob - degree of belonging
         List<List<Double>> purchasedProgramsDob = new ArrayList<>();
-
+        List<Category> categoriesOfPurchasedPrograms = new ArrayList<>();
         for (var purchasedProgram : purchasedPrograms) {
+            for (var category : purchasedProgram.getCategories()) {
+                if (!categoriesOfPurchasedPrograms.contains(category)) {
+                    categoriesOfPurchasedPrograms.add(category);
+                }
+            }
             purchasedProgramsDob.add(
                     getDegreesOfBelonging(purchasedProgram, lastId)
             );
@@ -532,20 +537,30 @@ public class ProgramDAO implements DAO<Program> {
         List<Recommendation> recommendations = new ArrayList<>();
 
         for (var program : allPrograms) {
-            var degreesOfBelonging = getDegreesOfBelonging(program, lastId);
-            var distance = getEuclideanDistance(
-                    avgDegreesOfBelonging,
-                    degreesOfBelonging
-            );
+            var containsCommonCategories = false;
 
-            boolean priceIsGood = program.getPrice().compareTo(new BigDecimal(maxPrice)) <= 0;
-            boolean estimationIsGood = program.getAverageEstimation() >= minEstimation;
+            for (var category : program.getCategories()) {
+                if (categoriesOfPurchasedPrograms.contains(category)) {
+                    containsCommonCategories = true;
+                }
+            }
 
-            if (estimationIsGood && priceIsGood) {
-                recommendations.add(new Recommendation(
-                        program,
-                        distance
-                ));
+            if (containsCommonCategories) {
+                var degreesOfBelonging = getDegreesOfBelonging(program, lastId);
+                var distance = getEuclideanDistance(
+                        avgDegreesOfBelonging,
+                        degreesOfBelonging
+                );
+
+                boolean priceIsGood = program.getPrice().compareTo(new BigDecimal(maxPrice)) <= 0;
+                boolean estimationIsGood = program.getAverageEstimation() >= minEstimation;
+
+                if (estimationIsGood && priceIsGood) {
+                    recommendations.add(new Recommendation(
+                            program,
+                            distance
+                    ));
+                }
             }
         }
 

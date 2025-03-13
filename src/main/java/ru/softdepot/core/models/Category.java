@@ -61,4 +61,9 @@ public class Category {
     public String toString() {
         return "Category [id=" + id + ", name=" + name + ", degreeOfBelonging=" + degreeOfBelonging +"]";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.id == ((Category) obj).id && this.name.equals(((Category) obj).name);
+    }
 }
