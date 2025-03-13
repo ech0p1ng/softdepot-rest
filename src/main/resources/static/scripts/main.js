@@ -13,8 +13,10 @@ const MAX_PROGRAM_PRICE = 1000000;
 const MIN_DEGREE_OF_BELONGING = 0;
 const MAX_DEGREE_OF_BELONGING = 10;
 
-const MIN_CATEGORIES_AMOUNT = 2;
+const MIN_CATEGORIES_AMOUNT = 1;
 const MIN_SCREENSHOTS_AMOUNT = 3;
+
+const ACCEPTABLE_FILE_TYPES = ".png,.jpg,.jpeg,.webp";
 
 const ERROR_MESSAGE_STYLE_VISIBLE = {
     "font-size": "8pt",

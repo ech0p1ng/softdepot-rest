@@ -56,7 +56,7 @@ class ProgramUploader {
                                 <div class="preview-container" id="logo-preview-container" style="max-width: 33%;"></div>
 
                                 <div class="file-input button pop-up-button full-width-button" id="add-logo-container">
-                                    <input type="file" accept=".png,.jpg,.jpeg" id="add-logo-button" class="file-upload-button"></input>
+                                    <input type="file" accept=${ACCEPTABLE_FILE_TYPES} id="add-logo-button" class="file-upload-button"></input>
                                     <span>Добавить логотип</span>
                                 </div>
                             </div>
@@ -68,7 +68,7 @@ class ProgramUploader {
                                 <div class="preview-container" id="screenshots-preview-container"></div>
 
                                 <div class="file-input button pop-up-button full-width-button" id="add-screenshots-container">
-                                    <input type="file" accept=".png,.jpg,.jpeg" id="add-screenshots-button" class="file-upload-button" multiple></input>
+                                    <input type="file" accept=${ACCEPTABLE_FILE_TYPES} id="add-screenshots-button" class="file-upload-button" multiple></input>
                                     <span>Добавить скриншоты</span>
                                 </div>
                             </div>

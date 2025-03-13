@@ -554,6 +554,11 @@ public class ProgramDAO implements DAO<Program> {
             recommendations = recommendations.subList(0, 100);
         List<Program> result = new ArrayList<>();
         for (var recommendation : recommendations) {
+            System.out.printf("%s\t%s\t%s\t%s\n",
+                    recommendation.program().getName(),
+                    recommendation.program().getPrice(),
+                    recommendation.program().getAverageEstimation(),
+                    recommendation.euclideanDistance());
             result.add(recommendation.program());
         }
 

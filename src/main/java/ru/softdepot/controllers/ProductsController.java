@@ -212,7 +212,7 @@ public class ProductsController {
             );
         }
 
-        int minCategoriesAmount = 2;
+        int minCategoriesAmount = 1;
         if (categories.size() < minCategoriesAmount) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
