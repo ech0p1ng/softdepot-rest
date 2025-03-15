@@ -1,6 +1,5 @@
 package ru.softdepot.core.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,10 +11,8 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Repository
@@ -44,6 +41,42 @@ public class ProgramDAO implements DAO<Program> {
         }
     }
 
+    private static Double getEuclideanDistance(List<Double> a, List<Double> b) {
+        Double sum = 0.0;
+
+        for (var i = 0; i < a.size(); i++) {
+            sum += Math.pow(a.get(i) - b.get(i), 2);
+        }
+
+        return Math.sqrt(sum);
+    }
+
+    private static List<Double> getDegreesOfBelonging(Program program, List<Category> allCategories) {
+        List<Double> degreesOfBelonging = new ArrayList<>();
+
+        for (int i = 0; i < allCategories.size(); i++) {
+            degreesOfBelonging.add(0.0);
+        }
+
+        var categoriesOfProgram = programDAO.getCategories(program.getId());
+
+        for (var category : categoriesOfProgram) {
+            int id = allCategories.indexOf(category);
+            double dob = category.getDegreeOfBelonging();
+            degreesOfBelonging.set(id, dob);
+        }
+
+        return degreesOfBelonging;
+    }
+
+    public Program setAdditionalInfo(Customer customer, Program program) {
+        program.setIsInCart(programDAO.isInCart(program, customer));
+        program.setIsPurchased(programDAO.isPurchased(program, customer));
+        program.setHasReview(programDAO.hasReview(program, customer));
+
+        return program;
+    }
+
     private Program resultSetToProgram(ResultSet resultSet) throws SQLException {
         Program program = new Program(
                 resultSet.getInt("id"),
@@ -63,32 +96,6 @@ public class ProgramDAO implements DAO<Program> {
         program.setHeaderUrl();
         program.setAverageEstimation(getAverageEstimation(program));
         return program;
-    }
-
-    private static Double getEuclideanDistance(List<Double> a, List<Double> b) {
-        Double sum = 0.0;
-
-        for (var i = 0; i < a.size(); i++) {
-            sum += Math.pow(a.get(i) - b.get(i), 2);
-        }
-
-        return Math.sqrt(sum);
-    }
-
-    private static List<Double> getDegreesOfBelonging(Program program, int lastCategoryId) {
-        List<Double> degreesOfBelonging = new ArrayList<>();
-        for (int i = 0; i <= lastCategoryId; i++) {
-            degreesOfBelonging.add(0.0);
-        }
-        var categories = programDAO.getCategories(program.getId());
-
-        for (var category : categories) {
-            degreesOfBelonging.add(
-                    category.getId(),
-                    (double) category.getDegreeOfBelonging()
-            );
-        }
-        return degreesOfBelonging;
     }
 
     public void addMedia(FileStorageService fileStorageService, int programId, Program program, MultipartFile logo, List<MultipartFile> screenshots) throws IOException {
@@ -494,113 +501,173 @@ public class ProgramDAO implements DAO<Program> {
         return result;
     }
 
-    public List<Program> getRecommendations(Customer customer, double minEstimation, double maxPrice) throws Exception {
+    public List<Program> getRecommendations(Customer customer, double minEstimation, double maxPrice) {
         var allPrograms = programDAO.getAll();
+        var allCategories = categoryDAO.getAll(CategoryDAO.Sort.DEFAULT);
+        var purchasedPrograms = customerDAO.getPurchasedPrograms(customer);
+        var recommendations = new ArrayList<Recommendation>();
 
-        List<Program> purchasedPrograms = null;
-        try {
-            purchasedPrograms = customerDAO.getPurchasedPrograms(customer);
-        } catch (Exception e) {
-            throw new Exception("У покупателя с id=" + customer.getId() + " не найдено приобретенных программ");
+        //Отладочная информация
+        StringBuilder resultCsv = new StringBuilder();
+        resultCsv
+                .append("Название программы;")
+                .append("Стоимость;")
+                .append("Средняя оценка;")
+                .append("Евклидово расстояние;")
+                .append(String.join(
+                        ";",
+                        allCategories
+                                .stream()
+                                .map(c->c.getName()).toList()
+                        )
+                )
+                .append("\n");
+
+
+        var categoriesOfPurchasedPrograms = new ArrayList<Category>();
+        //dob - degree of belonging (степень принадлежности)
+        var avgDobsOfPurchasedPrograms = new ArrayList<Double>();
+
+        //Подсчет средних степеней принадлежности всех приобретенных программ
+        for (var category : allCategories) {
+            double avgDob = 0;
+
+            for (var program : purchasedPrograms) {
+                if (program.getCategories().contains(category)) {
+                    var dob = program
+                            .getCategories()
+                            .stream()
+                            .filter(c -> c.equals(category))
+                            .findFirst()
+                            .get()
+                            .getDegreeOfBelonging();
+                    avgDob += dob;
+                }
+            }
+
+            avgDob /= purchasedPrograms.size();
+            avgDobsOfPurchasedPrograms.add(avgDob);
         }
 
-        var allCategories = categoryDAO.getAll(CategoryDAO.Sort.DEFAULT);
-        int lastId = allCategories.getLast().getId();
+        resultCsv
+                .append("Приобретенные программы;;;;")
+                .append(";".repeat(allCategories.size()))
+                .append(";\n");
 
-        //dob - degree of belonging
-        List<List<Double>> purchasedProgramsDob = new ArrayList<>();
-        List<Category> categoriesOfPurchasedPrograms = new ArrayList<>();
-        for (var purchasedProgram : purchasedPrograms) {
-            for (var category : purchasedProgram.getCategories()) {
+        //Составление списка категорий приобретенных программ
+        for (var program : purchasedPrograms) {
+            var categories = program.getCategories();
+            for (var category : categories) {
                 if (!categoriesOfPurchasedPrograms.contains(category)) {
                     categoriesOfPurchasedPrograms.add(category);
                 }
             }
-            purchasedProgramsDob.add(
-                    getDegreesOfBelonging(purchasedProgram, lastId)
-            );
+
+            StringBuilder resultRow = new StringBuilder();
+            resultRow
+                    .append(program.getName()).append(";")
+                    .append(program.getPrice()).append(";")
+                    .append(program.getAverageEstimation()).append(";")
+                    .append(" ").append(";")
+                    .append(String.join(";", getDegreesOfBelonging(program,allCategories)
+                                    .stream()
+                                    .map(Object::toString)
+                                    .collect(Collectors.toList())
+                            )
+                    )
+                    .append(";\n");
+            resultCsv.append(resultRow);
         }
 
-        //средняя степень принадлежности к каждой программе в библиотеке
-        List<Double> avgDegreesOfBelonging = new ArrayList<>();
+        resultCsv
+                .append("Средние значения степеней принадлежности к категориям приобретенных программ;;;;")
+                .append(String.join(";",avgDobsOfPurchasedPrograms
+                        .stream()
+                        .map(Object::toString)
+                        .collect(Collectors.toList())))
+                .append(";\n");
 
-        for (int categoryId = 0; categoryId <= lastId; categoryId++) {
-            double avgDegreeOfBelonging = 0.0;
-            for (int programsDobId = 0; programsDobId < purchasedProgramsDob.size(); programsDobId++) {
-                avgDegreeOfBelonging += purchasedProgramsDob.get(programsDobId).get(categoryId);
-            }
-            avgDegreeOfBelonging /= lastId;
-            avgDegreesOfBelonging.add(avgDegreeOfBelonging);
-        }
-
-        //Составление списка рекомендаций
-        List<Recommendation> recommendations = new ArrayList<>();
-
+        /*
+        Подсчет евклидова расстояния между степенями принадлежности программ в каталоге и средних степеней
+        принадлежности всех приобретенных программ, и добавление программы в список рекомендаций в случае если она:
+        1. Имеет общие категории с приобретенными программами
+        2. Цена ниже или равна максимально допустимой
+        3. Средняя оценка выше или равна минимально допустимой
+        */
         for (var program : allPrograms) {
-            var containsCommonCategories = false;
+            var degreesOfBelonging = getDegreesOfBelonging(program,allCategories);
+            var distance = getEuclideanDistance(
+                    avgDobsOfPurchasedPrograms,
+                    degreesOfBelonging
+            );
 
-            for (var category : program.getCategories()) {
-                if (categoriesOfPurchasedPrograms.contains(category)) {
-                    containsCommonCategories = true;
+            boolean hasCommonCategories = false;
+
+            for (var categoryOfProgram : program.getCategories()) {
+                if (categoriesOfPurchasedPrograms.contains(categoryOfProgram)) {
+                    hasCommonCategories = true;
+                    break;
                 }
             }
 
-            if (containsCommonCategories) {
-                var degreesOfBelonging = getDegreesOfBelonging(program, lastId);
-                var distance = getEuclideanDistance(
-                        avgDegreesOfBelonging,
-                        degreesOfBelonging
-                );
+            boolean estimationIsGood = program.getAverageEstimation() >= minEstimation;
+            boolean priceIsGood = program.getPrice().compareTo(BigDecimal.valueOf(maxPrice)) <= 0;
+            boolean notPurchased = !purchasedPrograms.contains(program);
 
-                boolean priceIsGood = program.getPrice().compareTo(new BigDecimal(maxPrice)) <= 0;
-                boolean estimationIsGood = program.getAverageEstimation() >= minEstimation;
-
-                if (estimationIsGood && priceIsGood) {
-                    recommendations.add(new Recommendation(
-                            program,
-                            distance
-                    ));
-                }
+            if (hasCommonCategories && estimationIsGood && priceIsGood && notPurchased) {
+                recommendations.add(new Recommendation(program, distance, degreesOfBelonging));
             }
         }
 
-        recommendations.sort(new RecommendationsComparator());
-        if (recommendations.size() > 100)
-            recommendations = recommendations.subList(0, 100);
-        List<Program> result = new ArrayList<>();
-        for (var recommendation : recommendations) {
-            System.out.printf("%s\t%s\t%s\t%s\n",
-                    recommendation.program().getName(),
-                    recommendation.program().getPrice(),
-                    recommendation.program().getAverageEstimation(),
-                    recommendation.euclideanDistance());
-            result.add(recommendation.program());
+        //Сортировка списка рекомендаций по возрастанию евклидова расстояния
+        Collections.sort(recommendations, new RecommendationsComparator());
+
+        //Итоговый список программ
+        var result = recommendations
+                .stream()
+                .map(r -> setAdditionalInfo(customer, r.program()))
+                .toList();
+
+        //Отладочная информация
+        resultCsv
+                .append("Рекомендуемые к покупке программы;;;;")
+                .append(";".repeat(allCategories.size()))
+                .append(";\n");
+        for (var r : recommendations) {
+            var program = r.program();
+            StringBuilder resultRow = new StringBuilder();
+            resultRow
+                    .append(program.getName()).append(";")
+                    .append(program.getPrice()).append(";")
+                    .append(program.getAverageEstimation()).append(";")
+                    .append(r.euclideanDistance()).append(";")
+                    .append(String.join(";", r.degreesOfBelonging()
+                                    .stream()
+                                    .map(Object::toString)
+                                    .collect(Collectors.toList())
+                            )
+                    )
+                    .append(";\n");
+            resultCsv.append(resultRow);
         }
 
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);  // Для 24-часового формата
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
         int second = calendar.get(Calendar.SECOND);
         String dateTime = String.format("%d-%02d-%02d %02d-%02d-%02d",
                 year, month, dayOfMonth, hour, minute, second);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String resultJson = objectMapper
-                .writerWithDefaultPrettyPrinter()
-                .writeValueAsString(
-                        new RecommendationResult(
-                                customer,
-                                allPrograms,
-                                recommendations,
-                                dateTime
-                        )
-                );
-
-        var filePath = Files.createFile(Path.of("logs/" + dateTime + ".log").toAbsolutePath());
-        Files.writeString(filePath, resultJson);
+        Path filePath = null;
+        try {
+            filePath = Files.createFile(Path.of("logs/" + dateTime + ".csv").toAbsolutePath());
+            Files.writeString(filePath, resultCsv);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return result;
     }

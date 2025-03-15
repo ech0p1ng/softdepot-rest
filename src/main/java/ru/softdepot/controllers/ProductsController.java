@@ -14,14 +14,14 @@ import ru.softdepot.FileStorageService;
 import ru.softdepot.core.dao.*;
 import ru.softdepot.core.models.Customer;
 import ru.softdepot.core.models.Program;
-import ru.softdepot.core.models.Purchase;
 import ru.softdepot.core.models.User;
 import ru.softdepot.messages.Message;
 import ru.softdepot.requestBodies.ProgramRequestBody;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -323,6 +323,17 @@ public class ProductsController {
             allPrograms = programDAO.getAll();
         }
 
+        Collections.sort(allPrograms, new Comparator<Program>() {
+            @Override
+            public int compare(Program o1, Program o2) {
+                if (o1.getId() < o2.getId()) {
+                    return 1;
+                } else if (o1.getId() > o2.getId()) {
+                    return -1;
+                } else return 0;
+            }
+        });
+
         var user = UsersController.getCurrentUser(userDAO);
         if (user != null) {
             if (user.getUserType() == User.Type.Customer) {
@@ -337,7 +348,7 @@ public class ProductsController {
                 return ResponseEntity.ok().body(allPrograms);
             }
         }
-        return ResponseEntity.ok().body(programDAO.getAll());
+        return ResponseEntity.ok().body(allPrograms);
     }
 
     @GetMapping("/recommendations")
@@ -364,30 +375,22 @@ public class ProductsController {
         if (maxPrice == null) maxPrice = Double.MAX_VALUE;
 
         List<Program> recommendations;
-        List<Purchase> purchases = purchaseDAO.getPurchasesOfCustomer(customer);
-        List<Integer> purchasedProgramsIds = new ArrayList<>();
-        for (var purchase : purchases) {
-            purchasedProgramsIds.add(purchase.getProgramId());
-        }
 
-        try {
-            recommendations = programDAO.getRecommendations(customer, minEstimation, maxPrice);
-            for (int i = 0; i < recommendations.size(); i++) {
-                var program = recommendations.get(i);
-                if (purchasedProgramsIds.contains(program.getId())) {
-                    recommendations.remove(i);
-                } else {
-                    recommendations.set(i, setAdditionalInfo(customer, program));
-                }
-            }
+//        try {
+        recommendations = programDAO.getRecommendations(customer, minEstimation, maxPrice);
+//        for (int i = 0; i < recommendations.size(); i++) {
+//            var program = recommendations.get(i);
+//            var programWithAdditionalInfo = setAdditionalInfo(customer, program);
+//            recommendations.set(i, programWithAdditionalInfo);
+//        }
 
-            return ResponseEntity.ok().body(recommendations);
-        } catch (Exception e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    e.getMessage()
-            );
-        }
+        return ResponseEntity.ok().body(recommendations);
+//        } catch (Exception e) {
+//            throw new ResponseStatusException(
+//                    HttpStatus.NOT_FOUND,
+//                    e.getMessage()
+//            );
+//        }
     }
 
     private Program setAdditionalInfo(Customer customer, Program program) {

@@ -358,4 +358,9 @@ public class Program {
 
         return "Program [id=" + this.id + ", name=" + this.name + ", pageUrl=" + this.pageUrl + ", categories=[" + categoriesString + "]]";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.id == ((Program) obj).id && this.name.equals(((Program) obj).name);
+    }
 }

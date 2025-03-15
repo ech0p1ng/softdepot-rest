@@ -62,24 +62,47 @@ function addHeader(addSearchForm, addProfileButton) {
         );
     }
 
-    if (addProfileButton) {
-        header
-            .find(".right-buttons-panel")
-            .append('<a id="user-profile-button" class="login button" title="Войти" href="/sign-in"></a>');
-    }
+    let addButtons = () => {
+        if (addProfileButton) {
+            header
+                .find(".right-buttons-panel")
+                .append('<a id="user-profile-button" class="login button" title="Войти" href="/sign-in"></a>');
 
-    $(window).on('userDataLoaded', () => {
-        if (USER !== null) {
-            if (USER.hasPurchasedPrograms) {
-                header
-                    .find(".right-buttons-panel")
-                    .prepend(/*html*/`
-                    <a href="/recommendations" id="recommendations-button" class="button" title="Рекомендации"></a>
-                `);
+            if (USER !== null) {
+                header.find("#user-profile-button")
+                    .removeClass("login")
+                    .addClass("profile")
+                    .attr("href", USER.pageUrl)
+                    .attr("title", "Профиль");
             }
         }
-    });
-    $("body").prepend(header);
+
+        if (USER !== null) {
+            if (USER.userType === "Customer") {
+                if (USER.hasPurchasedPrograms) {
+                    header
+                        .find(".right-buttons-panel")
+                        .prepend(/*html*/`
+                        <a href="/recommendations" id="recommendations-button" class="button" title="Рекомендации"></a>
+                    `);
+                }
+                let cartButton = $(/*html*/`
+                    <button class="shopping-basket button" title="Корзина" onclick="Cart.show()"></button>
+                `);
+                header.find(".right-buttons-panel").children().eq(0).after(cartButton);
+
+            }
+        }
+        $("body").prepend(header);
+    }
+
+    if (User.dataLoaded) {
+        addButtons();
+    } else {
+        $(window).on('userDataLoaded', () => { addButtons() });
+    }
+
+
 }
 
 function convertToNumber(str, { onError, onErrorResolved }, minValue = -Infinity,
@@ -118,3 +141,7 @@ function convertToNumber(str, { onError, onErrorResolved }, minValue = -Infinity
     return result;
 
 }
+
+$(window).on('load', () => {
+    User.loadUserData();
+})

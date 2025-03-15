@@ -12,7 +12,7 @@ $(window).on("userDataLoaded", () => {
             });
         },
         error: function (xhr, status, error) {
-            alert(JSON.stringify(xhr.responseJSON));
+            alert(xhr.responseJSON.message);
         }
     });
 });

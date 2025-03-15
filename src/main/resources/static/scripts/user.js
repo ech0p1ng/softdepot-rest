@@ -23,44 +23,35 @@ class User {
             success: function (response) {
                 USER = new User(response);
 
-                $("#user-profile-button")
-                    .removeClass("login")
-                    .addClass("profile")
-                    .attr("href", USER.pageUrl)
-                    .attr("title", "Профиль");
-
-
                 if (USER.userType === "Customer") {
-                    let cartButton = $(/*html*/`
-                        <button class="shopping-basket button" title="Корзина" onclick="Cart.show()"></button>
-                    `);
-                    $(".right-buttons-panel").children().eq(0).after(cartButton);
-
                     $.ajax({
                         method: "GET",
                         url: BACKEND_URL + "softdepot-api/purchases?customerId=" + USER.id,
                         dataType: "json",
                         success: function (response) {
-                            USER.hasPurchasedPrograms = response.length > 0;
+                            if (response.length > 0) {
+                                USER.hasPurchasedPrograms = true;
+                                $(window).trigger('userPurchasesLoaded');
+                            }
                         },
                         error: function (xhr, status, error) {
                         },
-                        complete: function () {
-                            $(window).trigger('userDataLoaded');
+                        complete: () => {
                             User.dataLoaded = true;
+                            $(window).trigger('userDataLoaded');
                         }
                     });
                 }
                 else {
-                    $(window).trigger('userDataLoaded');
                     User.dataLoaded = true;
+                    $(window).trigger('userDataLoaded');
                 }
             },
             error: function (xhr, status, error) {
                 console.error("Ошибка загрузки данных пользователя: ", xhr.responseJSON.message);
-                $(window).trigger('userDataLoaded');
                 User.dataLoaded = true;
-            }
+                $(window).trigger('userDataLoaded');
+            },
         });
     }
 
@@ -199,12 +190,19 @@ class User {
                 roleStr = "Покупатель";
                 $(".user-role").html(roleStr);
 
-                $("main").append(/*html*/`
+                let libItem = $(/*html*/`
                     <h1 id="programs-header">Библиотека</h1>
                     <div id="programs-list"></div>
+                `);
+
+                let reviewsItem = $(/*html*/`
                     <h1 id="programs-header">Отзывы пользователя</h1>
                     <div id="reviews-list"></div>
                 `);
+
+                $("main").append(libItem);
+
+                $("main").append(reviewsItem);
 
                 $.ajax({
                     method: "GET",
@@ -212,11 +210,16 @@ class User {
                     dataType: "json",
                     success: function (response) {
                         Program.catalogue.length = 0;
-                        response.forEach((element) => {
-                            var program = new Program(element);
-                            Program.catalogue.push(program);
-                            $("#programs-list").append(program.getGameRowPreview());
-                        });
+                        if (response.length == 0) {
+                            libItem.remove();
+                        }
+                        else {
+                            response.forEach((element) => {
+                                var program = new Program(element);
+                                Program.catalogue.push(program);
+                                $("#programs-list").append(program.getGameRowPreview());
+                            });
+                        }
                     },
                     error: function (xhr, status, error) {
                     }
@@ -227,11 +230,15 @@ class User {
                     url: BACKEND_URL + "softdepot-api/reviews?customerId=" + this.id,
                     dataType: "json",
                     success: function (response) {
-
-                        response.forEach((element) => {
-                            var review = new Review(element);
-                            $("#reviews-list").append(review.getReviewRowAtUserPage());
-                        });
+                        if (response.length == 0) {
+                            reviewsItem.remove();
+                        }
+                        else {
+                            response.forEach((element) => {
+                                var review = new Review(element);
+                                $("#reviews-list").append(review.getReviewRowAtUserPage());
+                            });
+                        }
                     },
                     error: function (xhr, status, error) {
                         console.error("Не удалось выйти");
@@ -244,6 +251,3 @@ class User {
     }
 }
 
-window.addEventListener("load", function () {
-    User.loadUserData();
-});

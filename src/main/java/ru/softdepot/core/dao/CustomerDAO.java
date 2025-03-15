@@ -235,7 +235,7 @@ public class CustomerDAO implements DAO<Customer> {
     }
 
 
-    public List<Program> getPurchasedPrograms(Customer customer) throws Exception {
+    public List<Program> getPurchasedPrograms(Customer customer) {
         List<Purchase> purchases = purchaseDAO.getPurchasesOfCustomer(customer);
         List<Program> programs = new ArrayList<>();
 
@@ -245,7 +245,13 @@ public class CustomerDAO implements DAO<Customer> {
 
 
         for (Purchase purchase : purchases) {
-            Program program = programDAO.getById(purchase.getProgramId());
+            Program program = null;
+            try {
+                program = programDAO.getById(purchase.getProgramId());
+            } catch (Exception e) {
+                continue;
+//                throw new RuntimeException(e);
+            }
             programs.add(program);
         }
         return programs;

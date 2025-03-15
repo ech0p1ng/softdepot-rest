@@ -14,6 +14,8 @@ import ru.softdepot.core.models.Review;
 import ru.softdepot.messages.Message;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.Comparator;
 
 @RestController
 @RequestMapping("softdepot-api/reviews")
@@ -94,7 +96,15 @@ public class ReviewsController {
                     )
             );
 
-        return ResponseEntity.ok().body(reviewDAO.getAllAboutProgram(programId));
+        var reviews = reviewDAO.getAllAboutProgram(programId);
+        Collections.sort(reviews, new Comparator<Review>() {
+            @Override
+            public int compare(Review o1, Review o2) {
+                return 1 - o1.getDateTime().compareTo(o2.getDateTime());
+            }
+        });
+
+        return ResponseEntity.ok().body(reviews);
     }
 
     @GetMapping(params = {"customerId"})
@@ -110,7 +120,16 @@ public class ReviewsController {
                     )
             );
 
-        return ResponseEntity.ok().body(reviewDAO.getAllByCustomer(customerId));
+
+        var reviews = reviewDAO.getAllByCustomer(customerId);
+        Collections.sort(reviews, new Comparator<Review>() {
+            @Override
+            public int compare(Review o1, Review o2) {
+                return -o1.getDateTime().compareTo(o2.getDateTime());
+            }
+        });
+
+        return ResponseEntity.ok().body(reviews);
     }
 
     @GetMapping(params = {"programId", "customerId"})

@@ -16,6 +16,8 @@ import ru.softdepot.messages.Message;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -52,6 +54,13 @@ public class PurchasesController {
         var currentUser = UsersController.getCurrentUser(userDAO);
 
         var purchases = purchaseDAO.getPurchasesOfCustomer(userOfPage);
+
+        Collections.sort(purchases, new Comparator<Purchase>() {
+            @Override
+            public int compare(Purchase o1, Purchase o2) {
+                return o1.getDateTime().compareTo(o2.getDateTime());
+            }
+        });
         List<Program> programs = new ArrayList<>();
 
 

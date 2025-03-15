@@ -156,6 +156,8 @@ class Review {
     static text = 5;
     static userId;
     static programId;
+    static offset = new Date().getTimezoneOffset();
+
 
     constructor(response) {
         this.id = response.id;
@@ -170,10 +172,14 @@ class Review {
 
         this.reviewRow = $(/*html*/`
             <div class="review">
-                <a class="review-user" href="${this.customer.pageUrl}">
-                    <img class="review-user-profile-img" src="${this.customer.profileImgUrl}" />
-                    <span class="review-username">${this.customer.name}</span>
-                </a>
+                <div class="review-header">
+                    <a class="review-user" href="${this.customer.pageUrl}">
+                        <img class="review-user-profile-img" src="${this.customer.profileImgUrl}" />
+                        <span class="review-username">${this.customer.name}</span>
+                    </a>
+                    <span class="review-date-time">${this.getLocalDateTimeAsStr()}</span>
+                </div>
+
                 <br />
                 <div class="review-estimation" style="color: ${Program.getScoreColor(this.estimation)}"></div>
                 <br />
@@ -183,10 +189,13 @@ class Review {
 
         this.reviewRowAtUserPage = $(/*html*/`
             <div class="review">
-                <a href="${this.program.pageUrl}" class="review-program" target="_blank" >
-                    <img class="review-program-preview" src="${this.program.headerUrl}" title="${this.program.name}">
-                    <span class="review-program-name">${this.program.name}</span>
-                </a>
+                <div class="review-header">
+                    <a href="${this.program.pageUrl}" class="review-program" target="_blank" >
+                        <img class="review-program-preview" src="${this.program.headerUrl}" title="${this.program.name}">
+                        <span class="review-program-name">${this.program.name}</span>
+                    </a>
+                    <span class="review-date-time">${this.getLocalDateTimeAsStr()}</span>
+                </div>
                 <br />
                 <div class="review-estimation" style="color: ${Program.getScoreColor(this.estimation)}"></div>
                 <br />
@@ -242,5 +251,18 @@ class Review {
             });
             return this.reviewRowAtUserPage;
         }
+    }
+
+    getLocalDateTimeAsStr() {
+        const options = {
+            hour: "2-digit",
+            minute: "2-digit",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            weekday: "short"
+        };
+
+        return new Date(this.dateTime).toLocaleString("ru-RU", options).replaceAll(",", "");
     }
 }

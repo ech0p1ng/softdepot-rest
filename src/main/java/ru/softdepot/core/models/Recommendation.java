@@ -1,6 +1,8 @@
 package ru.softdepot.core.models;
 
-public record Recommendation(Program program, double euclideanDistance) {
+import java.util.List;
+
+public record Recommendation(Program program, double euclideanDistance, List<Double> degreesOfBelonging) {
     public String toString() {
         return "Recommendation [program=[" + program + "], euclideanDistance=" + euclideanDistance + "]";
     }

@@ -348,3 +348,16 @@ html {
 .estimation-button:hover {
     cursor: pointer;
 }
+
+.review-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.review-date-time {
+    color: var(--text-dark-color);
+    align-self: self-end;
+    align-self: center;
+}

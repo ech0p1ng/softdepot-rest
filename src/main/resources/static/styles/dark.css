@@ -6,6 +6,7 @@ body {
     --bg-no-opacity: rgb(64, 64, 64);
     --border-color: rgb(32, 32, 32);
     --text-color: white;
+    --text-dark-color: gray;
     --text-bright-color: white;
     --red: rgba(255, 0, 0, 0.6);
     --green: rgba(0, 255, 0, 0.6);
