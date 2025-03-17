@@ -235,7 +235,22 @@ public class ProductsController {
         //Сохранение лого и скриншотов на сервер
         programDAO.addMedia(fileStorageService, id, program, logo, screenshots);
 
-        return ResponseEntity.ok().build();
+        Program resultProgram;
+        try {
+            resultProgram = programDAO.getById(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    Message.build(
+                            Message.Entity.PRODUCT,
+                            Message.Identifier.ID,
+                            id,
+                            Message.Status.NOT_FOUND
+                    )
+            );
+        }
+
+        return ResponseEntity.ok().body(resultProgram);
     }
 
     /*
@@ -376,21 +391,8 @@ public class ProductsController {
 
         List<Program> recommendations;
 
-//        try {
         recommendations = programDAO.getRecommendations(customer, minEstimation, maxPrice);
-//        for (int i = 0; i < recommendations.size(); i++) {
-//            var program = recommendations.get(i);
-//            var programWithAdditionalInfo = setAdditionalInfo(customer, program);
-//            recommendations.set(i, programWithAdditionalInfo);
-//        }
-
         return ResponseEntity.ok().body(recommendations);
-//        } catch (Exception e) {
-//            throw new ResponseStatusException(
-//                    HttpStatus.NOT_FOUND,
-//                    e.getMessage()
-//            );
-//        }
     }
 
     private Program setAdditionalInfo(Customer customer, Program program) {

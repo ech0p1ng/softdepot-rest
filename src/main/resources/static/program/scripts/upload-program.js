@@ -554,7 +554,8 @@ class ProgramUploader {
                         contentType: false,
                         data: formData,
                         success: (response) => {
-                            location.reload();
+                            let program = new Program(response);
+                            alert(program.pageUrl);
                         },
                         error: (xhr, status, message) => {
                             console.error(xhr.responseJSON.message);
