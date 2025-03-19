@@ -555,7 +555,7 @@ class ProgramUploader {
                         data: formData,
                         success: (response) => {
                             let program = new Program(response);
-                            alert(program.pageUrl);
+                            window.location.href = program.pageUrl;
                         },
                         error: (xhr, status, message) => {
                             console.error(xhr.responseJSON.message);
