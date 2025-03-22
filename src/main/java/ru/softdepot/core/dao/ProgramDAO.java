@@ -1,5 +1,6 @@
 package ru.softdepot.core.dao;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,7 +28,18 @@ public class ProgramDAO implements DAO<Program> {
 
     private static Connection connection;
 
+
+    private static String mediaUploadDir;
+
+    @Value("${app.media.upload.dir}")
+    public void setMediaUploadDir(String mediaUploadDir) {
+        ProgramDAO.mediaUploadDir = mediaUploadDir;
+        Program.setMediaUploadDir(mediaUploadDir);
+    }
+
     static {
+
+
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
@@ -40,6 +52,7 @@ public class ProgramDAO implements DAO<Program> {
             throw new RuntimeException(e);
         }
     }
+
 
     private static Double getEuclideanDistance(List<Double> a, List<Double> b) {
         Double sum = 0.0;

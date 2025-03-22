@@ -17,6 +17,7 @@ import java.util.List;
 public class Program {
     @Autowired
     FileStorageService fileStorageService;
+    private static String mediaUploadDir;
     private int id;
     private String name;
     private BigDecimal price;
@@ -362,5 +363,14 @@ public class Program {
     @Override
     public boolean equals(Object obj) {
         return this.id == ((Program) obj).id && this.name.equals(((Program) obj).name);
+    }
+
+    public static String getMediaUploadDir() {
+        return mediaUploadDir;
+    }
+
+    public static void setMediaUploadDir(String mediaUploadDir) {
+        Program.mediaUploadDir = mediaUploadDir;
+        System.out.println(Program.mediaUploadDir);
     }
 }
