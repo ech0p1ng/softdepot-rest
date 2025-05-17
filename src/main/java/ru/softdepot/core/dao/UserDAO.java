@@ -52,7 +52,9 @@ public class UserDAO implements DAO<User>, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         var user = getByUserName(userName);
-
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found by name " + userName);
+        }
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + user.getUserType().name().toUpperCase()));

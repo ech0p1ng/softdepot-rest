@@ -100,7 +100,7 @@ public class UsersController {
                 e.printStackTrace();
                 throw new ResponseStatusException(
                         HttpStatus.UNAUTHORIZED,
-                        "Неверный email или пароль"
+                        "Неверное имя пользователя или пароль"
                 );
             }
         }
