@@ -77,7 +77,9 @@ function printErrorMessage(message) {
     });
 
 }
+console.log('script loaded');
 
-window.addEventListener("load", function () {
+$(window).on('load', () => {
+    console.log('window loaded');
     addHeader(false,false);
-});
+})
