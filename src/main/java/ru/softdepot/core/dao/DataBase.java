@@ -1,4 +1,5 @@
 package ru.softdepot.core.dao;
+import io.github.cdimascio.dotenv.Dotenv;
 
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
@@ -27,9 +28,22 @@ public class DataBase {
 
     private static ZoneOffset zoneOffset = ZoneOffset.UTC;
 
-    private static String jsonPath = "D:\\Проекты программирование\\Мои проекты\\Java\\Spring MVC\\SoftDepot\\src\\main\\java\\ru\\softdepot\\core\\db_info.json";
+    public DataBase() {
+        Dotenv dotenv = Dotenv.load();
+        String host = dotenv.get("POSTGRES_HOST");
+        String port = dotenv.get("POSTGRES_PORT");
+        String db = dotenv.get("POSTGRES_DB");
+        String user = dotenv.get("POSTGRES_USER");
+        String password = dotenv.get("POSTGRES_PASSWORD");
+        StringBuilder urlsb = new StringBuilder();
+        urlsb.append("jdbc:postgresql://")
+                .append(host).append(":").append(port)
+                .append("/").append(db);
+        DataBase.url = urlsb.toString();
+        DataBase.user = user;
+        DataBase.password = password;
 
-    private DataBase() {}
+    }
 
     public static Timestamp convertToTimestamp(OffsetDateTime offsetDateTime) {
         Instant nowInstant = offsetDateTime.toInstant();
