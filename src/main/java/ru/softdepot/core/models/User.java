@@ -9,7 +9,7 @@ public class User {
         Customer,
         Developer,
         Administrator
-        }
+    }
 
     public static final String profileImgPlaceholderUrl ="/styles/images/profile-white.png";
 

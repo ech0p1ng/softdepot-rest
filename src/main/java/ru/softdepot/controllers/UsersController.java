@@ -17,10 +17,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.softdepot.config.JwtTokenProvider;
-import ru.softdepot.config.MyUserDetails;
-import ru.softdepot.messages.Message;
 import ru.softdepot.core.dao.UserDAO;
 import ru.softdepot.core.models.User;
+import ru.softdepot.messages.Message;
 import ru.softdepot.requestBodies.RegistrationRequestBody;
 import ru.softdepot.requestBodies.SignInRequestBody;
 
@@ -32,6 +31,16 @@ public class UsersController {
     private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder;
     private JwtTokenProvider jwtTokenProvider;
+
+    public static User getCurrentUser(UserDAO userDAO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            var userAuth = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+            return userDAO.getByUserName(userAuth.getUsername());
+        }
+        return null;
+    }
 
     @PostMapping("/new")
     public ResponseEntity<?> newUser(@Valid @RequestBody RegistrationRequestBody body,
@@ -89,7 +98,7 @@ public class UsersController {
                         .httpOnly(true)
                         .secure(false) //HTTPS
                         .path("/")
-                        .maxAge(3600 * 24 * 7) // Срок жизни cookie (в секундах)
+                        .maxAge(60 * 60 * 24 * 7) // Срок жизни cookie (в секундах)
                         .build();
 
                 return ResponseEntity.ok()
@@ -134,15 +143,5 @@ public class UsersController {
                     "Вы не авторизованы"
             );
         }
-    }
-
-    public static User getCurrentUser(UserDAO userDAO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()
-                && !(authentication instanceof AnonymousAuthenticationToken)) {
-            var userAuth = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
-            return userDAO.getByUserName(userAuth.getUsername());
-        }
-        return null;
     }
 }

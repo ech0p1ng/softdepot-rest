@@ -67,11 +67,10 @@ function errorResponse(xhr, status, error) {
 }
 
 function printErrorMessage(message) {
-    var arr = message.split("\n");
-    arr.forEach((msg) => {
+    message.forEach((msg) => {
         console.error(msg);
-        $(".error-messages").append(
-            '<span style="color: red" class="error-message">' + msg + '</span> <br/>'
+        $(".error-messages").append(/*html*/
+            `<span style="color: red" class="error-message">${msg}</span> <br/>`
         );
     });
 
@@ -80,5 +79,5 @@ console.log('script loaded');
 
 $(window).on('load', () => {
     console.log('window loaded');
-    addHeader(false,false);
+    addHeader(false, false);
 })

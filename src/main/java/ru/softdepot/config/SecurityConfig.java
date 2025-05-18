@@ -35,12 +35,13 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(
-                                "/sign-in",
-                                "/registration",
-                                "/softdepot-api/users/sign-in",
-                                "/softdepot-api/users/new").anonymous() // доступ только для незарегистрированных
+//                        .requestMatchers(
+//                                "/sign-in",
+//                                "/registration",
+//                                "/softdepot-api/users/sign-in",
+//                                "/softdepot-api/users/new").anonymous() // доступ только для незарегистрированных
                         .requestMatchers("/administrators/**").hasRole("ADMINISTRATOR")
+                        .requestMatchers("/recommendations").hasRole("CUSTOMER")
                         .anyRequest().permitAll()) // аутентификация для остальных запросов
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Добавление JWT фильтра
                 .formLogin(login -> login

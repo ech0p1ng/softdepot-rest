@@ -4,8 +4,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Arrays;
+import java.util.List;
 
 @org.springframework.web.bind.annotation.ControllerAdvice
 public class ControllerAdvice {
@@ -16,20 +20,23 @@ public class ControllerAdvice {
 
         if (e instanceof ResponseStatusException) {
             problemDetail.setStatus((HttpStatus) ((ResponseStatusException) e).getStatusCode());
-            problemDetail.setProperty("message", ((ResponseStatusException) e).getReason());
+            var messages = Arrays.asList(((ResponseStatusException) e).getReason());
+            problemDetail.setProperty("message", messages);
             return ResponseEntity.status(
                     ((ResponseStatusException) e).getStatusCode()
             ).body(problemDetail);
         }
         else if (e instanceof BindException) {
-//            problemDetail.setProperty("errors",
-//                    ((BindException) e).getAllErrors()
-//                            .stream()
-//                            .map(ObjectError::getDefaultMessage));
+            List<String> errorMessages = ((BindException) e).getBindingResult()
+                    .getAllErrors()
+                    .stream()
+                    .map(ObjectError::getDefaultMessage)
+                    .toList();
+            problemDetail.setProperty("message", errorMessages);
             return ResponseEntity.badRequest().body(problemDetail);
         }
         else {
-            problemDetail.setProperty("errors", e);
+            problemDetail.setProperty("message", Arrays.asList(e));
             return ResponseEntity.internalServerError().body(problemDetail);
         }
 

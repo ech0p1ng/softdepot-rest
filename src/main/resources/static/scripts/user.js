@@ -108,13 +108,23 @@ class User {
                 $(".user-role").html(roleStr);
                 if (USER !== null) {
                     if (this.id === USER.id && this.userType === USER.userType) {
+                        let addCategoryButton = $(/*html*/`
+                            <button class="button add-new-category-button">Добавить категорию</button>
+                        `);
+
+                        $("main").append(/*html*/`<h1 id="categories-header">Категории</h1>`);
+                        addCategoryButton.on('click', () => {
+                            let item = Tag.getEmptyEditorItem((editorItem) => {
+                                $("#categories-list").prepend(editorItem);
+                            });
+                            $("#categories-list").prepend(item);
+                        });
+                        $("main").append(addCategoryButton);
+                        $("main").append(/*html*/`<div id="categories-list"></div>`);
+
 
                         getCategoriesItems({
                             onSuccess: (response) => {
-                                $("main").append(/*html*/`
-                                    <h1 id="categories-header">Категории</h1>
-                                    <div id="categories-list"></div>
-                                `);
 
                                 response.forEach((element) => {
                                     Tag.emptyCategoryEditor;
@@ -124,20 +134,6 @@ class User {
                             },
                             onError: (xhr, status, error) => {
                                 console.error("Не удалось загрузить категории");
-                            },
-                            onComplete: () => {
-                                let addCategoryButton = $(/*html*/`
-                                    <button class="button add-new-category-button">Добавить категорию</button>
-                                `);
-
-                                addCategoryButton.on('click', () => {
-                                    let item = Tag.getEmptyEditorItem((editorItem) => {
-                                        $("#categories-list").append(editorItem);
-                                    });
-                                    $("#categories-list").append(item);
-                                });
-
-                                $("main").append(addCategoryButton);
                             }
                         });
 

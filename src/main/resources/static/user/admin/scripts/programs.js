@@ -55,7 +55,7 @@ function add_program_from_admin() {
 
 function remove_program(event) {
     let program_id = event.currentTarget.getAttribute("program-id");
-    console.log("Program id="+program_id);
+    console.log("Program id=" + program_id);
     let program_name = $(".admin-game-title[program-id=" + program_id + "]").html();
 
     let remove_program_answer = confirm('Вы действительно хотите удалить "' + program_name + '"?');
@@ -95,7 +95,7 @@ let selectors_count = 1;
 document.addEventListener("click", function (e) {
     if (e.target.className === "button add-tag") {
         selectors_count++;
-        $("#categories-selector").append('<select class="program-tag" selector-id="'+selectors_count+'"></select>');
+        $("#categories-selector").append('<select class="program-tag" selector-id="' + selectors_count + '"></select>');
         add_categories(selectors_count);
     }
 });
@@ -109,7 +109,9 @@ function get_categories() {
             url: "/tag/get-all",
             contentType: "application/json; charset=utf-8",
             success: function (tags) {
-                $("#categories-container").append('<option value="none" selected>Выберите категорию</option>');
+                $("#categories-container").append(/*html*/
+                    `<option value="none" selected>Выберите категорию</option>`
+                );
                 tags.forEach(function (tag) {
                     $("#categories-container").append(get_option(tag.id, tag.name));
                 });
@@ -128,7 +130,7 @@ function get_option(value, content) {
 }
 
 function add_categories(selector_id) {
-    let selector = $('.program-tag[selector-id="'+selector_id+'"');
+    let selector = $('.program-tag[selector-id="' + selector_id + '"');
     let options = $('#categories-container').children();
 
     selector.append(options.clone());
@@ -138,7 +140,7 @@ function add_categories(selector_id) {
 function add_game(event) {
     let tags_id = [];
     for (let selector_id = 1; selector_id <= selectors_count; selector_id++) {
-        let id = $('#add_game_info_form select[selector-id="'+selector_id+'"]').val();
+        let id = $('#add_game_info_form select[selector-id="' + selector_id + '"]').val();
         if (id !== undefined) {
             tags_id.push(id);
         }
@@ -172,17 +174,17 @@ function add_game(event) {
 function post_game(game_info, form_data) {
     console.log(game_info, form_data);
     return new Promise((resolve, reject) => {
-       $.ajax({
-           type: 'POST',
-           url: '/administrator/program/new',
-           data: game_info,
-           success: function (game_id) {
-               add_game_files(game_id, form_data)
-           },
-           error: function () {
+        $.ajax({
+            type: 'POST',
+            url: '/administrator/program/new',
+            data: game_info,
+            success: function (game_id) {
+                add_game_files(game_id, form_data)
+            },
+            error: function () {
                 alert("Программа не добавлена");
-           }
-       })
+            }
+        })
     });
 }
 
