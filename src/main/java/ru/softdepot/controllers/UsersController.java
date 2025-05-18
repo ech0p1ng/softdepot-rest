@@ -114,7 +114,7 @@ public class UsersController {
                 .path("/")
                 .maxAge(0) // Нулевой срок жизни удаляет cookie
                 .build();
-
+        System.out.println("logout");
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
                 .build();

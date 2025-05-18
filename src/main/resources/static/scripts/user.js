@@ -65,16 +65,17 @@ class User {
                 $("#user-profile-button")
                     .removeClass("profile")
                     .addClass("logout")
-                    .attr("href", "/")
                     .attr("title", "Выйти")
-                    .on("click", function () {
+                    .on("click", function (e) {
+                        e.preventDefault();
                         $.ajax({
                             method: "POST",
                             url: BACKEND_URL + "softdepot-api/users/sign-out",
-                            dataType: "json",
+                            // dataType: "json",
                             credentials: "include",
                             success: function (response) {
                                 USER = null;
+                                window.location.href = '/';
                             },
                             error: function (xhr, status, error) {
                                 console.error("Не удалось выйти");

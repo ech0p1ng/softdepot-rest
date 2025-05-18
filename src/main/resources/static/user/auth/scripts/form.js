@@ -1,7 +1,6 @@
 function registration() {
     var data = {
         userName: $("#username").val(),
-        // email: $("#email").val(),
         password: $("#password").val(),
         userType: $('input[name="userType"]:checked').val()
     }

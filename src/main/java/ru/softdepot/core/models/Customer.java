@@ -8,18 +8,18 @@ public class Customer extends User {
     private String name;
     private String password;
     private String profileImgUrl;
-    private BigDecimal balance;
+//    private BigDecimal balance;
     private Type type = Type.Customer;
     private String pageUrl;
 
-    public Customer(int id, String name, String password, String profileImgUrl, BigDecimal balance) {
+    public Customer(int id, String name, String password, String profileImgUrl) {
         super(id, password, name, Type.Customer);
         this.id = id;
         this.name = name;
         this.password = password;
         setProfileImgUrl(profileImgUrl);
         this.pageUrl = super.getPageUrl();
-        setBalance(balance);
+//        setBalance(balance);
         this.type = Type.Customer;
     }
 
@@ -30,7 +30,7 @@ public class Customer extends User {
         this.password = user.getPassword();
         this.type = user.getUserType();
         setProfileImgUrl(null);
-        this.balance = new BigDecimal(0);
+//        this.balance = new BigDecimal(0);
         this.pageUrl = super.getPageUrl();
     }
 
@@ -54,13 +54,13 @@ public class Customer extends User {
         this.password = password;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
+//    public BigDecimal getBalance() {
+//        return balance;
+//    }
+//
+//    public void setBalance(BigDecimal balance) {
+//        this.balance = balance;
+//    }
 
     /**
      * @param returnPlaceholder если у пользователя нет собственного аватара, то возвращается адрес плейсхолдера

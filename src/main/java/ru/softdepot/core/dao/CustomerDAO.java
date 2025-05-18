@@ -42,13 +42,13 @@ public class CustomerDAO implements DAO<Customer> {
         }
         try{
             String sql =
-                    "INSERT INTO customer (customer_name, password, profile_img_url, balance) " +
-                    "VALUES(?,?,?,?) RETURNING id";
+                    "INSERT INTO customer (customer_name, password, profile_img_url) " +
+                    "VALUES(?,?,?) RETURNING id";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, customer.getName());
             statement.setString(2, customer.getPassword());
             statement.setString(3, customer.getProfileImgUrl(false));
-            statement.setBigDecimal(4, customer.getBalance());
+//            statement.setBigDecimal(4, customer.getBalance());
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -65,14 +65,14 @@ public class CustomerDAO implements DAO<Customer> {
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "UPDATE customer " +
-                            "SET customer_name=?, password=?, profile_img_url=?, balance=? " +
+                            "SET customer_name=?, password=?, profile_img_url=? " +
                             "WHERE id=?"
             );
             statement.setString(1, customer.getName());
             statement.setString(2, customer.getPassword());
             statement.setString(3, customer.getProfileImgUrl(false));
-            statement.setBigDecimal(4, customer.getBalance());
-            statement.setInt(5, customer.getId());
+//            statement.setBigDecimal(4, customer.getBalance());
+            statement.setInt(4, customer.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -108,8 +108,8 @@ public class CustomerDAO implements DAO<Customer> {
                         id,
                         resultSet.getString("customer_name"),
                         resultSet.getString("password"),
-                        resultSet.getString("profile_img_url"),
-                        resultSet.getBigDecimal("balance")
+                        resultSet.getString("profile_img_url")
+//                        resultSet.getBigDecimal("balance")
                 );
             }
         } catch (SQLException e) {
@@ -156,8 +156,7 @@ public class CustomerDAO implements DAO<Customer> {
                         resultSet.getString("customer_name"),
                         //resultSet.getString("password"),
                         null,
-                        resultSet.getString("profile_img_url"),
-                        resultSet.getBigDecimal("balance")
+                        resultSet.getString("profile_img_url")
                 ));
             }
         } catch (SQLException e) {
@@ -199,8 +198,7 @@ public class CustomerDAO implements DAO<Customer> {
                         resultSet.getInt("id"),
                         resultSet.getString("customer_name"),
                         resultSet.getString("password"),
-                        resultSet.getString("profile_img_url"),
-                        resultSet.getBigDecimal("balance")
+                        resultSet.getString("profile_img_url")
                 );
                 customers.add(customer);
             }
@@ -288,30 +286,30 @@ public class CustomerDAO implements DAO<Customer> {
         return false;
     }
 
-    public void buyProgram(int customerId, int programId) throws Exception {
-        Program program = programDAO.getById(programId);
-        Customer customer = getById(customerId);
-
-        //если на балансе хватает денег для приобретения программы
-        if (customer.getBalance().compareTo(program.getPrice()) > 0 ||
-            customer.getBalance().compareTo(program.getPrice()) == 0) {
-
-            Purchase purchase = new Purchase();
-            purchase.setCustomerId(customerId);
-            purchase.setProgramId(programId);
-            purchase.setDateTime(OffsetDateTime.now(ZoneOffset.UTC));
-
-            purchaseDAO.add(purchase);
-
-            //снятие с баланса покупателя суммы
-            subtractMoney(customer, program.getPrice());
-        }
-        else {
-            String msg = String.format("Customer [id=%d, balance=%s] does not have enough money " +
-                    "to buy program [id=%d, price=%s]", customerId, customer.getBalance(), programId, program.getPrice());
-            throw new Exception(msg);
-        }
-    }
+//    public void buyProgram(int customerId, int programId) throws Exception {
+//        Program program = programDAO.getById(programId);
+//        Customer customer = getById(customerId);
+//
+//        //если на балансе хватает денег для приобретения программы
+//        if (customer.getBalance().compareTo(program.getPrice()) > 0 ||
+//            customer.getBalance().compareTo(program.getPrice()) == 0) {
+//
+//            Purchase purchase = new Purchase();
+//            purchase.setCustomerId(customerId);
+//            purchase.setProgramId(programId);
+//            purchase.setDateTime(OffsetDateTime.now(ZoneOffset.UTC));
+//
+//            purchaseDAO.add(purchase);
+//
+//            //снятие с баланса покупателя суммы
+//            subtractMoney(customer, program.getPrice());
+//        }
+//        else {
+//            String msg = String.format("Customer [id=%d, balance=%s] does not have enough money " +
+//                    "to buy program [id=%d, price=%s]", customerId, customer.getBalance(), programId, program.getPrice());
+//            throw new Exception(msg);
+//        }
+//    }
 
     public void deletePurchasedProgram(Customer customer, Program program) throws Exception {
         Purchase purchase = purchaseDAO.getByCustomerAndProgram(customer, program);
@@ -384,29 +382,29 @@ public class CustomerDAO implements DAO<Customer> {
     }
 
 
-    public void addMoney(Customer customer, BigDecimal money) throws Exception {
-        if (money.compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal newMoney = customer.getBalance().add(money);
-            customer.setBalance(newMoney);
-            update(customer);
-        }
-        else {
-            String msg = String.format("Money amount can not be less than zero (it is %s)", money);
-            throw new Exception(msg);
-        }
-    }
+//    public void addMoney(Customer customer, BigDecimal money) throws Exception {
+//        if (money.compareTo(BigDecimal.ZERO) > 0) {
+//            BigDecimal newMoney = customer.getBalance().add(money);
+//            customer.setBalance(newMoney);
+//            update(customer);
+//        }
+//        else {
+//            String msg = String.format("Money amount can not be less than zero (it is %s)", money);
+//            throw new Exception(msg);
+//        }
+//    }
 
-    public void subtractMoney(Customer customer, BigDecimal money) throws Exception {
-        if (customer.getBalance().compareTo(money) > 0) {
-            customer.setBalance(customer.getBalance().subtract(money));
-            update(customer);
-        }
-        else {
-            String msg = String.format("Money amount [%s] can not be greater than balance of customer [balance=%s]",
-                    money, customer.getBalance());
-            throw new Exception(msg);
-        }
-    }
+//    public void subtractMoney(Customer customer, BigDecimal money) throws Exception {
+//        if (customer.getBalance().compareTo(money) > 0) {
+//            customer.setBalance(customer.getBalance().subtract(money));
+//            update(customer);
+//        }
+//        else {
+//            String msg = String.format("Money amount [%s] can not be greater than balance of customer [balance=%s]",
+//                    money, customer.getBalance());
+//            throw new Exception(msg);
+//        }
+//    }
 
 
     public List<Program> getProgramsInCart(Customer customer) {
