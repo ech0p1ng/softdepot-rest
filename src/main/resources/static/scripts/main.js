@@ -78,7 +78,7 @@ function addHeader(addSearchForm, addProfileButton) {
         }
 
         if (USER !== null) {
-            if (USER.userType === "Customer") {
+            if (USER.type === "Customer") {
                 if (USER.hasPurchasedPrograms) {
                     header
                         .find(".right-buttons-panel")

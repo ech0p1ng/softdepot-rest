@@ -34,12 +34,13 @@ public class PurchaseDAO implements DAO<Purchase> {
         if (!exists(purchase.getCustomerId(), purchase.getProgramId())) {
             try {
                 PreparedStatement statement = connection.prepareStatement(
-                        "INSERT INTO purchase (purchase_date_time, customer_id, program_id) VALUES (?, ?, ?) " +
+                        "INSERT INTO purchase (purchase_date_time, customer_id, program_id, currency) VALUES (?, ?, ?, ?) " +
                                 "RETURNING id"
                 );
                 statement.setTimestamp(1, DataBase.convertToTimestamp(purchase.getDateTime()));
                 statement.setInt(2, purchase.getCustomerId());
                 statement.setInt(3, purchase.getProgramId());
+                statement.setInt(4, 1);
                 ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
                     return resultSet.getInt("id");

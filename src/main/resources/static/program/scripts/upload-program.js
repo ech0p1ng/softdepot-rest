@@ -531,7 +531,7 @@ class ProgramUploader {
             alert("Авторизируйтесь!")
         }
         else {
-            if (USER.userType === "Developer") {
+            if (USER.type === "Developer") {
                 if (nameIsGood && shortDescriptionIsGood && fullDescriptionIsGood &&
                     categoriesIsGood && logoIsGood && screenshotsIsGood) {
                     const formData = new FormData();

@@ -9,17 +9,19 @@ public class Purchase {
     private OffsetDateTime dateTime;
     private int customerId;
     private int programId;
+    private int currencyId;
 
     private String programName;
     private String programLink;
     private String customerName;
     private String customerLink;
 
-    public Purchase(int id, OffsetDateTime purchaseDate, int customerId, int programId) {
+    public Purchase(int id, OffsetDateTime purchaseDate, int customerId, int programId, int currencyid) {
         this.id = id;
         this.dateTime = purchaseDate;
         this.customerId = customerId;
         this.programId = programId;
+        this.currencyId = currencyid;
     }
 
     public Purchase(int id, int customerId, int programId) {
@@ -122,5 +124,13 @@ public class Purchase {
         return String.format("%s.%s.%s %s:%s:%s.%s",
                 day, month, year, hour,minute, second, millisecond);
 
+    }
+
+    public int getCurrencyId() {
+        return currencyId;
+    }
+
+    public void setCurrencyId(int currencyId) {
+        this.currencyId = currencyId;
     }
 }

@@ -228,7 +228,7 @@ class Program {
                         });
                 }
             }
-            else if (USER.type === "Developer" && this.developerId === USER.id) {
+            else if ((USER.type === "Developer" && this.developerId === USER.id) || USER.type === "Administrator") {
                 $("#add-to-cart-from-page")
                     .addClass('remove-from-cart')
                     .removeClass('add-to-cart')
@@ -348,6 +348,8 @@ class Program {
             this.shortDescription
                 .replaceAll("\\n", "<br>")
                 .replaceAll("\\t", "    ")
+                .replaceAll("\n", "<br>")
+                .replaceAll("\t", "    ")
         );
         $(".game-name").html(this.name);
         if (this.averageEstimation == 0) {
@@ -360,6 +362,8 @@ class Program {
         }
         $("#description-text").html(
             this.fullDescription
+                .replaceAll("\\n", "<br>")
+                .replaceAll("\\t", "    ")
                 .replaceAll("\n", "<br>")
                 .replaceAll("\t", "    ")
         );
@@ -400,7 +404,7 @@ class Program {
             complete: () => {
                 let hideReviewsBlock = false;
                 if (USER !== null) {
-                    if (USER.userType === "Customer") {
+                    if (USER.type === "Customer") {
                         if (this.isPurchased && !this.hasReview) {
                             $(".reviews").prepend(Review.inputJqueryItem);
                             let currentProgramId = this.id;

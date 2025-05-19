@@ -23,7 +23,7 @@ class User {
             success: function (response) {
                 USER = new User(response);
 
-                if (USER.userType === "Customer") {
+                if (USER.type === "Customer") {
                     $.ajax({
                         method: "GET",
                         url: BACKEND_URL + "softdepot-api/purchases?customerId=" + USER.id,
@@ -61,7 +61,7 @@ class User {
         $(".user-name").html(this.name);
 
         if (USER != null) {
-            if (this.userType === USER.userType && this.id === USER.id) {
+            if (this.type === USER.type && this.id === USER.id) {
                 $("#user-profile-button")
                     .removeClass("profile")
                     .addClass("logout")
@@ -90,7 +90,7 @@ class User {
 
         var roleStr = "USER_ROLE";
 
-        switch (this.userType) {
+        switch (this.type) {
             case "Administrator": {
 
                 function getCategoriesItems({ onSuccess, onError, onComplete }) {
@@ -107,7 +107,7 @@ class User {
                 roleStr = "Администратор";
                 $(".user-role").html(roleStr);
                 if (USER !== null) {
-                    if (this.id === USER.id && this.userType === USER.userType) {
+                    if (this.id === USER.id && this.type === USER.type) {
                         let addCategoryButton = $(/*html*/`
                             <button class="button add-new-category-button">Добавить категорию</button>
                         `);
@@ -148,7 +148,7 @@ class User {
                 $(".user-role").html(roleStr);
 
                 if (USER !== null) {
-                    if (this.id === USER.id && this.userType === USER.userType) {
+                    if (this.id === USER.id && this.type === USER.type) {
                         let uploadProgramButton = $(/*html*/`
                             <button class="button" id="add-program-as-developer">Добавить программу</button>
                         `);
