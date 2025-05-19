@@ -3,6 +3,8 @@ package ru.softdepot.core.models;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 
+import java.time.OffsetDateTime;
+
 
 public class User {
     public enum Type {
@@ -26,6 +28,8 @@ public class User {
     private String pageUrl;
 
     private Type userType;
+
+    private OffsetDateTime registrationDateTime;
 
 
     public User(int id, String password, String name, Type userType) {
@@ -84,5 +88,13 @@ public class User {
 
     public String getPageUrl() {
         return "/" + userType.name().toLowerCase() + "s/" + id;
+    }
+
+    public OffsetDateTime getRegistrationDateTime() {
+        return registrationDateTime;
+    }
+
+    public void setRegistrationDateTime(OffsetDateTime registrationDateTime) {
+        this.registrationDateTime = registrationDateTime;
     }
 }

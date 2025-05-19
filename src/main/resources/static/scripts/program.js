@@ -164,7 +164,7 @@ class Program {
                 }
             }
 
-            else if (USER.type === "Developer" && this.developerId === USER.id) {
+            else if ((USER.type === "Developer" && this.developerId === USER.id) || USER.type === "Administrator") {
                 this.gameRowCatalogue
                     .find('.add-to-cart')
                     .addClass('remove-from-cart')

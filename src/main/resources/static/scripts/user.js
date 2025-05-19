@@ -9,7 +9,7 @@ class User {
         this.userType = response.userType;
         this.profileImgUrl = response.profileImgUrl;
         this.balance = response.balance;
-        this.type = response.type;
+        this.type = response.userType;
         this.pageUrl = response.pageUrl;
         this.hasPurchasedPrograms = false;
     }

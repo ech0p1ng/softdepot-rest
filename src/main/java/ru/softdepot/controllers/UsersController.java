@@ -96,8 +96,9 @@ public class UsersController {
                 // Создание HttpOnly Cookie
                 ResponseCookie jwtCookie = ResponseCookie.from("JWT-TOKEN", token)
                         .httpOnly(true)
-                        .secure(false) //HTTPS
+                        .secure(false) //HTTPS h
                         .path("/")
+                        .sameSite("Strict")
                         .maxAge(60 * 60 * 24 * 7) // Срок жизни cookie (в секундах)
                         .build();
 

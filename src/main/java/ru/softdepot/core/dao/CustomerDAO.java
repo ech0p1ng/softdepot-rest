@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.softdepot.core.models.*;
 
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.OffsetDateTime;
@@ -42,12 +43,13 @@ public class CustomerDAO implements DAO<Customer> {
         }
         try{
             String sql =
-                    "INSERT INTO customer (customer_name, password, profile_img_url) " +
-                    "VALUES(?,?,?) RETURNING id";
+                    "INSERT INTO customer (customer_name, password, profile_img_url, registration_date_time) " +
+                    "VALUES(?,?,?,?) RETURNING id";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, customer.getName());
             statement.setString(2, customer.getPassword());
             statement.setString(3, customer.getProfileImgUrl(false));
+            statement.setTimestamp(4, DataBase.convertToTimestamp(OffsetDateTime.now()));
 //            statement.setBigDecimal(4, customer.getBalance());
 
             ResultSet resultSet = statement.executeQuery();
@@ -108,8 +110,8 @@ public class CustomerDAO implements DAO<Customer> {
                         id,
                         resultSet.getString("customer_name"),
                         resultSet.getString("password"),
-                        resultSet.getString("profile_img_url")
-//                        resultSet.getBigDecimal("balance")
+                        resultSet.getString("profile_img_url"),
+                        DataBase.convertToDateTime(resultSet.getTimestamp("registration_date_time"))
                 );
             }
         } catch (SQLException e) {
@@ -154,9 +156,9 @@ public class CustomerDAO implements DAO<Customer> {
                 result.add(new Customer(
                         resultSet.getInt("id"),
                         resultSet.getString("customer_name"),
-                        //resultSet.getString("password"),
                         null,
-                        resultSet.getString("profile_img_url")
+                        resultSet.getString("profile_img_url"),
+                        DataBase.convertToDateTime(resultSet.getTimestamp("registration_date_time"))
                 ));
             }
         } catch (SQLException e) {
@@ -198,7 +200,8 @@ public class CustomerDAO implements DAO<Customer> {
                         resultSet.getInt("id"),
                         resultSet.getString("customer_name"),
                         resultSet.getString("password"),
-                        resultSet.getString("profile_img_url")
+                        resultSet.getString("profile_img_url"),
+                        DataBase.convertToDateTime(resultSet.getTimestamp("registration_date_time"))
                 );
                 customers.add(customer);
             }

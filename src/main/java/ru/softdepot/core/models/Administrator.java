@@ -1,5 +1,7 @@
 package ru.softdepot.core.models;
 
+import java.time.OffsetDateTime;
+
 public class Administrator extends User {
     private int id;
     private String password;
@@ -7,13 +9,14 @@ public class Administrator extends User {
     private Type userType = Type.Administrator;
     private String pageUrl;
 
-    public Administrator(int id, String password, String name) {
+    public Administrator(int id, String password, String name, OffsetDateTime registrationDateTime) {
         super(id, password, name, Type.Administrator);
         this.id = id;
         this.password = password;
         this.name = name;
         this.userType = Type.Administrator;
         this.pageUrl = super.getPageUrl();
+        this.setRegistrationDateTime(registrationDateTime);
     }
 
     public Administrator(User user){

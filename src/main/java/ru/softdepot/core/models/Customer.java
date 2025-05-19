@@ -1,6 +1,7 @@
 package ru.softdepot.core.models;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class Customer extends User {
@@ -12,7 +13,7 @@ public class Customer extends User {
     private Type type = Type.Customer;
     private String pageUrl;
 
-    public Customer(int id, String name, String password, String profileImgUrl) {
+    public Customer(int id, String name, String password, String profileImgUrl, OffsetDateTime registrationDateTime) {
         super(id, password, name, Type.Customer);
         this.id = id;
         this.name = name;
@@ -21,6 +22,7 @@ public class Customer extends User {
         this.pageUrl = super.getPageUrl();
 //        setBalance(balance);
         this.type = Type.Customer;
+        this.setRegistrationDateTime(registrationDateTime);
     }
 
     public Customer(User user) {

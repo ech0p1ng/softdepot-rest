@@ -6,7 +6,9 @@ import ru.softdepot.core.models.DailyStats;
 import ru.softdepot.core.models.Developer;
 import ru.softdepot.core.models.Program;
 
+import javax.xml.crypto.Data;
 import java.sql.*;
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,13 +40,14 @@ public class DeveloperDAO implements DAO<Developer> {
         if (!exists(developer.getName())) {
             try {
                 PreparedStatement statment = connection.prepareStatement(
-                        "INSERT INTO developer (developer_name, password, profile_img_url) " +
-                                "VALUES (?,?,?) " +
+                        "INSERT INTO developer (developer_name, password, profile_img_url, registration_date_time) " +
+                                "VALUES (?,?,?,?) " +
                                 "RETURNING id"
                 );
                 statment.setString(1, developer.getName());
                 statment.setString(2, developer.getPassword());
                 statment.setString(3, developer.getProfileImgUrl(false));
+                statment.setTimestamp(4, DataBase.convertToTimestamp(OffsetDateTime.now()));
 
                 ResultSet resultSet = statment.executeQuery();
                 if (resultSet.next()) {
@@ -106,7 +109,8 @@ public class DeveloperDAO implements DAO<Developer> {
                         resultSet.getInt("id"),
                         resultSet.getString("developer_name"),
                         resultSet.getString("password"),
-                        resultSet.getString("profile_img_url")
+                        resultSet.getString("profile_img_url"),
+                        DataBase.convertToDateTime(resultSet.getTimestamp("registration_date_time"))
                 );
             }
 
@@ -136,7 +140,8 @@ public class DeveloperDAO implements DAO<Developer> {
                         resultSet.getInt("id"),
                         resultSet.getString("developer_name"),
                         resultSet.getString("password"),
-                        resultSet.getString("profile_img_url")
+                        resultSet.getString("profile_img_url"),
+                        DataBase.convertToDateTime(resultSet.getTimestamp("registration_date_time"))
                 );
             }
         } catch (SQLException e) {
@@ -300,7 +305,8 @@ public class DeveloperDAO implements DAO<Developer> {
                         resultSet.getInt("id"),
                         resultSet.getString("developer_name"),
                         resultSet.getString("password"),
-                        resultSet.getString("profile_img_url")
+                        resultSet.getString("profile_img_url"),
+                        DataBase.convertToDateTime(resultSet.getTimestamp("registration_date_time"))
                 ));
             }
             return developers;

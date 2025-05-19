@@ -1,5 +1,7 @@
 package ru.softdepot.core.models;
 
+import java.time.OffsetDateTime;
+
 public class Developer extends User {
     private int id;
     private String name;
@@ -8,13 +10,14 @@ public class Developer extends User {
     private Type type = Type.Developer;
     private String pageUrl;
 
-    public Developer(int id, String name, String password, String profileImgUrl) {
+    public Developer(int id, String name, String password, String profileImgUrl, OffsetDateTime registrationDateTime) {
         super(id, password, name, Type.Developer);
         this.id = id;
         this.name = name;
         this.password = password;
         setProfileImgUrl(profileImgUrl);
         this.pageUrl = super.getPageUrl();
+        this.setRegistrationDateTime(registrationDateTime);
     }
 
     public Developer(User user) {

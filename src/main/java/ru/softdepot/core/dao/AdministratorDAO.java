@@ -7,6 +7,7 @@ import ru.softdepot.core.models.Category;
 import ru.softdepot.core.models.Program;
 
 import java.sql.*;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,10 +38,12 @@ public class AdministratorDAO implements DAO<Administrator> {
         if (!exists(admin.getName())) {
             try {
                 PreparedStatement statement = connection.prepareStatement(
-                        "INSERT INTO administrator (password,administrator_name) VALUES (?,?) RETURNING id"
+                        "INSERT INTO administrator (password,administrator_name, registration_date_time)" +
+                                "VALUES (?,?,?) RETURNING id"
                 );
                 statement.setString(1, admin.getPassword());
                 statement.setString(2, admin.getName());
+                statement.setTimestamp(3, DataBase.convertToTimestamp(OffsetDateTime.now()));
                 ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
                     return resultSet.getInt("id");
@@ -100,7 +103,8 @@ public class AdministratorDAO implements DAO<Administrator> {
                 admin = new Administrator(
                         id,
                         resultSet.getString("password"),
-                        resultSet.getString("administrator_name")
+                        resultSet.getString("administrator_name"),
+                        DataBase.convertToDateTime(resultSet.getTimestamp("registration_date_time"))
                 );
             }
         } catch (SQLException e) {
@@ -169,7 +173,8 @@ public class AdministratorDAO implements DAO<Administrator> {
                 result.add(new Administrator(
                         resultSet.getInt("id"),
                         resultSet.getString("password"),
-                        resultSet.getString("administrator_name")
+                        resultSet.getString("administrator_name"),
+                        DataBase.convertToDateTime(resultSet.getTimestamp("registration_date_time"))
                 ));
             }
         } catch (SQLException e) {
